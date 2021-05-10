@@ -12,12 +12,12 @@
 <!-- Feather icon-->
 <link rel="stylesheet" type="text/css" href="{{asset('assets/css/feather-icon.css')}}">
 <!-- Plugins css start-->
-@yield('css')
+@yield('style_before')
 <!-- Plugins css Ends-->
 <!-- Bootstrap css-->
 <link rel="stylesheet" type="text/css" href="{{asset('assets/css/bootstrap.css')}}">
 <!-- App css-->
 <link rel="stylesheet" type="text/css" href="{{asset('assets/css/style.css')}}">
-<link id="color" rel="stylesheet" href="{{asset('assets/css/color-1.css')}}" media="screen">
+<link id="color" rel="stylesheet" href="{{asset('assets/css/color-6.css')}}" media="screen">
 <!-- Responsive css-->
 <link rel="stylesheet" type="text/css" href="{{asset('assets/css/responsive.css')}}">

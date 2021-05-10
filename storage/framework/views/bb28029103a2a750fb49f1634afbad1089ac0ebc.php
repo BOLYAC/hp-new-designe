@@ -12,12 +12,13 @@
 <!-- Feather icon-->
 <link rel="stylesheet" type="text/css" href="<?php echo e(asset('assets/css/feather-icon.css')); ?>">
 <!-- Plugins css start-->
-<?php echo $__env->yieldContent('css'); ?>
+<?php echo $__env->yieldContent('style_before'); ?>
 <!-- Plugins css Ends-->
 <!-- Bootstrap css-->
 <link rel="stylesheet" type="text/css" href="<?php echo e(asset('assets/css/bootstrap.css')); ?>">
 <!-- App css-->
 <link rel="stylesheet" type="text/css" href="<?php echo e(asset('assets/css/style.css')); ?>">
-<link id="color" rel="stylesheet" href="<?php echo e(asset('assets/css/color-1.css')); ?>" media="screen">
+<link id="color" rel="stylesheet" href="<?php echo e(asset('assets/css/color-6.css')); ?>" media="screen">
 <!-- Responsive css-->
-<link rel="stylesheet" type="text/css" href="<?php echo e(asset('assets/css/responsive.css')); ?>"><?php /**PATH C:\wamp64\www\hp\resources\views/layouts/vertical/css.blade.php ENDPATH**/ ?>
+<link rel="stylesheet" type="text/css" href="<?php echo e(asset('assets/css/responsive.css')); ?>">
+<?php /**PATH C:\wamp64\www\hp\resources\views/layouts/vertical/css.blade.php ENDPATH**/ ?>

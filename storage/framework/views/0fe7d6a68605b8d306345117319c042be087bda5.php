@@ -14,4 +14,5 @@
 <!-- Plugins JS Ends-->
 <!-- Theme js-->
 <script src="<?php echo e(asset('assets/js/script.js')); ?>"></script>
-<!-- Plugin used<?php /**PATH C:\wamp64\www\hp\resources\views/layouts/vertical/script.blade.php ENDPATH**/ ?>
+<!-- Plugin used -->
+<?php /**PATH C:\wamp64\www\hp\resources\views/layouts/vertical/script.blade.php ENDPATH**/ ?>
