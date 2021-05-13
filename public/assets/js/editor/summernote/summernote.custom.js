@@ -1,4 +1,4 @@
-var summernote_custom = {
+let summernote_custom = {
     init: function () {
         $('.summernote').summernote({
             height: 100,

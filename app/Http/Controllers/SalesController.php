@@ -109,7 +109,10 @@ class SalesController extends Controller
             ->update(['user_id' => $request->get('user_id'), 'team_id' => $team, 'type' => '1']);
         $result = Client::whereIn('id', $request->get('clients'))->get();
 
+
+
         foreach ($result as $d) {
+            $d->tasks()->update(['user_id' => $user->id, 'team_id' => $team,]);
             $link = route('clients.edit', $d->id);
             $data[] = array(
                 'full_name' => $d->full_name,

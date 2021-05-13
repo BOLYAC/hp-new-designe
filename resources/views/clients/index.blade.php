@@ -63,7 +63,36 @@
     <script src="{{ asset('assets/js/datepicker/daterange-picker/moment.min.js') }}"></script>
     <script src="{{ asset('assets/js/datepicker/daterange-picker/daterangepicker.js') }}"></script>
     <script src="{{ asset('assets/js/datepicker/daterange-picker/daterange-picker.custom.js') }}"></script>
+    <!-- Notify -->
+    <script src="{{ asset('assets/js/notify/bootstrap-notify.min.js') }}"></script>
     <script>
+        function notify(title, type) {
+            $.notify({
+                    title: title
+                },
+                {
+                    type: type,
+                    allow_dismiss: true,
+                    newest_on_top: true,
+                    mouse_over: true,
+                    spacing: 10,
+                    timer: 2000,
+                    placement: {
+                        from: 'top',
+                        align: 'right'
+                    },
+                    offset: {
+                        x: 30,
+                        y: 30
+                    },
+                    delay: 1000,
+                    z_index: 10000,
+                    animate: {
+                        enter: 'animated bounce',
+                        exit: 'animated bounce'
+                    }
+                });
+        }
 
         // Main data table
         let table = $('#leads-table').DataTable({
@@ -73,32 +102,31 @@
             ajax: {
                 url: '{!! route('clients.data') !!}',
                 data: function (d) {
-                    d.user = $('select[name=user_filter1]').val();
-                    d.source = $('select[name=source_filter]').val();
                     d.status = $('select[name=status_filter]').val();
-                    d.priority = $('select[name=priority_filter1]').val();
-                    d.assigned = $('select[name=assigned_user_id]').val();
-                    d.country = $('input[name=country_filter]').val();
-                    d.phone = $('input[name=phone_filter]').val();
-                    d.cName = $('input[name=name_filter]').val();
-                    d.next_call = $('input[name=next_call_filter]').val();
-                    d.public_id = $('input[name=client_public_id]').val();
-                    d.email = $('input[name=email_filter]').val();
-                    d.filter_var = $("input[type='radio'][name=options]:checked").val();
-                    d.filter_order = $("input[type='radio'][name=orders]:checked").val();
+                    d.source = $('select[name=source_filter]').val();
+                    d.priority = $('select[name=priority_filter]').val();
+                    d.agency = $('select[name=agency_filter]').val();
+                    d.country_check = $('#country_check').is(':checked');
+                    d.country_type = $('select[name=country_type]').val();
+                    d.country = $('input[name=country_field]').val();
+                    d.phone_check = $('#phone_check').is(':checked');
+                    d.phone_type = $('select[name=phone_type]').val();
+                    d.phone = $('input[name=phone_field]').val();
+                    d.user = $('select[name=user_filter]').val();
+                    d.daysActif = $('#last_active').val();
+                    d.lastUpdate = $('#no_tasks').is(':checked');
+                    d.daterange = $('input[name=daterange]').val()
+                    d.filterDateBase = $('input[type="radio"]:checked').val();
                 }
             },
             "drawCallback": function (settings) {
                 var api = this.api();
-
             },
             columns: [
                 {data: 'id', name: 'id', visible: false},
                 {data: 'check', name: 'check', orderable: false, searchable: false,},
                 {data: 'public_id', name: 'public_id'},
                 {data: 'full_name', name: 'full_name'},
-                {data: 'client_number', name: 'client_number'},
-                {data: 'client_email', name: 'client_email'},
                 {data: 'country', name: 'country'},
                 {data: 'status', name: 'status', orderable: false, searchable: false,},
                 {data: 'source_id', name: 'source_id', orderable: false, searchable: false,},
@@ -112,15 +140,91 @@
                 // Center align the header content of column 1
                 {
                     className: "dt-head-center",
-                    targets: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+                    targets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
                 }
             ],
             order: [[1, 'asc']]
+        });
+        // Assigne user
+        $('#refresh').click(function () {
+            $('select[name=status_filter]').val('');
+            $('select[name=source_filter]').val('');
+            $('select[name=priority_filter]').val('');
+            $('select[name=agency_filter]').val('');
+            $('#country_check').prop('checked', false);
+            $('input[name=country_field]').val('');
+            $('#phone_check').prop('checked', false);
+            $('input[name=phone_field]').val('');
+            $('select[name=user_filter]').val('');
+            $('#last_active').val('');
+            $('#no_tasks').prop('checked', false);
+            $('input[name=daterange]').val('')
+            $('input[type="radio"]').filter('[value=none]').prop('checked', true);
+            valueChanged()
+            valuePhoneChanged()
+            table.DataTable().destroy();
+        });
+        // Search form
+        $('#search-form').on('submit', function (e) {
+            table.draw();
+            e.preventDefault();
+        });
+        // Check/Uncheck ALl
+        $('#checkAll').change(function () {
+            if ($(this).is(':checked')) {
+                $('.checkbox-circle').prop('checked', true);
+            } else {
+                $('.checkbox-circle').each(function () {
+                    $(this).prop('checked', false);
+                });
+            }
+        });
+        // Select all, trigger modal
+        $('#row-select-btn').on('click', function (e) {
+            e.preventDefault();
+            let filter = [];
+            $('.checkbox-circle:checked').each(function () {
+                filter.push($(this).val());
+            });
+            if (filter.length > 0) {
+                $('#massAssignModal').modal('show');
+            } else {
+                notify('At least select one lead!', 'danger');
+            }
+        });
+
+        // Mass assign modal
+        $('#massAssignForm').on('submit', function (e) {
+            e.preventDefault();
+            let ids = [];
+            $('.checkbox-circle:checked').each(function () {
+                ids.push($(this).val());
+            });
+            $.ajax({
+                url: "{{ route('sales.share.mass') }}",
+                type: "POST",
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    user_id: $('#assigned_user_mass').val(),
+                    clients: ids,
+                },
+                success: function (response) {
+                    table.ajax.reload(null, false);
+                    $('#massAssignModal').modal('hide');
+                    notify('Lead transferred', 'success');
+                },
+            });
         });
 
         // Filtration sidebar
         $("#cts_select").hide();
         $("#pts_select").hide();
+
+
+        $(document).ready(function () {
+            $('input[name=daterange]').val('')
+        });
+
 
         function valueChanged() {
             if ($('#country_check').is(":checked"))
@@ -156,127 +260,165 @@
                     <div class="card-header b-l-primary p-2">
                         <h6 class="m-0">{{ __('Filter leads by:') }}</h6>
                     </div>
-                    <div class="card-body p-2">
-                        <div class="form-group mb-2">
-                            <select class="form-control form-control-sm digits" id="status_filter">
-                                <option value="">{{ __('Status') }}</option>
-                                <option value="1">{{ __('New Lead') }}</option>
-                                <option value="8">{{ __('No Answer') }}</option>
-                                <option value="12">{{ __('In progress') }}</option>
-                                <option value="3">{{ __('Potential appointment') }}</option>
-                                <option value="4">{{ __('Appointment set') }}</option>
-                                <option value="10">{{ __('Appointment follow up') }}</option>
-                                <option value="5">{{ __('Sold') }}</option>
-                                <option value="13">{{ __('Unreachable') }}</option>
-                                <option value="7">{{ __('Not interested') }}</option>
-                                <option value="11">{{ __('Low budget') }}</option>
-                                <option value="9">{{ __('Wrong Number') }}</option>
-                                <option value="14">{{ __('Unqualified') }}</option>
-                            </select>
-                        </div>
-                        <div class="form-group mb-2">
-                            <select class="form-control form-control-sm digits" id="source_filter">
-                                <option value="">{{ __('Source') }}</option>
+                    <form id="search-form">
+                        <div class="card-body p-2">
+                            <div class="form-group mb-2">
+                                <select class="form-control form-control-sm digits" id="status_filter"
+                                        name="status_filter">
+                                    <option value="">{{ __('Status') }}</option>
+                                    <option value="1">{{ __('New Lead') }}</option>
+                                    <option value="8">{{ __('No Answer') }}</option>
+                                    <option value="12">{{ __('In progress') }}</option>
+                                    <option value="3">{{ __('Potential appointment') }}</option>
+                                    <option value="4">{{ __('Appointment set') }}</option>
+                                    <option value="10">{{ __('Appointment follow up') }}</option>
+                                    <option value="5">{{ __('Sold') }}</option>
+                                    <option value="13">{{ __('Unreachable') }}</option>
+                                    <option value="7">{{ __('Not interested') }}</option>
+                                    <option value="11">{{ __('Low budget') }}</option>
+                                    <option value="9">{{ __('Wrong Number') }}</option>
+                                    <option value="14">{{ __('Unqualified') }}</option>
+                                </select>
+                            </div>
+                            <div class="form-group mb-2">
+                                <select class="form-control form-control-sm digits" id="source_filter"
+                                        name="source_filter">
+                                    <option value="">{{ __('Source') }}</option>
+                                    @foreach($sources as $row)
+                                        <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group mb-2">
+                                <select class="form-control form-control-sm digits" id="priority_filter"
+                                        name="priority_filter">
+                                    <option value="">{{ __('Priority') }}</option>
+                                    <option value="1">{{ __('Low') }}</option>
+                                    <option value="2">{{ __('Medium') }}</option>
+                                    <option value="3">{{ __('High') }}</option>
+                                </select>
+                            </div>
+                            <div class="form-group mb-2">
+                                <select class="form-control form-control-sm digits" id="agency_filter"
+                                        name="agency_filter">
+                                    <option value="">{{ __('Agency') }}</option>
+                                    @foreach($agencies as $row)
+                                        <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                    @endforeach
 
-                            </select>
+                                </select>
+                            </div>
+                            <div class="checkbox checkbox-primary">
+                                <input id="country_check" type="checkbox"
+                                       onclick="valueChanged()">
+                                <label for="country_check">{{ __('Country') }}</label>
+                            </div>
+                            <div class="form-group mb-2 ml-2" id="cts_select">
+                                <select class="form-control form-control-sm digits mb-1" id="country_type"
+                                        name="country_type">
+                                    <option value="1">{{ __('is') }}</option>
+                                    <option value="2">{{ __('isn\'t') }}</option>
+                                    <option value="3">{{ __('contains') }}</option>
+                                    <option value="4">{{ __('dosen\'t contain') }}</option>
+                                    <option value="5">{{ __('start with') }}</option>
+                                    <option value="6">{{ __('ends with') }}</option>
+                                    <option value="7">{{ __('is empty') }}</option>
+                                    <option value="8">{{ __('is note empty') }}</option>
+                                </select>
+                                <input type="text" class="form-control form-control-sm"
+                                       placeholder="{{ __('Type here') }}"
+                                       id="country_field" name="country_field">
+                            </div>
+                            <div class="checkbox checkbox-primary">
+                                <input id="phone_check" type="checkbox"
+                                       onclick="valuePhoneChanged()">
+                                <label for="phone_check">{{ __('Phone') }}</label>
+                            </div>
+                            <div class="form-group mb-2 ml-2" id="pts_select">
+                                <select class="form-control form-control-sm digits mb-1" id="phone_type"
+                                        name="phone_type">
+                                    <option value="1">{{ __('is') }}</option>
+                                    <option value="2">{{ __('isn\'t') }}</option>
+                                    <option value="3">{{ __('contains') }}</option>
+                                    <option value="4">{{ __('dosen\'t contain') }}</option>
+                                    <option value="5">{{ __('start with') }}</option>
+                                    <option value="6">{{ __('ends with') }}</option>
+                                    <option value="7">{{ __('is empty') }}</option>
+                                    <option value="8">{{ __('is note empty') }}</option>
+                                </select>
+                                <input type="text" class="form-control form-control-sm"
+                                       placeholder="{{ __('Type here') }}"
+                                       id="phone_field" name="phone_field">
+                            </div>
+                            @if(auth()->user()->hasRole('Admin'))
+                                <div class="form-group mb-2">
+                                    <option value="">{{ __('Assigned') }}</option>
+                                    <select name="user_filter" id="user_filter"
+                                            class="custom-select custom-select-sm">
+                                        <option value="">{{ __('Assigned') }}</option>
+                                        @foreach($users as $row)
+                                            <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            @elseif(auth()->user()->hasRole('Manager'))
+                                @if(auth()->user()->ownedTeams()->count() > 0)
+                                    <div class="form-group mb-2">
+                                        <select name="user_filter" id="user_filter"
+                                                class="custom-select custom-select-sm">
+                                            <option value="">{{ __('Assigned') }}</option>
+                                            @foreach(auth()->user()->currentTeam->allUsers() as $user)
+                                                <option
+                                                    value="{{ $user->id }}">{{ $user->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endif
+                            @endif
+                            <div class="form-group mb-2">
+                                <input type="text" class="form-control form-control-sm"
+                                       placeholder="{{ __('Last active') }}"
+                                       id="last_active" name="last_active">
+                            </div>
+                            <div class="checkbox checkbox-primary">
+                                <input id="no_tasks" type="checkbox">
+                                <label for="no_tasks" nonce="no_tasks">{{ __('No tasks') }}</label>
+                            </div>
+                            <div class="theme-form mb-2">
+                                <input class="form-control form-control-sm digits" type="text" name="daterange"
+                                       value="">
+                            </div>
+                            <div class="form-group">
+                                <label class="d-block" for="edo-ani">
+                                    <input class="radio_animated" id="edo-ani" type="radio" name="rdo-ani"
+                                           value="creation"> {{ __('Creation') }}
+                                </label>
+                                <label class="d-block" for="edo-ani1">
+                                    <input class="radio_animated" id="edo-ani1" type="radio" name="rdo-ani"
+                                           value="modification"> {{ __('Modification') }}
+                                </label>
+                                <label class="d-block" for="edo-ani2">
+                                    <input class="radio_animated" id="edo-ani2" type="radio" name="rdo-ani"
+                                           value="arrival"> {{ __('Arrival') }}
+                                </label>
+                                <label class="d-block" for="edo-ani13">
+                                    <input class="radio_animated" id="edo-ani13" type="radio" name="rdo-ani" checked
+                                           value="none"> {{ __('None') }}
+                                </label>
+                            </div>
                         </div>
-                        <div class="form-group mb-2">
-                            <select class="form-control form-control-sm digits" id="priority_filter">
-                                <option value="">{{ __('Priority') }}</option>
-                                <option value="1">{{ __('Low') }}</option>
-                                <option value="2">{{ __('Medium') }}</option>
-                                <option value="3">{{ __('High') }}</option>
-                            </select>
+                        <div class="card-footer p-2">
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <button class="btn btn-primary" type="submit">{{ __('Filter') }}</button>
+                                <button class="btn btn-light" type="button" id="refresh">{{ __('Clear') }}</button>
+                            </div>
                         </div>
-                        <div class="checkbox checkbox-primary">
-                            <input id="country_check" type="checkbox"
-                                   onclick="valueChanged()">
-                            <label for="country_check">{{ __('Country') }}</label>
-                        </div>
-                        <div class="form-group mb-2 ml-2" id="cts_select">
-                            <select class="form-control form-control-sm digits mb-1" id="country_type">
-                                <option value="">{{ __('is') }}</option>
-                                <option value="1">{{ __('isn\'t') }}</option>
-                                <option value="2">{{ __('contains') }}</option>
-                                <option value="3">{{ __('dosen\'t contain') }}</option>
-                                <option value="4">{{ __('start with') }}</option>
-                                <option value="5">{{ __('ends with') }}</option>
-                                <option value="6">{{ __('is empty') }}</option>
-                                <option value="7">{{ __('is note empty') }}</option>
-                            </select>
-                            <input type="text" class="form-control form-control-sm" placeholder="{{ __('Type here') }}"
-                                   id="country_field">
-                        </div>
-                        <div class="checkbox checkbox-primary">
-                            <input id="phone_check" type="checkbox"
-                                   onclick="valuePhoneChanged()">
-                            <label for="phone_check">{{ __('Phone') }}</label>
-                        </div>
-                        <div class="form-group mb-2 ml-2" id="pts_select">
-                            <select class="form-control form-control-sm digits mb-1" id="phone_type">
-                                <option value="">{{ __('is') }}</option>
-                                <option value="1">{{ __('isn\'t') }}</option>
-                                <option value="2">{{ __('contains') }}</option>
-                                <option value="3">{{ __('dosen\'t contain') }}</option>
-                                <option value="4">{{ __('start with') }}</option>
-                                <option value="5">{{ __('ends with') }}</option>
-                                <option value="6">{{ __('is empty') }}</option>
-                                <option value="7">{{ __('is note empty') }}</option>
-                            </select>
-                            <input type="text" class="form-control form-control-sm" placeholder="{{ __('Type here') }}"
-                                   id="phone_field">
-                        </div>
-                        <div class="form-group mb-2">
-                            <select class="form-control form-control-sm digits" id="assigned_filter">
-                                <option value="">{{ __('Assigned') }}</option>
-
-                            </select>
-                        </div>
-                        <div class="form-group mb-2">
-                            <input type="text" class="form-control form-control-sm"
-                                   placeholder="{{ __('Last active') }}"
-                                   id="last_active">
-                        </div>
-                        <div class="checkbox checkbox-primary">
-                            <input id="no_tasks" type="checkbox">
-                            <label for="no_tasks">{{ __('No tasks') }}</label>
-                        </div>
-                        <div class="theme-form mb-2">
-                            <input class="form-control form-control-sm digits" type="text" name="daterange"
-                                   value="">
-                        </div>
-                        <div class="form-group">
-                            <label class="d-block" for="edo-ani">
-                                <input class="radio_animated" id="edo-ani" type="radio" name="rdo-ani"
-                                       checked=""
-                                       data-original-title="" title=""> {{ __('Creation') }}
-                            </label>
-                            <label class="d-block" for="edo-ani1">
-                                <input class="radio_animated" id="edo-ani1" type="radio" name="rdo-ani"
-                                       data-original-title="" title=""> {{ __('Modification') }}
-                            </label>
-                            <label class="d-block" for="edo-ani2">
-                                <input class="radio_animated" id="edo-ani2" type="radio" name="rdo-ani"
-                                       checked=""
-                                       data-original-title="" title=""> {{ __('Arrival') }}
-                            </label>
-                            <label class="d-block" for="edo-ani13">
-                                <input class="radio_animated" id="edo-ani13" type="radio" name="rdo-ani"
-                                       data-original-title="" title=""> {{ __('None') }}
-                            </label>
-                        </div>
-                    </div>
-                    <div class="card-footer p-2">
-                        <div class="btn-group" role="group" aria-label="Basic example">
-                            <button class="btn btn-primary" type="button">{{ __('Filter') }}</button>
-                            <button class="btn btn-light" type="button">{{ __('Clear') }}</button>
-                        </div>
-                    </div>
+                    </form>
                 </div>
             </div>
             <div class="col-sm-10">
                 <div class="card p-1">
-                    <div class="card-header card-no-border p-1">
+                    <div class="card-header card-no-border p-2  b-t-primary">
                         @can('share-client')
                             <div class="btn-group btn-group-toggle" data-toggle="buttons">
                                 <label class="btn btn-primary btn-sm">
@@ -311,8 +453,8 @@
                                 lead') }} <i class="icofont icofont-plus"></i></a>
                         @endcan
                     </div>
-                    <div class="card-body p-1">
-                        <div class="order-history dt-ext table-responsive">
+                    <div class="card-body p-1 b-t-primary">
+                        <div class="order-history dt-ext table-responsive m-2">
                             <table id="leads-table" class="table table-striped display table-bordered nowrap"
                                    width="100%" cellspacing="0">
                                 <thead>
@@ -320,126 +462,62 @@
                                     <th>ID</th>
                                     <th></th>
                                     <th>N°</th>
-                                    <th>Name</th>
-                                    <th>Phone</th>
-                                    <th>E-mail</th>
-                                    <th>Country</th>
+                                    <th>{{ __('Name') }}</th>
+                                    <th>{{ __('Country') }}</th>
                                     <th>
-                                        <select name="status_filter" id="status_filter"
-                                                class="custom-select custom-select-sm">
-                                            <option value=""> Status
-                                            </option>
-                                            <option value="1">
-                                                New Lead
-                                            </option>
-                                            <option value="8">
-                                                No Answer
-                                            </option>
-                                            <option value="12">
-                                                In progress
-                                            </option>
-                                            <option value="3">
-                                                Potential
-                                                appointment
-                                            </option>
-                                            <option value="4">
-                                                Appointment
-                                                set
-                                            </option>
-                                            <option value="10">
-                                                Appointment
-                                                follow up
-                                            </option>
-                                            <option value="5">
-                                                Sold
-                                            </option>
-                                            <option value="13">
-                                                Unreachable
-                                            </option>
-                                            <option value="7">
-                                                Not interested
-                                            </option>
-                                            <option value="11">
-                                                Low budget
-                                            </option>
-                                            <option value="9">
-                                                Wrong Number
-                                            </option>
-                                            <option value="14">
-                                                Unqualified
-                                            </option>
-                                        </select>
+                                        {{ __('Status') }}
                                     </th>
                                     <th>
-                                        <select name="source_filter" id="source_filter"
-                                                class="custom-select custom-select-sm">
-                                            <option value="">Source</option>
-                                            @foreach($sources as $row)
-                                                <option value="{{ $row->id }}">{{ $row->name }}</option>
-                                            @endforeach
-                                        </select>
+                                        {{ __('Source') }}
                                     </th>
                                     <th>
-                                        <select name="agency_filter" id="agency_filter"
-                                                class="custom-select custom-select-sm">
-                                            <option value="">Agency</option>
-                                            @foreach($agencies as $row)
-                                                <option value="{{ $row->id }}">{{ $row->name }}</option>
-                                            @endforeach
-                                        </select>
+                                        {{ __('Agency') }}
                                     </th>
                                     <th>
-                                        <select name="priority_filter" id="priority_filter"
-                                                class="custom-select custom-select-sm">
-                                            <option value="">Priority
-                                            </option>
-                                            <option value="1">
-                                                Low
-                                            </option>
-                                            <option value="2">
-                                                Medium
-                                            </option>
-                                            <option value="3">
-                                                High
-                                            </option>
-                                        </select>
+                                        {{ __('Priority') }}
                                     </th>
                                     <th>
-                                        @if(auth()->user()->hasRole('Admin'))
-                                            <select name="user_filter" id="user_filter"
-                                                    class="custom-select custom-select-sm">
-                                                <option value="">Assigned</option>
-                                                @foreach($users as $row)
-                                                    <option value="{{ $row->id }}">{{ $row->name }}</option>
-                                                @endforeach
-                                            </select>
-                                        @elseif(auth()->user()->hasRole('Manager'))
-                                            @if(auth()->user()->ownedTeams()->count() > 0)
-                                                <select name="user_filter" id="user_filter"
-                                                        class="custom-select custom-select-sm">
-                                                    <option value="">Assigned</option>
-                                                    @foreach(auth()->user()->currentTeam->allUsers() as $user)
-                                                        <option
-                                                            value="{{ $user->id }}">{{ $user->name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            @else
-                                                Assigned
-                                            @endif
-                                        @else
-                                            Assigned
-                                        @endif
+                                        {{ __('Assigned') }}
                                     </th>
-                                    <th>Creation date</th>
-                                    <th>Action</th>
+                                    <th>{{ __('Creation date') }}</th>
+                                    <th>{{ __('Action') }}</th>
                                 </tr>
                                 </thead>
-                                <tbody class="task-page">
-                                </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+    <!-- Mass Assigne -->
+    <div class="modal fade" id="massAssignModal" tabindex="-1">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ __('Assign to user') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="massAssignForm">
+                    @csrf
+                    <div class="modal-body p-b-0">
+                        <div class="form-group">
+                            <select class="form-control" name="assigned_user_mass" id="assigned_user_mass">
+                                <option value="" selected>-- {{ __('Select user') }} --</option>
+                                @foreach($users as $user)
+                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">{{ __('Save') }} <i class="icon-save"></i>
+                        </button>
+                        <button type="button" class="btn btn-warning" data-dismiss="modal">{{ __('Cancel') }}</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

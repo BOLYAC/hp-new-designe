@@ -1,74 +1,45 @@
-<div class="card-block note-card">
-    <div class="note-box-wrapper row">
-        <div class="note-box-aside col-lg-12 col-xl-3">
-            <div class="row">
-                <div class="col-sm-3">
-                    <h5><i class="icofont icofont-file-text m-r-5"></i>Notes
-                    </h5>
+<div class="email-right-aside bookmark-tabcontent">
+    <div class="card email-body radius-left">
+        <div class="pl-0">
+            <div class="tab-content">
+                <div class="tab-pane fade active show" id="pills-created" role="tabpanel"
+                     aria-labelledby="pills-created-tab">
+                    <div class="card mb-0">
+                        <div class="card-header d-flex">
+                            <h6 class="mb-0 f-w-600"><i data-feather="file-text"></i> Notes</h6>
+                            <a href="#">Add note <i class="mr-2" data-feather="plus"></i></a>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="taskadd">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        @foreach($notes as $note)
+                                            <tr class="border-bottom-primary">
+                                                <td width="col">
+                                                    {!! $note->body ?? '' !!}
+                                                    <p class="text-muted">
+                                                        {{ Carbon\Carbon::parse(now())->format('Y-m-d H:i') }}
+                                                        {{ __('By:') }} Admin
+                                                    </p>
+                                                </td>
+                                                <td width="col">
+                                                    <a href="#"><i data-feather="link"></i></a>
+                                                    @can('note-delete')
+                                                        <a>
+                                                            <i data-feather="trash-2"></i>
+                                                        </a>
+                                                    @endcan
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="notes-list">
-                <ul id="Note-list" class="Note-list list-group">
-                    @foreach($notes as $note)
-                        <li class="list-group-item">
-                            @can('note-delete')
-                                <form
-                                    action="{{ route('notes.destroy', $note) }}"
-                                    method="post" role="form">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                            class="Note-delete">
-                                        x
-                                    </button>
-                                </form>
-                            @endcan
-                            <div class="Note">
-                                <a onclick="showNote({!! $note->id !!});"
-                                   class="btn btn-sm btn-outline-success"><i
-                                        class="ti-eye"></i> show</a>
-                                <div class="Note__name"></div>
-                                <div class="Note__desc">
-                                    {!! $note->body ?? '' !!}
-                                </div>
-                                <span
-                                    class="Note__date">
-                                    {{ Carbon\Carbon::parse($note->created_at)->format('Y-m-d H:i') }}
-                                    By: {{ $note->user->name }}
-
-                                                                                </span>
-                            </div>
-                        </li>
-                    @endforeach
-                </ul>
-            </div>
-        </div>
-        <div class="note-box-content col-lg-12 col-xl-9">
-            @can('note-create')
-                <form action="{{ route('notes.store') }}" method="post"
-                      role="form">
-                    @csrf
-                    <input type="hidden" name="client_id"
-                           value="{{ $client }}">
-                    <div class="Note-header">
-                        <div class="Note-created f-right">
-                                                                    <span
-                                                                        class="Note-created__on"></span>
-                            <span class="Note-created__date"
-                                  id="Note-created__date"></span>
-                        </div>
-                        <button type="submit"
-                                class="btn btn-md btn-primary hidden-xs Note-add">
-                            Add
-                            New +
-                        </button>
-                    </div>
-                    <div class="note-body">
-                                                                <textarea name="body">
-                                                                </textarea>
-                    </div>
-                </form>
-            @endcan
         </div>
     </div>
 </div>
+

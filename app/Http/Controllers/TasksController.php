@@ -49,15 +49,6 @@ class TasksController extends Controller
     public function anyData(Request $request)
     {
         $tasks = Task::with(['client', 'user'])->select(['id', 'date', 'client_id', 'title', 'user_id', 'archive']);
-        /*$roleName = auth()->user()->getRoleNames();
-        if ($roleName[0] === 'User') {
-            $tasks = Task::with(['client'])
-                ->select(['id', 'date', 'client_id', 'title', 'user_id', 'archive'])
-                ->where('user_id', Auth::id());
-        } else {
-            $tasks = Task::with(['client', 'user'])
-                ->select(['id', 'date', 'client_id', 'title', 'user_id', 'archive']);
-        }*/
 
         switch ($request->get('name')) {
             case 'today-tasks':
@@ -94,7 +85,7 @@ class TasksController extends Controller
                     $cou = '';
                     $countries = collect($tasks->client->country)->toArray();
                     foreach( $countries as $name) {
-                        $cou .=  '<span class="badge badge-inverse">' .  $name . '</span>';
+                        $cou .=  '<span class="badge badge-light-primary">' .  $name . '</span>';
                     }
                     return $cou;
                 }
@@ -106,7 +97,7 @@ class TasksController extends Controller
                     $cou = '';
                     $nat = collect($tasks->client->nationality)->toArray();
                     foreach( $nat as $name) {
-                        $cou .=  '<span class="badge badge-inverse">' .  $name . '</span>';
+                        $cou .=  '<span class="badge badge-light-primary">' .  $name . '</span>';
                     }
                     return $cou;
                 }
@@ -116,7 +107,7 @@ class TasksController extends Controller
                     return '<span class="badge badge-success">' . optional($tasks->user)->name . '</span> <a href="#" class="assign"><i class="icofont icofont-plus f-w-600"></i></a>';
                 })
             ->addColumn('archive', function ($tasks) {
-                return $tasks->archive === true ? '<label class="label label-success">Yes</label>' : '<label class="label label-danger">No</label>';
+                return $tasks->archive === true ? '<label class="txt-success">Yes</label>' : '<label class="txt-danger">No</label>';
             })
             ->addColumn('action', '<a class="dropdown-toggle addon-btn" data-toggle="dropdown"
                                                        aria-expanded="true">

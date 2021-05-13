@@ -34,7 +34,7 @@ class Tasks extends Component
         $this->tasks = Task::whereHas('client', function ($query) use ($client) {
             $query->where('client_id', $client);
         })->get()->sortByDesc('created_at');
-        return view('clients.tasks.index');
+        return view('livewire.tasks');
     }
 
     /**

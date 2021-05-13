@@ -61,7 +61,7 @@ class EventsController extends Controller
         ]);
 
 
-        $data = $request->except('share_with');
+        $data = $request->except('share_with', 'files');
 
         $users = $request->get('share_with');
         $adminEmail = User::findOrFail(1);
@@ -160,7 +160,7 @@ class EventsController extends Controller
         $user = User::find($request->user_id);
         $team = $user->current_team_id ?? 1;
 
-        $data = $request->except('share_with');
+        $data = $request->except('share_with', 'files');
 
         $data['created_by'] = Auth::id();
 
@@ -246,12 +246,19 @@ class EventsController extends Controller
         return view('events.report', compact('events', 'val'));
     }
 
-    public function createReport($val): RedirectResponse
+    public function createReport(Request $request, $val = array())
     {
         if ($val === 'today') {
             $events = Event::whereDate('event_date', Carbon::today()->toDateString())->get();
         } elseif ($val === 'tomorrow') {
             $events = Event::whereDate('event_date', Carbon::tomorrow()->toDateString())->get();
+        } else {
+            $d = $request->all();
+            $t = array_keys($d);
+            $p = explode("_", $t[0]);
+            $to = $p[0] . ' ' . $p[1];
+            $from = $val;
+            $events = Event::whereBetween('event_date', [$from, $to])->get();
         }
 
         if ($events->isEmpty()) {
@@ -288,8 +295,7 @@ class EventsController extends Controller
             return back()->with('toast_error', 'There is no appointment in this date')->withInput();
         }
 
-        $val = 'custom';
-
+        $val = [$from, $to];
         return view('events.report', compact('events', 'val'));
 
         /*$pdf = PDF::loadView('events.preview', compact('events', 'val'));

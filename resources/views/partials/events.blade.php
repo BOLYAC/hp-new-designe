@@ -1,18 +1,16 @@
 <div class="card mt-4">
-    <div class="card-header">
-    </div>
-    <div class="card-block">
+    <div class="card-body b-t-primary">
         <div class="table-responsive">
             <div class="dt-responsive table-responsive">
-                <table id="res-config" class="table table-bordered nowrap display compact">
+                <table id="res-config" class="table table-bordered nowrap display">
                     <thead>
                     <tr>
-                        <th>Title</th>
-                        <th>Date</th>
-                        <th>Owner</th>
-                        <th>Sales representative</th>
-                        <th>Created at</th>
-                        <th>Result</th>
+                        <th>{{ __('Title') }}</th>
+                        <th>{{ __('Date') }}</th>
+                        <th>{{ __('Owner') }}</th>
+                        <th>{{ __('Sales representative') }}</th>
+                        <th>{{ __('Created at') }}</th>
+                        <th>{{ __('Result') }}</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -30,7 +28,7 @@
                             <td>
                                 @php $sellRep = collect($event->sells_name)->toArray() @endphp
                                 @foreach( $sellRep as $name)
-                                    <span class="badge badge-inverse">{{ $name }}</span>
+                                    <span class="badge badge-light-primary">{{ $name }}</span>
                                 @endforeach
                             </td>
                             <td>
@@ -41,40 +39,40 @@
                                     $i = $event->results;
                                     switch ($i) {
                                     case 0:
-                                    echo 'None';
+                                    echo __('None');
                                     break;
                                     case 1:
-                                    echo 'Under evaluation';
+                                    echo __('Under evaluation');
                                     break;
                                     case 2:
-                                    echo 'Postponed';
+                                    echo __('Postponed');
                                     break;
                                     case 3:
-                                    echo 'Negative';
+                                    echo __('Negative');
                                     break;
                                     case 4:
-                                    echo 'Appointment not met';
+                                    echo __('Appointment not met');
                                     break;
                                     case 5:
-                                    echo 'Reservation';
+                                    echo __('Reservation');
                                     break;
                                     case 6:
-                                    echo 'Reservation Cancellation';
+                                    echo __('Reservation Cancellation');
                                     break;
                                     case 7:
-                                    echo 'Sale';
+                                    echo __('Sale');
                                     break;
                                     case 8:
-                                    echo 'Sale Cancellation';
+                                    echo __('Sale Cancellation');
                                     break;
                                     case 9:
-                                    echo 'After Sale';
+                                    echo __('After Sale');
                                     break;
                                     case 10:
-                                    echo 'Presentation';
+                                    echo __('Presentation');
                                     break;
                                     case 11:
-                                    echo 'Follow up';
+                                    echo __('Follow up');
                                     break;
                                     }
                                 @endphp

@@ -27,6 +27,7 @@ class PaymentController extends Controller
 
     public function store(Request $request)
     {
+
         $payment = Payment::create([
             'external_id' => Uuid::uuid4()->toString(),
             'amount' => $request->amount,
@@ -76,7 +77,7 @@ class PaymentController extends Controller
      * Remove the specified resource from storage.
      *
      * @param \App\Models\Payment $payment
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      * @throws \Exception
      */
     public function destroy(Payment $payment)

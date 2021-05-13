@@ -44,6 +44,7 @@
                             </ol>
                             @yield('breadcrumb-title')
                         </div>
+                        @yield('bookmarks-start')
                     </div>
                 </div>
             </div>

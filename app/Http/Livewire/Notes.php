@@ -32,7 +32,8 @@ class Notes extends Component
         $this->notes = Note::whereHas('client', function ($query) use ($client) {
             $query->where('client_id', $client);
         })->get()->sortByDesc('date')->sortByDesc('favorite');
-        return view('clients.notes.index');
+
+        return view('livewire.notes');
     }
 
     /**
@@ -71,9 +72,9 @@ class Notes extends Component
 
           $this->resetInputFields();
 
-          $this->emit('alert', ['type' => 'success', 'message' => 'Note created successfully!']);
+          $this->emit('alert', ['icon' => 'icon-check', 'type' => 'info', 'message' => 'Note created successfully!']);
       } else {
-          $this->emit('alert', ['type' => 'danger', 'message' => 'There is something wrong!, Please try again.']);
+          $this->emit('alert', ['icon' => 'fa fa-times', 'type' => 'danger', 'message' => 'There is something wrong!, Please try again.']);
       }
     }
 

@@ -23,7 +23,8 @@ class User extends Authenticatable implements Auditable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password'
+        'name', 'email', 'password', 'external_id', 'image_path'
+
     ];
 
     /**
@@ -58,18 +59,18 @@ class User extends Authenticatable implements Auditable
     public function SharedLeads(): BelongsToMany
     {
 
-      return $this->belongsToMany(Lead::class, Membership::class)
-        ->withPivot('user_name', 'added_by')
-        ->withTimestamps()
-        ->as('sharedLeads');
+        return $this->belongsToMany(Lead::class, Membership::class)
+            ->withPivot('user_name', 'added_by')
+            ->withTimestamps()
+            ->as('sharedLeads');
     }
 
     public function SharedEvents(): BelongsToMany
     {
-      return $this->belongsToMany(Event::class, EventUser::class)
-        ->withPivot('user_name', 'added_by')
-        ->withTimestamps()
-        ->as('sharedEvents');
+        return $this->belongsToMany(Event::class, EventUser::class)
+            ->withPivot('user_name', 'added_by')
+            ->withTimestamps()
+            ->as('sharedEvents');
     }
 
     public function tasks(): HasMany

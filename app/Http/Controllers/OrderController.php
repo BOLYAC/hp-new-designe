@@ -81,7 +81,7 @@ class OrderController extends Controller
      */
     public function update(Request $request, Invoice $invoice)
     {
-        $data = $request->all();
+        $data = $request->except('_token', 'files');
         $m = $request->get('price') - $request->get('installment') - $invoice->payments()->sum('amount');
 
         if ($m === 0) {

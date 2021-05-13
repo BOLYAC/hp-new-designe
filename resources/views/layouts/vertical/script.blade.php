@@ -15,3 +15,4 @@
 <!-- Theme js-->
 <script src="{{asset('assets/js/script.js')}}"></script>
 <!-- Plugin used -->
+@include('sweetalert::alert')

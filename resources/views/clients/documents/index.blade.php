@@ -1,16 +1,13 @@
 <!-- info card start -->
 <div class="card">
-    <div class="card-header">
-        <h5 class="card-header-text">Documents</h5>
-        <div class="pull-right">
-            @can('task-create')
-                <button data-toggle="modal"
-                        data-target="#document-in-modal"
-                        class="btn btn-primary form-control">Add
-                    Documents <i class="ti-plus"></i>
-                </button>
-            @endcan
-        </div>
+    <div class="card-header d-flex justify-content-between">
+        <h5 class="mb-0 f-w-600">{{ __('Documents') }}</h5>
+        @can('task-create')
+            <button data-toggle="modal"
+                    data-target="#exampleModalCenter"
+                    class="btn btn-primary">{{ __('Add Documents') }} <i class="icon-plus"></i>
+            </button>
+        @endcan
     </div>
     <div class="card-block">
         @if($clientDocuments->count() > 0)
@@ -19,17 +16,19 @@
                     <table id="res-config" class="table table-bordered nowrap">
                         <thead>
                         <tr>
-                            <th width="20%">File</th>
-                            <th width="60%">Title</th>
-                            <th width="10%">Action</th>
+                            <th width="20%">{{ __('File') }}</th>
+                            <th width="60%">{{ __('Title') }}</th>
+                            <th width="10%">{{ __('Action') }}</th>
                         </tr>
                         </thead>
                         <tbody>
                         @foreach($clientDocuments as $file)
                             <tr data-id="{{ $file->id }}">
                                 <td class="img-pro text-center">
-                                    <a href="{{ asset('storage/' . $file->full) }}" data-lightbox="{{ $file->id }}" data-title="{{ $file->title }}">
-                                        <img src="{{ asset('storage/' . $file->full) }}" alt="" class="img-fluid img-thumbnail img-fluid d-inline-block img-70">
+                                    <a href="{{ asset('storage/' . $file->full) }}" data-lightbox="{{ $file->id }}"
+                                       data-title="{{ $file->title }}">
+                                        <img src="{{ asset('storage/' . $file->full) }}" alt=""
+                                             class="img-fluid img-thumbnail img-fluid d-inline-block img-70">
                                     </a>
                                 </td>
                                 <td class="pro-name">
@@ -55,35 +54,37 @@
 </div>
 <!-- info card end -->
 <!-- Create modal start -->
-<div class="modal fade" id="document-in-modal" tabindex="-1" aria-hidden="true" role="dialog">
-    <div class="modal-dialog" role="document">
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenter"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">New document</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                <h5 class="modal-title">{{ __('New document') }}</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span
+                        aria-hidden="true">×</span>
                 </button>
             </div>
             <form action="{{ route('documents.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                <div class="modal-body p-b-0">
+                <div class="modal-body">
                     <input type="hidden" name="client_id" value="{{ $client->id }}">
                     <div class="form-group">
-                        <label>Title</label>
+                        <label>{{ __('Title') }}</label>
                         <input class="form-control" name="title">
                     </div>
                     <div class="form-group">
-                        <label>Excerpt</label>
+                        <label>{{ __('Excerpt') }}</label>
                         <input type="text" name="excerpt" class="form-control">
                     </div>
                     <div class="form-group">
-                        <label>File</label>
+                        <label>{{ __('File') }}</label>
                         <input type="file" name="full" class="form-control">
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Save <i class="ti-save-alt"></i></button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">{{ __('Save') }} <i class="icon-save"></i></button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Cancel') }}</button>
                 </div>
             </form>
         </div>

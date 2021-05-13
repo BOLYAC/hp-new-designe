@@ -45,6 +45,7 @@
                             </ol>
                             <?php echo $__env->yieldContent('breadcrumb-title'); ?>
                         </div>
+                        <?php echo $__env->yieldContent('bookmarks-start'); ?>
                     </div>
                 </div>
             </div>

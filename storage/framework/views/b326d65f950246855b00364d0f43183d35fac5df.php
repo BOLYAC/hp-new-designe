@@ -127,7 +127,7 @@
             </div>
         </div>
         <div class="col-sm-12 col-xl-6 xl-100">
-            <div class="card">
+            <div class="card b-t-primary">
                 <div class="card-body">
                     <ul class="nav nav-tabs border-tab" id="top-tab" role="tablist">
                         <li class="nav-item"><a class="nav-link active" id="top-lead-tab" data-toggle="tab"

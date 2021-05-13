@@ -15,4 +15,5 @@
 <!-- Theme js-->
 <script src="<?php echo e(asset('assets/js/script.js')); ?>"></script>
 <!-- Plugin used -->
+<?php echo $__env->make('sweetalert::alert', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 <?php /**PATH C:\wamp64\www\hp\resources\views/layouts/vertical/script.blade.php ENDPATH**/ ?>

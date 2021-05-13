@@ -78,26 +78,27 @@ Route::group(
 
         // Clear Cache
         Route::get('/clear-cache', function () {
-            $exitCode = Artisan::call('config:clear');
-            $exitCode = Artisan::call('cache:clear');
-            $exitCode = Artisan::call('config:cache');
+            Artisan::call('config:cache');
+            Artisan::call('cache:clear');
+            Artisan::call('config:clear');
+            Artisan::call('view:clear');
+            Artisan::call('route:clear');
             return redirect()->back()->with('toast_success', 'Cache cleared!');
         })->name('cacheClear');
 
         // Backup
         Route::get('/backup-database', function () {
-            $exitCode = Artisan::call('backup:run --only-db');
+            Artisan::call('backup:run --only-db');
             return redirect()->back()->with('toast_success', 'Databes backup done!');
         })->name('backupDatabes');
 
         Route::get('/backup-files', function () {
-            $exitCode = Artisan::call('backup:run --only-files');
+            Artisan::call('backup:run --only-files');
             return redirect()->back()->with('toast_success', 'Files backup done!');
         })->name('backupFiles');
 
         // Audit
         Route::get('audits', 'AuditController@index');
-
 
         // Country and nationality & languages
         Route::get('select/country', 'HomeController@getCountry')->name('country.name');
@@ -123,13 +124,3 @@ Route::group(
         })->name('report_leads');
     }
 );
-
-
-Route::get('/clear-cache', function () {
-    Artisan::call('config:cache');
-    Artisan::call('cache:clear');
-    Artisan::call('config:clear');
-    Artisan::call('view:clear');
-    Artisan::call('route:clear');
-    return "Cache is cleared";
-})->name('clear.cache');
