@@ -24,4 +24,5 @@
 <link id="color" rel="stylesheet" href="<?php echo e(asset('assets/css/color-1.css')); ?>" media="screen">
 <!-- Responsive css-->
 <link rel="stylesheet" type="text/css" href="<?php echo e(asset('assets/css/responsive.css')); ?>">
+<?php echo $__env->yieldContent('style_after'); ?>
 <?php /**PATH C:\wamp64\www\hp\resources\views/layouts/vertical/css.blade.php ENDPATH**/ ?>

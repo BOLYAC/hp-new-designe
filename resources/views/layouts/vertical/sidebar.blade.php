@@ -5,19 +5,21 @@
             <div id="mainnav">
                 <ul class="nav-menu custom-scrollbar">
                     <li class="back-btn">
-                        <div class="mobile-back text-right"><span>Back</span><i class="fa fa-angle-right pl-2"
-                                                                                aria-hidden="true"></i></div>
+                        <div class="mobile-back text-right"><span>{{ __('Back') }}</span><i
+                                class="fa fa-angle-right pl-2"
+                                aria-hidden="true"></i></div>
                     </li>
 
-                    <li class="dropdown">
-                        <a class="nav-link menu-title {{ Request::is('/') ? 'active' : ''}}"
-                           href="{{route('home')}}"><i data-feather="home"></i><span>Dashboard</span>
+                    <li class="dropdown {{ Request::is('/') ? 'active' : ''}}">
+                        <a class="nav-link menu-title"
+                           href="{{route('home')}}"><i data-feather="home"></i><span>{{ __('Dashboard') }}</span>
                         </a>
                     </li>
                     @can('client-list')
                         <li class="dropdown {{ Request::is('clients') ? 'active' : ''}}">
                             <a class="nav-link menu-title"
-                               href="{{route('clients.index')}}"><i data-feather="users"></i><span>Leads</span>
+                               href="{{route('clients.index')}}"><i
+                                    data-feather="users"></i><span>{{ __('Leads') }}</span>
                             </a>
                         </li>
                     @endcan
@@ -70,7 +72,7 @@
                     @can('source-list')
                         <li class="nav-link menu-title {{ Request::is('sources') ? 'active' : ''}}">
                             <a href="{{ route('sources.index') }}">
-                                <i class="ti-direction"></i>
+                                <i class="icon-direction"></i>
                                 <span> {{ __('Sources') }}</span>
                             </a>
                         </li>
@@ -78,7 +80,7 @@
                     @can('agency-list')
                         <li class="nav-link menu-title {{ Request::is('agencies') ? 'active' : ''}}">
                             <a href="{{ route('agencies.index') }}">
-                                <i class="ti-magnet"></i>
+                                <i class="icon-magnet"></i>
                                 <span> {{ __('Agencies') }}</span>
                             </a>
                         </li>
@@ -86,7 +88,7 @@
                     @can('stats-list')
                         <li class="nav-link menu-title {{ Request::is('stats') ? 'active' : ''}}">
                             <a href="{{ route('static.index') }}">
-                                <i class="ti-bar-chart"></i>
+                                <i class="icon-bar-chart"></i>
                                 <span> {{ __('Reporting') }}</span>
                             </a>
                         </li>
@@ -102,7 +104,7 @@
                     @can('team-list')
                         <li class="nav-link menu-title {{ Request::is('teams') ? 'active' : ''}}">
                             <a href="{{ route('teams.index') }}">
-                                <i class="ti-link"></i>
+                                <i class="icon-link"></i>
                                 <span> {{ __('Teams') }}</span>
                             </a>
                         </li>
