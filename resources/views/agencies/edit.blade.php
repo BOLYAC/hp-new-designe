@@ -1,4 +1,4 @@
-s@extends('layouts.vertical.master')
+@extends('layouts.vertical.master')
 @section('title', '| edit agency')
 
 @section('style_before')
