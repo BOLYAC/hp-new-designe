@@ -109,6 +109,14 @@
                             </a>
                         </li>
                     <?php endif; ?>
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('department-list')): ?>
+                        <li class="nav-link menu-title <?php echo e(Request::is('departments') ? 'active' : ''); ?>">
+                            <a href="<?php echo e(route('departments.index')); ?>">
+                                <i class="fa fa-building"></i>
+                                <span> <?php echo e(__('Departments')); ?></span>
+                            </a>
+                        </li>
+                    <?php endif; ?>
                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('role-list')): ?>
                         <li class="nav-link menu-title <?php echo e(Request::is('roles') ? 'active' : ''); ?>">
                             <a href="<?php echo e(route('roles.index')); ?>">

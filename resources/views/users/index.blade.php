@@ -114,7 +114,6 @@
         </div>
         <!-- Zero config.table end -->
     </div>
-    </div>
     <!-- Delete modal start -->
     <div class="modal fade" id="deleteModal" tabindex="-1">
         <div class="modal-dialog" role="document">

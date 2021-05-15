@@ -116,10 +116,10 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive">
+                        <div class="dt-ext table-responsive">
                             <table
-                                class="table dt-responsive task-list-table table-striped table-bordered nowrap"
-                                id="customers-table" style="width: 100%">
+                                id="customers-table" class="table table-striped table-bordered nowrap"
+                                style="width:100%">
                                 <thead>
                                 <tr>
                                     <th>{{ __('Employee name') }}</th>

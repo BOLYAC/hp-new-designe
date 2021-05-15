@@ -109,6 +109,14 @@
                             </a>
                         </li>
                     @endcan
+                    @can('department-list')
+                        <li class="nav-link menu-title {{ Request::is('departments') ? 'active' : ''}}">
+                            <a href="{{ route('departments.index') }}">
+                                <i class="fa fa-building"></i>
+                                <span> {{ __('Departments') }}</span>
+                            </a>
+                        </li>
+                    @endcan
                     @can('role-list')
                         <li class="nav-link menu-title {{ Request::is('roles') ? 'active' : ''}}">
                             <a href="{{ route('roles.index') }}">

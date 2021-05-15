@@ -27,7 +27,7 @@
 
     <script id="details-template" type="text/x-handlebars-template">
         @verbatim
-        <div class="label label-info">Tasks list</div>
+        <div class="badge badge-primary">Tasks list</div>
         <div class="row">
             <table class="table details-table col mx-auto" id="client-{{id}}">
                 <thead>
@@ -199,10 +199,10 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <div class="order-history dt-ext table-responsive">
+                        <div class=" dt-ext table-responsive">
                             <table
                                 id="customers-table"
-                                class="table task-list-table table-striped table-bordered nowrap"
+                                class="table table-striped table-bordered nowrap"
                                 style="width:100%">
                                 <thead>
                                 <tr>

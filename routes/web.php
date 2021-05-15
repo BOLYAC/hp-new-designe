@@ -71,6 +71,13 @@ Route::group(
         //// Tasks
         Route::get('data', 'TasksController@anyData')->name('tasks.data');
         Route::post('assigne/task', 'TasksController@assigneTask')->name('tasks.assigne');
+        /**
+         * Departments
+         */
+        Route::group(['prefix' => 'departments'], function () {
+            Route::get('/indexData', 'DepartmentController@indexData')->name('departments.indexDataTable');
+        });
+        Route::resource('departments', 'DepartmentController');
         //// Projects
         Route::get('/project', 'ProjectsController@getProject')->name('project.api');
         Route::get('/project/show/{id}', 'ProjectsController@getSingleProject')->name('project.api.show');
