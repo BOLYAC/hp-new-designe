@@ -2,13 +2,17 @@
 
 namespace App\Http\Livewire;
 
+use App\Agency;
+use App\Models\Client;
 use App\Models\Note;
+use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use Livewire\Component;
 
 class Notes extends Component
 {
-    public $notes, $body_note, $mode, $client, $updateMode, $noteId, $notePin;
+    public $notes, $body_note, $mode, $client, $updateMode, $noteId, $notePin, $type;
 
     protected $rules = [
         'body_note' => 'required',
@@ -29,10 +33,18 @@ class Notes extends Component
     public function render()
     {
         $client = $this->client;
-        $this->notes = Note::whereHas('client', function ($query) use ($client) {
-            $query->where('client_id', $client);
-        })->get()->sortByDesc('date')->sortByDesc('favorite');
-
+        $this->notes = Note::whereHasMorph(
+            'Noteable',
+            [Agency::class, Client::class],
+            function ($query, $type) use ($client) {
+                if ($type === Agency::class) {
+                    $query->where('id', $client);
+                }
+                if ($type === Client::class) {
+                    $query->where('id', $client);
+                }
+            }
+        )->get()->sortByDesc('date')->sortByDesc('favorite');
         return view('livewire.notes');
     }
 
@@ -54,28 +66,50 @@ class Notes extends Component
      */
     public function createNote()
     {
-      $this->validate();
+        $this->validate();
+
+        $modelsMapping = [
+            'agency' => 'App\Agency',
+            'client' => 'App\Models\Client'
+        ];
+
+        if (!array_key_exists($this->type, $modelsMapping)) {
+            Session::flash('flash_message_warning', __('Could not create document, type not found! Please contact support'));
+            throw new Exception("Could not create comment with type " . $this->type);
+            return redirect()->back();
+        }
+
+        $model = $modelsMapping[$this->type];
+        $source = $model::where('id', '=', $this->client)->first();
+
+        $note = [
+            'body' => $this->body_note,
+            'favorite' => $this->notePin,
+            'date' => now(),
+            'user_id' => Auth::id(),
+        ];
+
+        if ($this->type == 'agency') {
+            $task['agency_id'] = $this->client;
+        }
+        if ($this->type == 'client') {
+            $task['client_id'] = $this->client;
+        }
 
 
-      $note = [
-          'body' => $this->body_note,
-          'favorite' => $this->notePin,
-          'date' => now(),
-          'user_id' => Auth::id(),
-          'client_id' => $this->client
-      ];
+        $note = $source->notes()->create($note);
 
+        if ($note) {
 
-      if (Note::create($note)) {
+            $this->updateMode('show');
 
-          $this->updateMode('show');
+            $this->resetInputFields();
 
-          $this->resetInputFields();
+            $this->emit('alert', ['type' => 'success', 'message' => 'Note created successfully!']);
+        } else {
+            $this->emit('alert', ['type' => 'danger', 'message' => 'There is something wrong!, Please try again.']);
+        }
 
-          $this->emit('alert', ['icon' => 'icon-check', 'type' => 'info', 'message' => 'Note created successfully!']);
-      } else {
-          $this->emit('alert', ['icon' => 'fa fa-times', 'type' => 'danger', 'message' => 'There is something wrong!, Please try again.']);
-      }
     }
 
     public function pinNote($noteId)

@@ -101,8 +101,10 @@
                             </div>
                             <div class="form-group input-group-sm">
                                 <label for="note">{{ __('Note') }}</label>
-                                <textarea class="summernote" type="text" name="note"
-                                          id="note"> {{ old('note',  $agency->note) }}</textarea>
+                                
+                                <textarea name="note"
+                                          class="summernote"
+                                          id="note">{{ old('note', $agency->note) }}</textarea>
                             </div>
                             {{--<div class="form-group">
                                 <div class="border-checkbox-section pl-4">

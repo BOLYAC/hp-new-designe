@@ -37,10 +37,6 @@
     </style>
 @endsection
 
-@section('style')
-
-@endsection
-
 @section('script')
     <!-- Plugins JS start-->
     <script src="{{ asset('assets/js/select2/select2.full.min.js') }}"></script>

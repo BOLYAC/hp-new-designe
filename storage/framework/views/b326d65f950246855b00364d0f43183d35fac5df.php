@@ -186,13 +186,15 @@
                                             <td><a href="#!" class="email-name"><?php echo e($todayTask->title ?? ''); ?></a>
                                             </td>
                                             <td>
-                                                <a
-                                                    href="<?php echo e(route('clients.edit', $todayTask->client_id)); ?>"><?php echo e(optional($todayTask->client)->full_name); ?></a>
+                                                <?php echo e(optional($todayTask->client)->full_name); ?>
+
+                                                <?php echo e(optional($todayTask->agency)->title); ?>
+
                                             </td>
                                             <td>
                                                 <?php if(is_null($todayTask->client->country)): ?>
                                                     <div class="col-form-label">
-                                                        Old: <?php echo e($client->getRawOriginal('country') ?? ''); ?></div>
+                                                        <?php echo e($todayTask->client->getRawOriginal('country') ?? ''); ?></div>
                                                 <?php else: ?>
                                                     <?php $countries = collect($todayTask->client->country)->toArray() ?>
                                                     <?php $__currentLoopData = $countries; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $name): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -239,8 +241,10 @@
                                             <td><a href="#!" class="email-name"><?php echo e($tomorrowTask->title ?? ' '); ?></a>
                                             </td>
                                             <td>
-                                                <a
-                                                    href="<?php echo e(route('clients.edit', $tomorrowTask->client_id)); ?>"><?php echo e(optional($tomorrowTask->client)->full_name); ?></a>
+                                                <?php echo e(optional($tomorrowTask->client)->full_name); ?>
+
+                                                <?php echo e(optional($tomorrowTask->agency)->title); ?>
+
                                             </td>
                                             <td>
                                                 <?php if(is_null($tomorrowTask->client->country)): ?>
@@ -292,8 +296,11 @@
                                             <td><a href="#!" class="email-name"><?php echo e($pendingTask->title ?? ''); ?></a>
                                             </td>
                                             <td>
-                                                <a
-                                                    href="<?php echo e(route('clients.edit', $pendingTask->client_id)); ?>"><?php echo e(optional($pendingTask->client)->full_name); ?></a>
+
+                                                <?php echo e(optional($pendingTask->client)->full_name); ?>
+
+                                                <?php echo e(optional($pendingTask->agency)->title); ?>
+
                                             </td>
                                             <td>
                                                 <?php if(is_null($pendingTask->client->country)): ?>
@@ -355,8 +362,10 @@
                                                 </a>
                                             </td>
                                             <td>
-                                                <a
-                                                    href="<?php echo e(route('clients.edit', $completedTask->client_id)); ?>"><?php echo e(optional($completedTask->client)->full_name); ?></a>
+                                                <?php echo e(optional($completedTask->client)->full_name); ?>
+
+                                                <?php echo e(optional($completedTask->agency)->title); ?>
+
                                             </td>
                                             <td>
                                                 <?php if(is_null($completedTask->client->country)): ?>
@@ -391,7 +400,6 @@
                                         </tr>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </tbody>
-                                </table>
                                 </table>
                             </div>
                         </div>

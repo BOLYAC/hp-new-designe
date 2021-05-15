@@ -70,6 +70,7 @@ Route::group(
         Route::get('/project', 'ProjectsController@getProject')->name('project.api');
         Route::get('/project/show/{id}', 'ProjectsController@getSingleProject')->name('project.api.show');
         // Agencies
+        Route::get('agencies/{id}', 'AgencyController@getAgencySellsOffice')->name('agencies.sells-office-edit');
         Route::resource('agencies', 'AgencyController');
 
 

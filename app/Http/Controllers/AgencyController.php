@@ -3,39 +3,46 @@
 namespace App\Http\Controllers;
 
 use App\Agency;
-use App\Models\Client;
+use App\Models\Note;
+use App\Models\Task;
+use Exception;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Yajra\DataTables\Facades\DataTables;
 
 class AgencyController extends Controller
 {
-  /**
-   * Display a listing of the resource.
-   *
-   * @return \Illuminate\Http\Response
-   */
-  function __construct()
-  {
-    $this->middleware('permission:agency-list|agency-create|agency-edit|agency-delete', ['only' => ['index', 'store']]);
-    $this->middleware('permission:agency-create', ['only' => ['create', 'store']]);
-    $this->middleware('permission:agency-edit', ['only' => ['edit', 'update']]);
-    $this->middleware('permission:agency-delete', ['only' => ['destroy']]);
-  }
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
+     */
+    function __construct()
+    {
+        $this->middleware('permission:agency-list|agency-create|agency-edit|agency-delete', ['only' => ['index', 'store']]);
+        $this->middleware('permission:agency-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:agency-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:agency-delete', ['only' => ['destroy']]);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @param Request $request
+     * @return Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|Response
+     * @throws Exception
      */
     public function index(Request $request)
     {
-      $agencies = Agency::with(['clients'])->select(['id', 'name'])->get();
-      if ($request->ajax()) {
-        return DataTables::of($agencies)
-        ->editColumn('name', function ($agency) {
-          return $agency->name;
-        })
-        ->addColumn('action', 
-        '<a class="dropdown-toggle addon-btn" data-toggle="dropdown"
+        $agencies = Agency::with(['clients'])->select(['id', 'name'])->get();
+        if ($request->ajax()) {
+            return DataTables::of($agencies)
+                ->editColumn('name', function ($agency) {
+                    return $agency->name;
+                })
+                ->addColumn('action',
+                    '<a class="dropdown-toggle addon-btn" data-toggle="dropdown"
             aria-expanded="true">
               <i class="icofont icofont-ui-settings"></i>
           </a>
@@ -43,6 +50,8 @@ class AgencyController extends Controller
               @can(\'agency-edit\')
                   <a class="dropdown-item" href="{{ route(\'agencies.edit\', $id) }}">
                   <i class="icofont icofont-ui-edit"></i>Edit agency</a>
+                  <a class="dropdown-item" href="{{ route(\'agencies.sells-office-edit\', $id) }}">
+                  <i class="icofont icofont-ui-edit"></i>edit agency sells</a>
               @endcan
               @can(\'client-delete\')
                   <form
@@ -57,18 +66,18 @@ class AgencyController extends Controller
                   </form>
               @endcan
           </div>')
-          ->addColumn('details_url', function ($agency) {
-            return route('api.agency_single_details', $agency->id);
-          })
-          ->make(true);
-      }
+                ->addColumn('details_url', function ($agency) {
+                    return route('api.agency_single_details', $agency->id);
+                })
+                ->make(true);
+        }
         return view('agencies.index');
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|Response
      */
     public function create()
     {
@@ -78,28 +87,28 @@ class AgencyController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): \Illuminate\Http\RedirectResponse
     {
 
-      $data = $request->except('_token');
-      
-      $data['status'] = $request->has('status') ? 1 : 0;
-      Agency::create($data);
+        $data = $request->except('_token');
 
-      return redirect()->route('agencies.index')
-        ->with('toast_success', 'Agency created successfully');
+        $data['status'] = $request->has('status') ? 1 : 0;
+        Agency::create($data);
+
+        return redirect()->route('agencies.index')
+            ->with('toast_success', 'Agency created successfully');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return void
      */
-    public function show($id)
+    public function show($id): void
     {
         //
     }
@@ -107,8 +116,8 @@ class AgencyController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Agency $agency
+     * @return Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|Response
      */
     public function edit(Agency $agency)
     {
@@ -119,30 +128,63 @@ class AgencyController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param \Illuminate\Http\Request $request
+     * @param Agency $agency
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, Agency $agency)
+    public function update(Request $request, Agency $agency): \Illuminate\Http\RedirectResponse
     {
-      $data = $request->except('_token', '_method');
-      $data['status'] = $request->has('status') ? 1 : 0;
-      $agency->forceFill($data)->save();
-  
-      return redirect()->route('agencies.index')
-        ->with('toast_success', 'Agency updated successfully');
+        $data = $request->except('_token', '_method');
+        $data['status'] = $request->has('status') ? 1 : 0;
+        $agency->forceFill($data)->save();
+
+        return redirect()->route('agencies.index')
+            ->with('toast_success', 'Agency updated successfully');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Agency $agency
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(Agency $agency)
+    public function destroy(Agency $agency): \Illuminate\Http\RedirectResponse
     {
-      $agency->delete();
-      return redirect()->route('agencies.index')
-        ->with('toast_success', 'Agency deleted successfully');
+        $agency->delete();
+        return redirect()->route('agencies.index')
+            ->with('toast_success', 'Agency deleted successfully');
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param Agency $agency
+     * @param $id
+     * @return Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|Response
+     */
+    public function getAgencySellsOffice(Agency $agency, $id)
+    {
+
+        $agency = Agency::findOrFail($id);
+
+        $agency->with('clients')->get();
+
+        $tasks = Task::whereHasMorph(
+            'Taskable',
+            ['App\Agency'],
+            function ($query) use ($agency) {
+                $query->where('agency_id', $agency->id);
+            }
+        )->get()->sortByDesc('created_at');
+
+        $notes = Note::whereHasMorph(
+            'Noteable',
+            [Agency::class],
+            function ($query) use ($agency) {
+                $query->where('agency_id', $agency->id);
+            }
+        )->get()->sortByDesc('date')->sortByDesc('favorite');
+
+        return view('agencies.sells-office-edit', compact('agency', 'tasks'));
     }
 }

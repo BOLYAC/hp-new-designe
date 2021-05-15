@@ -2,14 +2,17 @@
 
 namespace App\Http\Livewire;
 
+use App\Agency;
+use App\Models\Client;
 use App\Models\Task;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use Livewire\Component;
 
 
 class Tasks extends Component
 {
-    public $tasks, $title, $date, $mode, $client, $updateMode, $taskId;
+    public $tasks, $title, $date, $mode, $client, $updateMode, $taskId, $type, $task_entry, $body, $contact_type;
 
     protected $rules = [
         'title' => 'required|string|min:6',
@@ -23,6 +26,7 @@ class Tasks extends Component
         $this->client = $client->id;
     }
 
+
     /**
      * Write code on Method
      *
@@ -31,9 +35,20 @@ class Tasks extends Component
     public function render()
     {
         $client = $this->client;
-        $this->tasks = Task::whereHas('client', function ($query) use ($client) {
-            $query->where('client_id', $client);
-        })->get()->sortByDesc('created_at');
+
+        $this->tasks = Task::whereHasMorph(
+            'Taskable',
+            [Agency::class, Client::class],
+            function ($query, $type) use ($client) {
+                if ($type === Agency::class) {
+                    $query->where('id', $client);
+                }
+                if ($type === Client::class) {
+                    $query->where('id', $client);
+                }
+            }
+        )->get()->sortByDesc('created_at');
+
         return view('livewire.tasks');
     }
 
@@ -46,6 +61,8 @@ class Tasks extends Component
     {
         $this->title = '';
         $this->date = '';
+        $this->body = '';
+        $this->contact_type = '';
     }
 
     /**
@@ -57,13 +74,39 @@ class Tasks extends Component
     {
         $this->validate();
 
+        $modelsMapping = [
+            'agency' => 'App\Agency',
+            'client' => 'App\Models\Client'
+        ];
+
+        if (!array_key_exists($this->type, $modelsMapping)) {
+            Session::flash('flash_message_warning', __('Could not create document, type not found! Please contact support'));
+            throw new Exception("Could not create comment with type " . $this->type);
+            return redirect()->back();
+        }
+
+        $model = $modelsMapping[$this->type];
+        $source = $model::where('id', '=', $this->client)->first();
+
         $task = [
             'title' => $this->title,
             'date' => $this->date,
+            'body' => $this->body,
+            'contact_type' => $this->contact_type,
             'user_id' => Auth::id(),
-            'client_id' => $this->client
+            'task_entry' => $this->task_entry
         ];
-        if (Task::create($task)) {
+
+        if ($this->type == 'agency') {
+            $task['agency_id'] = $this->client;
+        }
+        if ($this->type == 'client') {
+            $task['client_id'] = $this->client;
+        }
+
+        $task = $source->tasks()->create($task);
+
+        if ($task) {
 
             $this->updateMode('show');
 

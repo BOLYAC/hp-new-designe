@@ -1,5 +1,5 @@
 @extends('layouts.vertical.master')
-@section('title', 'Users')
+@section('title', '| Users')
 
 @section('style_before')
     <!-- Notification.css -->

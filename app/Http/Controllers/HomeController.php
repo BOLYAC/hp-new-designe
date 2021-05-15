@@ -39,12 +39,12 @@ class HomeController extends Controller
         $sources = Source::all();
         $users = User::all();
         $allClients = Client::count();
-        $todayTasks = Task::with('client')->archive(false)->whereDate('date', Carbon::today())->get();
-        $olderTask = Task::with('client')->archive(true)->whereDate('date', '<', Carbon::today())->count();
-        $tomorrowTasks = Task::with('client')->archive(false)->whereDate('date', Carbon::tomorrow())->get();
+        $todayTasks = Task::with(['agency', 'client'])->archive(false)->whereDate('date', Carbon::today())->get();
+        $olderTask = Task::with(['agency', 'client'])->archive(true)->whereDate('date', '<', Carbon::today())->count();
+        $tomorrowTasks = Task::with(['agency', 'client'])->archive(false)->whereDate('date', Carbon::tomorrow())->get();
 //        $futureTask = Task::with('client')->archive(false)->whereDate('date', '>', Carbon::today())->get();
-        $pendingTasks = Task::with('client')->archive(false)->whereDate('date', '<', Carbon::today())->get();
-        $completedTasks = Task::with('client')->archive(true)->get();
+        $pendingTasks = Task::with(['agency', 'client'])->archive(false)->whereDate('date', '<', Carbon::today())->get();
+        $completedTasks = Task::with(['agency', 'client'])->archive(true)->get();
         $roleName = auth()->user()->getRoleNames();
         if ($roleName[0] === 'User') {
             $events = Event::whereHas('user', function ($query) {

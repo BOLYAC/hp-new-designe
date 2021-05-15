@@ -187,13 +187,13 @@
                                             <td><a href="#!" class="email-name">{{ $todayTask->title ?? '' }}</a>
                                             </td>
                                             <td>
-                                                <a
-                                                    href="{{ route('clients.edit', $todayTask->client_id) }}">{{ optional($todayTask->client)->full_name }}</a>
+                                                {{ optional($todayTask->client)->full_name }}
+                                                {{ optional($todayTask->agency)->title }}
                                             </td>
                                             <td>
                                                 @if(is_null($todayTask->client->country))
                                                     <div class="col-form-label">
-                                                        Old: {{ $client->getRawOriginal('country') ?? '' }}</div>
+                                                        {{ $todayTask->client->getRawOriginal('country') ?? '' }}</div>
                                                 @else
                                                     @php $countries = collect($todayTask->client->country)->toArray() @endphp
                                                     @foreach( $countries as $name)
@@ -238,8 +238,8 @@
                                             <td><a href="#!" class="email-name">{{ $tomorrowTask->title ?? ' '}}</a>
                                             </td>
                                             <td>
-                                                <a
-                                                    href="{{ route('clients.edit', $tomorrowTask->client_id) }}">{{ optional($tomorrowTask->client)->full_name }}</a>
+                                                {{ optional($tomorrowTask->client)->full_name }}
+                                                {{ optional($tomorrowTask->agency)->title }}
                                             </td>
                                             <td>
                                                 @if(is_null($tomorrowTask->client->country))
@@ -288,8 +288,9 @@
                                             <td><a href="#!" class="email-name">{{ $pendingTask->title ?? '' }}</a>
                                             </td>
                                             <td>
-                                                <a
-                                                    href="{{ route('clients.edit', $pendingTask->client_id) }}">{{ optional($pendingTask->client)->full_name }}</a>
+
+                                                {{ optional($pendingTask->client)->full_name }}
+                                                {{ optional($pendingTask->agency)->title }}
                                             </td>
                                             <td>
                                                 @if(is_null($pendingTask->client->country))
@@ -347,8 +348,8 @@
                                                 </a>
                                             </td>
                                             <td>
-                                                <a
-                                                    href="{{ route('clients.edit', $completedTask->client_id) }}">{{ optional($completedTask->client)->full_name }}</a>
+                                                {{ optional($completedTask->client)->full_name }}
+                                                {{ optional($completedTask->agency)->title }}
                                             </td>
                                             <td>
                                                 @if(is_null($completedTask->client->country))
@@ -379,7 +380,6 @@
                                         </tr>
                                     @endforeach
                                     </tbody>
-                                </table>
                                 </table>
                             </div>
                         </div>

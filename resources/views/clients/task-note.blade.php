@@ -1,9 +1,9 @@
 <div class="row">
     <div class="col-md">
-        <livewire:notes :client="$client">
+        @livewire('notes', ['client' => $client, 'type' => 'client'])
     </div>
     <div class="col-md">
-        <livewire:tasks :client="$client">
+        @livewire('tasks', ['client' => $client, 'type' => 'client'])
     </div>
 </div>
 
