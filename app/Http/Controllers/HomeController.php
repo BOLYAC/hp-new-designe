@@ -46,7 +46,7 @@ class HomeController extends Controller
         $pendingTasks = Task::with(['agency', 'client'])->archive(false)->whereDate('date', '<', Carbon::today())->get();
         $completedTasks = Task::with(['agency', 'client'])->archive(true)->get();
         $roleName = auth()->user()->getRoleNames();
-        if ($roleName[0] === 'User') {
+        if (auth()->user()->hasRole('User')) {
             $events = Event::whereHas('user', function ($query) {
                 $query->whereDate('event_date', Carbon::today())
                     ->where('user_id', Auth::id());
