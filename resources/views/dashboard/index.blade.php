@@ -253,7 +253,7 @@
                                             </td>
                                             <td>
                                                 @if(is_null($tomorrowTask->client->nationality))
-                                                    {{ $client->getRawOriginal('nationality') ?? '' }}
+                                                    {{ $tomorrowTask->client->getRawOriginal('nationality') ?? '' }}
                                                 @else
                                                     @php $nat = collect($tomorrowTask->client->nationality)->toArray() @endphp
                                                     @foreach( $nat as $name)

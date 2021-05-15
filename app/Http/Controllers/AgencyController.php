@@ -35,11 +35,17 @@ class AgencyController extends Controller
      */
     public function index(Request $request)
     {
-        $agencies = Agency::with(['clients'])->select(['id', 'name'])->get();
+        $agencies = Agency::with(['clients'])->select(['id', 'name', 'company_type', 'phone'])->get();
         if ($request->ajax()) {
             return DataTables::of($agencies)
+                ->editColumn('company_type', function ($agency) {
+                    return $agency->company_type === 1 ? __('Company') : __('Freelance');
+                })
                 ->editColumn('name', function ($agency) {
-                    return $agency->name;
+                    return '<a href="agencies/' . $agency->id . '/edit">' . $agency->name . '</a>';
+                })
+                ->editColumn('phone', function ($agency) {
+                    return $agency->phone;
                 })
                 ->addColumn('action',
                     '<a class="dropdown-toggle addon-btn" data-toggle="dropdown"
@@ -48,10 +54,10 @@ class AgencyController extends Controller
           </a>
           <div class="dropdown-menu dropdown-menu-right">
               @can(\'agency-edit\')
-                  <a class="dropdown-item" href="{{ route(\'agencies.edit\', $id) }}">
-                  <i class="icofont icofont-ui-edit"></i>Edit agency</a>
-                  <a class="dropdown-item" href="{{ route(\'agencies.sells-office-edit\', $id) }}">
-                  <i class="icofont icofont-ui-edit"></i>edit agency sells</a>
+                  <a class="dropdown-item pl-2" href="{{ route(\'agencies.edit\', $id) }}">
+                  <i class="fa fa-edit"></i> {{ __(\'Edit agency\') }}</a>
+                  <a class="dropdown-item pl-2" href="{{ route(\'agencies.sells-office-edit\', $id) }}">
+                  <i class="fa fa-edit"></i> edit agency sells</a>
               @endcan
               @can(\'client-delete\')
                   <form
@@ -60,8 +66,8 @@ class AgencyController extends Controller
                       @csrf
                       @method(\'DELETE\')
                       <button type="submit"
-                              class="dropdown-item">
-                          <i class="icofont icofont-trash"></i> Delete client
+                              class="dropdown-item pl-2">
+                          <i class="icon-trash"></i>  {{ __(\'Delete agency\') }}
                       </button>
                   </form>
               @endcan
@@ -69,9 +75,11 @@ class AgencyController extends Controller
                 ->addColumn('details_url', function ($agency) {
                     return route('api.agency_single_details', $agency->id);
                 })
+                ->rawColumns(['name', 'action'])
                 ->make(true);
         }
         return view('agencies.index');
+
     }
 
     /**
