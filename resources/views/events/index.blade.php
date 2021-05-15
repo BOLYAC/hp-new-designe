@@ -1,14 +1,10 @@
 @extends('layouts.vertical.master')
-@section('title', 'Events')
+@section('title', '| Events')
 
 @section('style_before')
     <!-- Notification.css -->
     <link rel="stylesheet" href="{{ asset('assets/css/datatables.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/datatable-extension.css') }}">
-@endsection
-
-@section('style')
-
 @endsection
 
 @section('script')
@@ -47,10 +43,6 @@
 
 @section('breadcrumb-items')
     <li class="breadcrumb-item">{{ __('Events') }}</li>
-@endsection
-
-@section('breadcrumb-title')
-    <h5>{{ __('Events list') }}</h5>
 @endsection
 @section('content')
     <div class="container-fluid">

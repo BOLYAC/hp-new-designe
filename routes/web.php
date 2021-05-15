@@ -38,8 +38,7 @@ Route::group(
         Route::resource('documents', 'DocumentController');
         Route::resource('payments', 'PaymentController');
         Route::get('/payments-data/{invoice}', 'PaymentController@paymentsDataTable')->name('invoice.paymentsDataTable');
-        Route::get('stats', 'StatisticController@index')->name('static.index');
-        Route::get('stats/filter', 'StatisticController@getData')->name('static.filter');
+
         Route::post('/covert-to-order/{lead}', 'LeadsController@convertToOrder')->name('lead.convert.order');
         Route::post('/comments/{type}/{external_id}', 'CommentController@store')->name('comments.create');
         Route::get('calender', 'CalenderController')->name('calender.index');
@@ -57,6 +56,12 @@ Route::group(
         Route::get('/create-report/{val}', 'EventsController@createReport')->name('generate.report');
         Route::post('/create-report/custom', 'EventsController@customReport')->name('generate.custom.report');
         Route::get('/events/duplicate/{event}', 'EventsController@replicate')->name('replicate.event');
+
+        // Reports
+        Route::get('stats', 'StatisticController@index')->name('static.index');
+        Route::get('stats/filter', 'StatisticController@getData')->name('static.filter');
+        Route::get('call-report', 'StatisticController@callsIndex')->name('calls.index');
+        Route::get('call-report/filter', 'StatisticController@getCallsData')->name('calls.filter');
 
         /// Users
         Route::get('/taskdata/{id?}', 'UsersController@taskData')->name('users.taskdata');
