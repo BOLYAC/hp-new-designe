@@ -22,25 +22,7 @@
     <script>
 
         $(function () {
-            let table = $('#departments-table').DataTable({
-                processing: true,
-                serverSide: true,
-                autoWidth: false,
-                ajax: '{!! route('departments.indexDataTable') !!}',
-                columns: [
-                    {data: 'name', name: 'name'},
-                    {data: 'description', name: 'description', orderable: false, searchable: false},
-                    @can('department-delete')
-                        {
-                            data: 'delete',
-                            name: 'delete',
-                            orderable: false,
-                            searchable: false,
-                            class: 'fit-action-delete-th table-actions'
-                        },
-                    @endcan
-                ]
-            });
+            var table = $('#departments-table').DataTable();
 
             table.on('click', '.edit', function () {
                 $tr = $(this).closest('tr');
@@ -51,6 +33,7 @@
                 console.log(data);
                 $('#name').val(data[1]);
                 $('#description').val(data[2]);
+                $('#status').prop('checked', data[5]);
                 $('#editForm').attr('action', 'departments/' + data[0]);
                 $('#editModal').modal('show');
             })
@@ -87,17 +70,39 @@
                         </button>
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive">
+                        <div class="order-history dt-ext table-responsive">
                             <table id="departments-table"
-                                   class="display table-hover"
-                                   style="width:100%">
+                                   class="table table-striped display table-bordered nowrap"
+                                   width="100%" cellspacing="0">
                                 <thead>
                                 <tr>
+                                    <th>ID</th>
                                     <th>{{ __('Name') }}</th>
                                     <th>{{ __('Description') }}</th>
                                     <th></th>
                                 </tr>
                                 </thead>
+                                <tbody>
+                                @foreach($departments as $department)
+                                    <tr>
+                                        <td>{{ $department->id }}</td>
+                                        <td>{{ $department->name ?? '' }}</td>
+                                        <td>{{ $department->description ?? '' }}</td>
+
+                                        <td>
+                                            @can('department-edit')
+                                                <a href="#"
+                                                   class="m-r-15 text-muted f-18 edit"><i
+                                                        class="icofont icofont-eye-alt"></i></a>
+                                            @endcan
+                                            @can('department-delete')
+                                                <a href="#" class="m-r-15 text-muted f-18 delete"> <i
+                                                        class="icofont icofont-trash"></i></a>
+                                            @endcan
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
 
                             </table>
                         </div>
@@ -113,7 +118,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">{{ __('New source') }}</h5>
+                    <h5 class="modal-title">{{ __('New department') }}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -126,7 +131,7 @@
                                 {{ __('Title') }}
                             </label>
                             <input class="form-control" type="text" name="name"
-                                   placeholder="Source title">
+                                   placeholder="department title">
                         </div>
 
                         <div class="form-group">

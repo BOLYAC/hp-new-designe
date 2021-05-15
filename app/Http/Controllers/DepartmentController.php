@@ -23,12 +23,12 @@ class DepartmentController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|Response
      */
     public function index()
     {
-        return view('departments.index')
-            ->withDepartment(Department::all());
+        $departments = Department::all();
+        return view('departments.index', compact('departments'));
     }
 
     /**
@@ -46,11 +46,12 @@ class DepartmentController extends Controller
                 return $departments->description;
             })
             ->addColumn('delete', '
-                <form action="{{ route(\'departments.destroy\', $external_id) }}" method="POST">
-            <input type="hidden" name="_method" value="DELETE">
-            {{csrf_field()}}
-            <input type="submit" name="submit" value="' . __('Delete') . '" class="btn btn-link" onClick="return confirm(\'Are you sure?\')"">
-            </form>')
+                <a href="#!"
+                class="m-r-15 text-muted f-18 edit"><i
+                class="icofont icofont-eye-alt"></i></a>
+                <a href="#!"
+                class="m-r-15 text-muted f-18 delete"><i
+                class="icofont icofont-trash"></i></a>')
             ->rawColumns(['delete'])
             ->make(true);
     }
@@ -108,11 +109,15 @@ class DepartmentController extends Controller
      *
      * @param \Illuminate\Http\Request $request
      * @param Department $department
-     * @return Response
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, Department $department)
+    public function update(Request $request, Department $department): \Illuminate\Http\RedirectResponse
     {
-        //
+        $department->update([
+            'name' => $request->name,
+            'description' => $request->description
+        ]);
+        return redirect()->route('departments.index')->with('toast_success', __("Department successfully updated"));
     }
 
     /**
@@ -128,6 +133,6 @@ class DepartmentController extends Controller
             return redirect()->route('departments.index')->with('toast_danger', __("Can't delete department with users, please remove users"));
         }
         $department->delete();
-        return redirect()->route('departments.index')->with('toast_danger', __("Department deleted with success"));
+        return redirect()->route('departments.index')->with('toast_success', __("Department deleted with success"));
     }
 }

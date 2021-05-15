@@ -23,7 +23,7 @@ class User extends Authenticatable implements Auditable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'external_id', 'image_path'
+        'name', 'email', 'password', 'external_id', 'image_path', 'department_id'
 
     ];
 
@@ -54,6 +54,11 @@ class User extends Authenticatable implements Auditable
     public function clients(): HasMany
     {
         return $this->hasMany(Client::class);
+    }
+
+    public function department()
+    {
+        return $this->belongsToMany(Department::class);
     }
 
     public function SharedLeads(): BelongsToMany

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Models\Department;
 use App\Models\Event;
 use App\Models\Lead;
 use App\Models\Task;
@@ -61,9 +62,10 @@ class UsersController extends Controller
     public function create()
     {
         $roles = Role::pluck('name', 'name')->all();
+        $departments = Department::all();
 
         $managers = User::all();
-        return view('users.create', compact('roles', 'managers'));
+        return view('users.create', compact('roles', 'managers', 'departments'));
     }
 
     /**
@@ -79,7 +81,8 @@ class UsersController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
             'password' => 'required',
-            'roles' => 'required'
+            'roles' => 'required',
+            'department_id' => 'required'
         ]);
 
         $input = $request->all();
@@ -126,9 +129,10 @@ class UsersController extends Controller
         $roles = Role::pluck('name', 'name')->all();
         $userRole = $user->roles->pluck('name', 'name')->all();
         $userManagers = $user->parent()->get();
+        $departments = Department::all();
 
 
-        return view('users.edit', compact('user', 'roles', 'userRole', 'managers', 'userManagers'));
+        return view('users.edit', compact('user', 'roles', 'userRole', 'managers', 'userManagers', 'departments'));
     }
 
     /**
@@ -146,6 +150,7 @@ class UsersController extends Controller
             'email' => 'required|email|unique:users,email,' . $user->id,
             'roles' => 'required',
             'image' => 'image|max:2048',
+            'department_id' => 'required'
         ]);
 
         $input = $request->all();
@@ -189,9 +194,19 @@ class UsersController extends Controller
      */
     public function destroy(User $user)
     {
-        $user->delete();
-        return redirect()->route('users.index')
-            ->with('toast_success', 'User deleted successfully');
+        if ($user->hasRole('Admin')) {
+            return redirect()->route('users.index')
+                ->with('toast_danger', __('Not allowed to delete super admin'));
+        }
+
+        try {
+            $user->delete();
+            redirect()->route('users.index')
+                ->with('toast_success', __('User successfully deleted'));
+        } catch (\Illuminate\Database\QueryException $e) {
+            redirect()->route('users.index')
+                ->with('toast_danger', __('User can NOT have, leads, clients, or tasks assigned when deleted'));
+        }
     }
 
     /**

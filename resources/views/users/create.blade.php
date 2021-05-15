@@ -59,11 +59,11 @@
                                 </select>
                             </div>
                             <div class="form-group input-group-sm">
-                                <label for="role">{{__('Parent')}}</label>
-                                <select class="form-control" type="parent" name="user_id" id="parent">
-                                    <option value="0"> -- Select parent --</option>
-                                    @foreach($managers as $manager)
-                                        <option value="{{ $manager->id }}">{{ $manager->name }}</option>
+                                <label for="department">{{__('Department')}}</label>
+                                <select class="form-control" name="department_id" id="department">
+                                    <option value="0"> -- {{ __('Select department') }} --</option>
+                                    @foreach($departments as $department)
+                                        <option value="{{ $department->id }}">{{ $department->name }}</option>
                                     @endforeach
                                 </select>
                             </div>

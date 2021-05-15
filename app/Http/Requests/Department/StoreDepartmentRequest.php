@@ -13,7 +13,7 @@ class StoreDepartmentRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->hasRole('administrator') || auth()->user()->hasRole('owner');
+        return auth()->user()->hasRole('Admin') || auth()->user()->hasPermissionTo('department-list');
     }
 
     /**

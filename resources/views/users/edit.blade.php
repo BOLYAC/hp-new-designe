@@ -80,6 +80,18 @@
                                     @endforeach
                                 </select>
                             </div>
+                            <div class="form-group input-group-sm">
+                                <label for="department">{{__('Department')}}</label>
+                                <select class="form-control" name="department_id" id="department">
+                                    <option value="0"> -- {{ __('Select department') }} --</option>
+                                    @foreach($departments as $department)
+                                        <option
+                                            value="{{ $department->id }}" {{ $user->department_id == $department->id ? 'selected' : '' }}>
+                                            {{ $department->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
                             <div class="form-group">
                                 <label>{{ __('Photo profile') }}</label>
                                 <input type="file" name="full" class="form-control">

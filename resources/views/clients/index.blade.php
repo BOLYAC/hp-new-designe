@@ -179,6 +179,7 @@
                 });
             }
         });
+        @can('share-client')
         // Select all, trigger modal
         $('#row-select-btn').on('click', function (e) {
             e.preventDefault();
@@ -192,7 +193,7 @@
                 notify('At least select one lead!', 'danger');
             }
         });
-
+        @endcan
         // Mass assign modal
         $('#massAssignForm').on('submit', function (e) {
             e.preventDefault();

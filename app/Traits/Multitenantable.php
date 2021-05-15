@@ -12,6 +12,7 @@ trait Multitenantable
 
             static::creating(function ($model) {
                 $model->created_by = auth()->id();
+                $model->department_id = auth()->user()->department_id;
             });
 
             static::updating(function ($model) {
@@ -20,14 +21,16 @@ trait Multitenantable
 
             if (auth()->user()->hasPermissionTo('simple-user')) {
                 static::addGlobalScope('user_id', function (Builder $builder) {
-                    $builder->where('user_id', auth()->id());
+                    $builder->where('user_id', auth()->id())
+                        ->where('department_id', auth()->user()->department_id);
                 });
             }
-            
+
             if (auth()->user()->hasPermissionTo('team-manager')) {
-              static::addGlobalScope('team_id', function (Builder $builder) {
-                  $builder->where('team_id', auth()->user()->currentTeam->id);
-              });
+                static::addGlobalScope('team_id', function (Builder $builder) {
+                    $builder->where('team_id', auth()->user()->currentTeam->id)
+                        ->where('department_id', auth()->user()->department_id);
+                });
             }
         }
     }
