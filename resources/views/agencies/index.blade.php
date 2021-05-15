@@ -67,7 +67,9 @@
                     "defaultContent": ''
                 },
                 {data: 'id', name: 'id'},
+                {data: 'company_type', name: 'company_type'},
                 {data: 'name', name: 'name'},
+                {data: 'phone', name: 'phone'},
                 {data: 'action', name: 'action'},
             ],
             order: [[1, 'asc']]
@@ -153,7 +155,9 @@
                                 <tr>
                                     <th width="5%"></th>
                                     <th width="5%">ID</th>
+                                    <th>{{ __('Agency type') }}</th>
                                     <th>{{ __('Name') }}</th>
+                                    <th>{{ __('Phone') }}</th>
                                     <th width="10%"></th>
                                 </tr>
                                 </thead>
