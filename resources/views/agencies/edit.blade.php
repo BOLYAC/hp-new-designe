@@ -1,4 +1,4 @@
-@extends('layouts.vertical.master')
+s@extends('layouts.vertical.master')
 @section('title', '| edit agency')
 
 @section('style_before')
@@ -101,7 +101,7 @@
                             </div>
                             <div class="form-group input-group-sm">
                                 <label for="note">{{ __('Note') }}</label>
-                                
+
                                 <textarea name="note"
                                           class="summernote"
                                           id="note">{{ old('note', $agency->note) }}</textarea>
