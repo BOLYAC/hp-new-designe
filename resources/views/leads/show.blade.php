@@ -8,61 +8,119 @@
     <!-- Datatables.css -->
     <link rel="stylesheet" href="{{ asset('assets/css/datatables.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/datatable-extension.css') }}">
+
+
+
     <style>
-        .select2-container--open {
-            z-index: 999999999999999 !important;
+        .select2-container {
+            width: 100% !important;
+            padding: 0;
         }
     </style>
+
 @endsection
 
 @section('script')
     <!-- Plugins JS start-->
     <script src="{{ asset('assets/js/select2/select2.full.min.js') }}"></script>
-    <script src="{{ asset('assets/js/select2/select2-custom.js') }}"></script>
     <!-- Plugins JS start-->
     <script src="{{ asset('assets/js/editor/summernote/summernote.js') }}"></script>
     <script src="{{ asset('assets/js/editor/summernote/summernote.custom.js') }}"></script>
     <!-- Plugins JS start-->
     <script src="{{ asset('assets/js/notify/bootstrap-notify.min.js') }}"></script>
-    <script src="{{ asset('assets/js/notify/notify-script.js') }}"></script>
     <!-- Plugins JS start-->
 
     <!-- Datatables.js -->
     <script src="{{asset('assets/js/datatables/jquery.dataTables.min.js')}}"></script>
     <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.bootstrap4.min.js')}}"></script>
     <script>
-        $(".js-select2-sales").select2({
-            theme: "classic"
-        });
 
+        let budgetData = [
+            {
+                id: 1,
+                text: 'Less then 50K'
+            },
+            {
+                id: 2,
+                text: '50K <> 100K'
+            },
+            {
+                id: 3,
+                text: '100K <> 150K'
+            },
+            {
+                id: 4,
+                text: '150K <> 200K'
+            },
+            {
+                id: 5,
+                text: '200K <> 300K'
+            },
+            {
+                id: 6,
+                text: '300K <> 400k'
+            },
+            {
+                id: 7,
+                text: '400k <> 500K'
+            },
+            {
+                id: 8,
+                text: '500K <> 600k'
+            },
+            {
+                id: 9,
+                text: '600K <> 1M'
+            },
+            {
+                id: 10,
+                text: '1M <> 2M'
+            },
+            {
+                id: 11,
+                text: 'More then 2M'
+            }
+        ]
+
+        $('.js-budgets-all').select2({
+            data: budgetData,
+        })
+
+        $(".js-select2-sales").select2();
+        $('.js-event-sells').select2();
         // Start Edit record
         let table = $('#res-config').DataTable({
             order: [[1, 'desc']],
         });
 
         // Init notification
-        function notify(message, type) {
-            $.growl({
-                message: message
-            }, {
-                type: type,
-                allow_dismiss: false,
-                label: 'Cancel',
-                className: 'btn-xs btn-inverse',
-                placement: {
-                    from: 'top',
-                    align: 'right'
+        function notify(title, type) {
+            $.notify({
+                    title: title
                 },
-                delay: 2500,
-                animate: {
-                    enter: 'animated fadeInRight',
-                    exit: 'animated fadeOutRight'
-                },
-                offset: {
-                    x: 30,
-                    y: 30
-                }
-            });
+                {
+                    type: type,
+                    allow_dismiss: true,
+                    newest_on_top: true,
+                    mouse_over: true,
+                    showProgressbar: true,
+                    spacing: 10,
+                    timer: 2000,
+                    placement: {
+                        from: 'top',
+                        align: 'right'
+                    },
+                    offset: {
+                        x: 30,
+                        y: 30
+                    },
+                    delay: 1000,
+                    z_index: 10000,
+                    animate: {
+                        enter: 'animated bounce',
+                        exit: 'animated bounce'
+                    }
+                });
         }
 
         $("#stage_id").on('change', function (e) {
@@ -130,13 +188,8 @@
 @endsection
 
 @section('breadcrumb-items')
-    <div class="col">
-        <li class="breadcrumb-item">{{ __('Deals') }}</li>
-    </div>
-@endsection
-
-@section('breadcrumb-title')
-    <h4>{{ __('Lead name') }}: {{ $lead->full_name ?? $lead->client->full_name }}</h4>
+    <li class="breadcrumb-item"><a href="{{ route('leads.index') }}">{{ __('Deals') }}</a></li>
+    <li class="breadcrumb-item">{{ __('Lead name') }}: {{ $lead->full_name ?? $lead->client->full_name }}</li>
 @endsection
 
 @section('content')
@@ -336,18 +389,18 @@
     </div>
 
     <!-- Start Appointment Modal -->
-    <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
-         id="sign-in-modal">
-        <div class="modal-dialog modal-lg" role="document">
+    <div class="modal fade" id="sign-in-modal" tabindex="-1">
+        <div class="modal-dialog  modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">{{__('New appointment')}}</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">×</span></button>
+                    <h5 class="modal-title">{{ __('New appointment') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
                 <form action="{{ route('events.store') }}" method="POST">
                     @csrf
-                    <div class="modal-body">
+                    <div class="modal-body p-b-0">
                         <div class="row">
                             <div class="form-group input-group-sm col-6">
                                 <label for="name">{{ __('Title') }}</label>
@@ -376,29 +429,29 @@
                                 </div>
                             </div>
                             <div class="form-group input-group-sm col-2">
-                                <label for="currency">{{ __('Currency') }}</label>
+                                <label for="currency">{{__('Currency')}}</label>
                                 <select class="form-control form-control-sm" id="currency" name="currency">
                                     <option value="try">TRY</option>
                                     <option value="usd">USD</option>
                                     <option value="euro">EURO</option>
                                 </select>
                             </div>
-                            <div class="form-group input-group-sm col">
-                                <div class="col-form-label">{{ __('Budget') }}</div>
-                                <input type="text" name="budget" id="budget" class="form-control form-control-sm">
+                            <div class="form-group col-10">
+                                <div class="col-form-label pt-0">{{ __('Budget') }}</div>
+                                <select name="budget[]"
+                                        class="form-control form-control-sm digits js-budgets-all col"
+                                        multiple></select>
                             </div>
                         </div>
-                        <div class="">
+                        <div class="mb-2">
                             <div class="col-form-label">{{ __('Languages') }}</div>
-                            <select class="js-language-all col-sm-12" multiple="multiple"
-                                    name="lang[]" id="lang">
+                            <select class="js-language-all custom-select col-12" multiple name="lang[]" id="lang">
                             </select>
                         </div>
                         @can('share-appointment')
-                            <div class="">
+                            <div class="mb-2">
                                 <div class="col-form-label">{{ __('Share with') }}</div>
-                                <select class="js-select2-sales col-sm-12" name="share_with[]"
-                                        id="share_with" multiple>
+                                <select class="js-event-sells custom-select" name="share_with[]" multiple>
                                     @foreach($users as $user)
                                         @if($lead->ShareWithSelles->contains($user))
                                             <option value="{{ $user->id }}"
@@ -412,7 +465,7 @@
                         @endcan
                         <div class="form-group input-group-sm">
                             <label for="description">{{ __('Description') }}</label>
-                            <textarea class="summernote" type="text" name="description"
+                            <textarea class="form-control sm" type="text" name="description"
                                       id="description"></textarea>
                         </div>
                         <div class="form-group input-group-sm">
@@ -424,8 +477,8 @@
                         <button type="submit" class="btn btn-primary"
                                 onClick="this.form.submit(); this.disabled=true; this.value='Sending…';">{{ __('Save') }}
                             <i
-                                class="icon-save"></i></button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">{{ __('Cancel') }}</button>
+                                class="ti-save-alt"></i></button>
+                        <button type="button" class="btn btn-warning" data-dismiss="modal">{{ __('Cancel') }}</button>
                     </div>
                 </form>
             </div>

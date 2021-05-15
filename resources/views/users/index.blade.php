@@ -61,9 +61,9 @@
                             {{ __('New user') }}<i class="icon-plus"></i></a>
                     </div>
                     <div class="card-body">
-                        <div class="order-history dt-ext table-responsive">
+                        <div class="table-responsive">
                             <table id="res-config"
-                                   class="table task-list-table table-striped table-bordered nowrap"
+                                   class="display"
                                    style="width:100%">
                                 <thead>
                                 <tr>

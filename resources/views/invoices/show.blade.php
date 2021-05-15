@@ -1,5 +1,5 @@
 @extends('layouts.vertical.master')
-@section('title', 'Sales page')
+@section('title', '| Sales page')
 @section('style_before')
     <!-- Datatables.css -->
     <link rel="stylesheet" href="{{ asset('assets/css/datatables.css') }}">
@@ -23,13 +23,9 @@
 @endsection
 
 @section('breadcrumb-items')
-    <div class="col">
-        <li class="breadcrumb-item">{{ __('Sales list') }}</li>
-    </div>
-@endsection
-
-@section('breadcrumb-title')
-    <h4>{{ __('Lead name') }}: <small class="ml-5">{{ $invoice->client_name }}</small></h4>
+    <li class="breadcrumb-item"><a href="{{ route('invoices.index') }}"></a>{{ __('Sales list') }}</li>
+    <li class="breadcrumb-item">{{ __('Sales page') }}</li>
+    <li class="breadcrumb-item">{{ __('Lead name') }}: <small class="ml-5">{{ $invoice->client_name }}</small></li>
 @endsection
 @section('content')
 
@@ -40,13 +36,11 @@
             <div class="col-md-8">
                 <!-- Flying Word card start -->
                 <div class="card">
-                    <div class="card-header b-t-primary b-b-primary">
+                    <div class="card-header b-t-primary b-b-primary p-2 d-flex justify-content-between">
                         <h5>Project: {{ $invoice->project }}</h5>
                         @can('invoice-edit')
-                            <div class="card-header-right">
-                                <a class="btn btn-sm btn-primary m-r-10"
-                                   href="{{ route('invoices.edit', $invoice) }}">{{ __('Edit') }}</a>
-                            </div>
+                            <a class="btn btn-sm btn-primary"
+                               href="{{ route('invoices.edit', $invoice) }}">{{ __('Edit') }}</a>
                         @endcan
                     </div>
                     <div class="card-body">

@@ -1,14 +1,10 @@
 @extends('layouts.vertical.master')
-@section('title', 'Invoices')
+@section('title', '| Invoices')
 
 @section('style_before')
     <!-- Notification.css -->
     <link rel="stylesheet" href="{{ asset('assets/css/datatables.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/datatable-extension.css') }}">
-@endsection
-
-@section('style')
-
 @endsection
 
 @section('script')
@@ -37,8 +33,6 @@
     <li class="breadcrumb-item">{{ __('Invoices') }}</li>
 @endsection
 
-@section('breadcrumb-title')
-
 @section('content')
 
     <div class="container-fluid">
@@ -46,13 +40,13 @@
             <div class="col-12 mx-auto">
                 <!-- Zero config.table start -->
                 @include('partials.flash-message')
-                <div class="card">
-                    <div class="card-header b-t-primary">
-                        @can('order-create')
-                            <a href="{{ route('invoices.create') }}" class="btn btn-sm btn-outline-primary">{{ __('New
-                                Invoice') }}<i class="ti-plus"></i></a>
-                        @endcan
-                    </div>
+                <div class="card b-t-primary">
+                    @can('order-create')
+                        <div class="card-header b-t-primary p-2">
+                            <a href="{{ route('invoices.create') }}" class="btn btn-sm btn-primary">{{ __('New
+                                Invoice') }}<i class="icon-plus"></i></a>
+                        </div>
+                    @endcan
                     <div class="card-body">
                         <div class="order-history dt-ext table-responsive">
                             <table id="res-config" class="table table-striped display table-bordered nowrap"

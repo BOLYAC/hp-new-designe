@@ -1,5 +1,5 @@
 @extends('layouts.vertical.master')
-@section('title', 'Sales page')
+@section('title', '| Sales page')
 @section('style_before')
     <!-- Datatables.css -->
     <link rel="stylesheet" href="{{ asset('assets/css/datatables.css') }}">
@@ -70,14 +70,11 @@
 @endsection
 
 @section('breadcrumb-items')
-    <div class="col">
-        <li class="breadcrumb-item">{{ __('Sales list') }}</li>
-    </div>
+    <li class="breadcrumb-item"><a href="{{ route('invoices.index') }}">{{ __('Sales list') }}</a></li>
+    <li class="breadcrumb-item">{{ __('Sales page') }}</li>
+    <li class="breadcrumb-item">{{ __('Lead name') }}: <small class="ml-5">{{ $invoice->client_name }}</small></li>
 @endsection
 
-@section('breadcrumb-title')
-    <h4>{{ __('Lead name') }}: <small class="ml-5">{{ $invoice->client_name }}</small></h4>
-@endsection
 @section('content')
 
     <div class="container-fluid">
@@ -85,15 +82,7 @@
             <!-- Left column start -->
             <div class="col-lg-12 col-xl-9">
                 <!-- Flying Word card start -->
-                <div class="card">
-                    <div class="card-header">
-                        <h5></h5>
-                        <div class="card-header-right">
-                            <i class="icofont icofont-rounded-down"></i>
-                            <i class="icofont icofont-refresh"></i>
-                            <i class="icofont icofont-close-circled"></i>
-                        </div>
-                    </div>
+                <div class="card b-t-primary">
                     <form action="{{ route('invoices.update', $invoice) }}" method="POST">
                         @csrf
                         @method('PUT')

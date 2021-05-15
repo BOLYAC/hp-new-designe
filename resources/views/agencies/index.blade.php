@@ -28,8 +28,8 @@
     <script id="details-template" type="text/x-handlebars-template">
         @verbatim
         <div class="badge badge-light-primary">Leads list</div>
-        <div class="dt-responsive table-responsive">
-            <table class="table table-striped table-bordered nowrap display compact" id="client-{{id}}"
+        <div class="table-responsive">
+            <table class="display" id="client-{{id}}"
                    style="width: 100%">
                 <thead>
                 <tr>
@@ -133,10 +133,6 @@
     <li class="breadcrumb-item">{{ __('Agencies') }}</li>
 @endsection
 
-@section('breadcrumb-title')
-
-@endsection
-
 @section('content')
     <div class="container-fluid">
         <div class="row">
@@ -149,9 +145,9 @@
                            class="btn btn-sm btn-outline-primary">{{ __('New Agency') }} <i class="icon-plus"></i></a>
                     </div>
                     <div class="card-body">
-                        <div class="order-history dt-ext table-responsive">
+                        <div class="table-responsive">
                             <table id="res-config"
-                                   class="table task-list-table table-striped table-bordered nowrap"
+                                   class="display"
                                    style="width:100%">
                                 <thead>
                                 <tr>

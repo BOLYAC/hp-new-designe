@@ -8,6 +8,8 @@
     <link rel="shortcut icon" href="{{asset('assets/images/favicon.png')}}" type="image/x-icon">
     <title>Hashim property CRM | Login</title>
     <!-- Google font-->
+    <!-- Bootstrap css-->
+    <link rel="stylesheet" type="text/css" href="{{asset('assets/css/bootstrap.css')}}">
     <link
         href="https://fonts.googleapis.com/css?family=Montserrat:300,300i,400,400i,500,500i,600,600i,700,700i&amp;display=swap"
         rel="stylesheet">
@@ -24,94 +26,90 @@
     <!-- Feather icon-->
     <link rel="stylesheet" type="text/css" href="{{asset('assets/css/feather-icon.css')}}">
     <!-- Plugins css start-->
-@yield('css')
-<!-- Plugins css Ends-->
-    <!-- Bootstrap css-->
-    <link rel="stylesheet" type="text/css" href="{{asset('assets/css/bootstrap.css')}}">
+    <!-- Plugins css Ends-->
     <!-- App css-->
-    <link rel="stylesheet" type="text/css" href="{{asset('assets/css/style.css')}}">
-    <link id="color" rel="stylesheet" href="{{asset('assets/css/color-1.css')}}" media="screen">
-    <!-- Responsive css-->
-    <link rel="stylesheet" type="text/css" href="{{asset('assets/css/responsive.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('assets/css/login.css')}}">
 </head>
 <body>
-<!-- Loader starts-->
+<!-- Loader starts
 <div class="loader-wrapper">
     <div class="theme-loader"></div>
 </div>
-<!-- Loader ends-->
+Loader ends-->
 <!-- page-wrapper Start-->
-<div class="page-wrapper">
-    <div class="container-fluid p-0">
-        <!-- login page start-->
-        <div class="authentication-main mt-0">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="auth-innerright auth-bg">
-                        <div class="authentication-box">
-                            <div class="mt-4">
-                                <div class="card-body p-0">
-                                    <div class="cont text-center">
-                                        <div>
-                                            <form class="theme-form" method="POST" action="{{ route('login') }}">
-                                                @csrf
-                                                <h4>{{ __('LOGIN') }}</h4>
-                                                <h6>{{ __('Enter your Email and Password') }}</h6>
-                                                <div class="form-group">
-                                                    <label class="col-form-label pt-0">{{ __('Your Email') }}</label>
-                                                    <input class="form-control @error('email') is-invalid @enderror"
-                                                           id="email"
-                                                           name="email"
-                                                           value="{{ old('email') }}"
-                                                           type="email" required autocomplete="email" autofocus>
-                                                    @error('email')
-                                                    <span class="invalid-feedback" role="alert">
+<!--[if lt IE 8]>
+<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
+    your browser</a> to improve your experience.</p>
+<![endif]-->
+<section class="fxt-template-animation fxt-template-layout7"
+         data-bg-image="{{ asset('assets/images/figure/bg7-l.png') }}">
+    <div class="container">
+        <div class="row align-items-center justify-content-center">
+            <div class="col-xl-6 col-lg-7 col-sm-12 col-12 fxt-bg-color">
+                <div class="fxt-content">
+                    <div class="fxt-header">
+                        <a href="" class="fxt-logo"><img
+                                style="width: 130px;height: 80px;"
+                                src="https://hashimproperty.com/wp-content/uploads/2020/07/HASHIM_PROPERTY.png"
+                                alt="Logo"></a>
+                        <p>Hashim Property CRM</p>
+                    </div>
+                    <div class="fxt-form">
+                        <form method="POST" action="{{ route('login') }}">
+                            @csrf
+                            <div class="form-group">
+                                <div class="fxt-transformY-50 fxt-transition-delay-1">
+                                    <input type="email" id="email"
+                                           class="form-control @error('email') is-invalid @enderror" name="email"
+                                           value="{{ old('email') }}"
+                                           placeholder="{{ __('Email') }}"
+                                           required autocomplete="email" autofocus>
+                                    @error('email')
+                                    <span class="invalid-feedback" role="alert">
                                                         <strong>{{ $message }}</strong>
                                                     </span>
-                                                    @enderror
-                                                </div>
-                                                <div class="form-group">
-                                                    <label class="col-form-label">{{ __('Password') }}</label>
-                                                    <input class="form-control @error('password') is-invalid @enderror"
-                                                           type="password" name="password"
-                                                           placeholder="{{ __('Password') }}" required
-                                                           autocomplete="current-password">
-                                                    @error('password')
-                                                    <span class="invalid-feedback" role="alert">
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="fxt-transformY-50 fxt-transition-delay-2">
+                                    <input id="password" type="password"
+                                           class="form-control @error('password') is-invalid @enderror"
+                                           name="password"
+                                           placeholder="{{ __('Password') }}"
+                                           required
+                                           autocomplete="current-password">
+                                    <i toggle="#password" class="fa fa-fw fa-eye toggle-password field-icon"></i>
+                                    @error('password')
+                                    <span class="invalid-feedback" role="alert">
                                                         <strong>{{ $message }}</strong>
                                                     </span>
-                                                    @enderror
-                                                </div>
-                                                <div class="checkbox p-0">
-                                                    <input type="checkbox"
-                                                           value=""
-                                                           name="remember"
-                                                           id="remember" {{ old('remember') ? 'checked' : '' }}>
-                                                    <label for="remember">{{ __('Remember me') }}</label>
-                                                </div>
-                                                <div class="form-group form-row mt-3 mb-0">
-                                                    <button class="btn btn-primary btn-block"
-                                                            type="submit">{{ __('LOGIN') }}
-                                                    </button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                        <div class="sub-cont">
-                                            <div class="img">
-
-                                            </div>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="fxt-transformY-50 fxt-transition-delay-3">
+                                    <div class="fxt-checkbox-area">
+                                        <div class="checkbox">
+                                            <input id="remember" type="checkbox" name="remember"
+                                                   id="remember" {{ old('remember') ? 'checked' : '' }}>
+                                            <label for="remember">{{ __('Remember me') }}</label>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                            <div class="form-group">
+                                <div class="fxt-transformY-50 fxt-transition-delay-4">
+                                    <button type="submit" class="fxt-btn-fill">{{ __('Log in') }}</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- login page end-->
     </div>
-</div>
+</section>
 <script src="{{asset('assets/js/jquery-3.2.1.min.js')}}"></script>
 <!-- Bootstrap js-->
 <script src="{{asset('assets/js/bootstrap/popper.min.js')}}"></script>
@@ -119,15 +117,12 @@
 <!-- feather icon js-->
 <script src="{{asset('assets/js/icons/feather-icon/feather.min.js')}}"></script>
 <script src="{{asset('assets/js/icons/feather-icon/feather-icon.js')}}"></script>
-<!-- Sidebar jquery-->
-<script src="{{asset('assets/js/vertical-sidebar-menu.js')}}"></script>
-<script src="{{asset('assets/js/config.js')}}"></script>
-<!-- Plugins JS start-->
-@yield('script')
-<script src="{{asset('assets/js/login.js')}}"></script>
-<!-- Plugins JS Ends-->
-<!-- Theme js-->
-<script src="{{asset('assets/js/script.js')}}"></script>
 <!-- Plugin used -->
+<!-- Imagesloaded js -->
+<script src="{{asset('assets/js/imagesloaded.pkgd.min.js')}}"></script>
+<!-- Validator js -->
+<script src="{{asset('assets/js/validator.min.js')}}"></script>
+<!-- Custom Js -->
+<script src="{{asset('assets/js/login.main.js')}}"></script>
 </body>
 </html>
