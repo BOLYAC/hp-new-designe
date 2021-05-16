@@ -24,60 +24,62 @@
     <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.rowReorder.min.js')}}"></script>
 
     <script>
-        $('#lead-table').DataTable({
-            destroy: true,
-            stateSave: false,
-            order: [[0, 'asc']],
-            processing: true,
-            serverSide: true,
-            responsive: true,
-            ajax: {
-                url: '{!! route('dashboard.data') !!}'
-            },
-            columns: [
-                {
-                    data: 'id',
-                    name: 'id',
-                    visible: false
+        $(document).ready(function () {
+            $('#lead-table').DataTable({
+                destroy: true,
+                stateSave: false,
+                order: [[0, 'asc']],
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                ajax: {
+                    url: '{!! route('dashboard.data') !!}'
                 },
-                {
-                    data: 'public_id',
-                    name: 'public_id'
-                },
-                {
-                    data: 'full_name',
-                    name: 'full_name',
-                },
-                {
-                    data: 'country',
-                    name: 'country'
-                },
-                {
-                    data: 'nationality',
-                    name: 'nationality'
-                },
-                {
-                    data: 'status',
-                    name: 'status',
-                    orderable: false,
-                    searchable: false,
-                },
-                {
-                    data: 'priority',
-                    name: 'priority',
-                    orderable: false,
-                    searchable: false,
-                },
-                {
-                    data: 'appointment_date',
-                    name: 'appointment_date',
-                }
-            ],
+                columns: [
+                    {
+                        data: 'id',
+                        name: 'id',
+                        visible: false
+                    },
+                    {
+                        data: 'public_id',
+                        name: 'public_id'
+                    },
+                    {
+                        data: 'full_name',
+                        name: 'full_name',
+                    },
+                    {
+                        data: 'country',
+                        name: 'country'
+                    },
+                    {
+                        data: 'nationality',
+                        name: 'nationality'
+                    },
+                    {
+                        data: 'status',
+                        name: 'status',
+                        orderable: false,
+                        searchable: false,
+                    },
+                    {
+                        data: 'priority',
+                        name: 'priority',
+                        orderable: false,
+                        searchable: false,
+                    },
+                    {
+                        data: 'appointment_date',
+                        name: 'appointment_date',
+                    }
+                ],
+            });
+            $('#today-table').DataTable();
+            $('#tomorrow-table').DataTable();
+            $('#pending-table').DataTable();
+            $('#completed-table').DataTable();
         });
-        $('#today-table').DataTable();
-        $('#tomorrow-table').DataTable();
-        $('#pending-table').DataTable();
-        $('#completed-table').DataTable();
     </script>
 
 @endsection

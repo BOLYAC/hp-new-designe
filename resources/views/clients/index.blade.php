@@ -99,6 +99,7 @@
             processing: true,
             serverSide: true,
             searching: true,
+            responsive: true,
             ajax: {
                 url: '{!! route('clients.data') !!}',
                 data: function (d) {
@@ -456,14 +457,13 @@
                     </div>
                     <div class="card-body p-1 b-t-primary">
                         <div class="order-history dt-ext table-responsive m-2">
-                            <table id="leads-table" class="table table-striped display table-bordered nowrap"
-                                   width="100%" cellspacing="0">
+                            <table id="leads-table" class="display">
                                 <thead>
                                 <tr>
                                     <th>ID</th>
                                     <th></th>
-                                    <th>N°</th>
-                                    <th>{{ __('Name') }}</th>
+                                    <th data-priority="1">N°</th>
+                                    <th data-priority="2">{{ __('Name') }}</th>
                                     <th>{{ __('Country') }}</th>
                                     <th>
                                         {{ __('Status') }}
@@ -481,7 +481,7 @@
                                         {{ __('Assigned') }}
                                     </th>
                                     <th>{{ __('Creation date') }}</th>
-                                    <th>{{ __('Action') }}</th>
+                                    <th data-priority="3">{{ __('Action') }}</th>
                                 </tr>
                                 </thead>
                             </table>

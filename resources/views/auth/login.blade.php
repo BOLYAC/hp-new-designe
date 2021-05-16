@@ -42,7 +42,7 @@ Loader ends-->
     your browser</a> to improve your experience.</p>
 <![endif]-->
 <section class="fxt-template-animation fxt-template-layout7"
-         data-bg-image="{{ asset('assets/images/figure/bg7-l.png') }}">
+         data-bg-image="{{ asset('assets/images/figure/bg7-l.jpg') }}">
     <div class="container">
         <div class="row align-items-center justify-content-center">
             <div class="col-xl-6 col-lg-7 col-sm-12 col-12 fxt-bg-color">
