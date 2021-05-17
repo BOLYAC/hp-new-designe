@@ -15,8 +15,6 @@ class Department extends Model
             'description',
         ];
 
-    protected $hidden = ['pivot'];
-
     public function users(): HasMany
     {
         return $this->hasMany(User::class);

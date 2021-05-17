@@ -7,10 +7,6 @@
     <link rel="stylesheet" href="{{ asset('assets/css/datatable-extension.css') }}">
 @endsection
 
-@section('style')
-
-@endsection
-
 @section('script')
 
     <script src="{{asset('assets/js/datatables/jquery.dataTables.min.js')}}"></script>
@@ -44,10 +40,6 @@
 
 @section('breadcrumb-items')
     <li class="breadcrumb-item">{{ __('Users list') }}</li>
-@endsection
-
-@section('breadcrumb-title')
-
 @endsection
 @section('content')
     <div class="container-fluid">

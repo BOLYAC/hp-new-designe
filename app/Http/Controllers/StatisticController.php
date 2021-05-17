@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use App\Models\Note;
+use App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -131,18 +132,28 @@ class StatisticController extends Controller
 
     public function callsIndex()
     {
-        return view('statics.call-reports');
+        $teams = Team::where('department_id', 3)->get();
+        return view('statics.call-reports', compact('teams'));
     }
 
     public function getCallsData(Request $request)
     {
         $team = auth()->user()->currentTeam;
+
         $q = User::query();
+
+        $q->where('department_id', '=', 3);
+
         if (auth()->user()->hasRole('Manager')) {
-            $q->where('current_team_id', '=', $team->id)->get();
+            $q->where('current_team_id', '=', $team->id);
         }
 
         if ($request->ajax()) {
+
+            if ($request->get('team')) {
+                $q->where('current_team_id', '=', $request->get('team'));
+            }
+
             if (!empty($request->from_date) && !empty($request->to_date)) {
                 $from = $request->from_date;
                 $to = $request->to_date;
@@ -151,6 +162,7 @@ class StatisticController extends Controller
                 $to = now();
             }
 
+
             $from = Carbon::parse($from)
                 ->startOfDay()        // 2018-09-29 00:00:00.000000
                 ->toDateTimeString(); // 2018-09-29 00:00:00
@@ -158,6 +170,8 @@ class StatisticController extends Controller
             $to = Carbon::parse($to)
                 ->endOfDay()          // 2018-09-29 23:59:59.000000
                 ->toDateTimeString(); // 2018-09-29 23:59:59
+
+
             $users = $q->withCount([
                 'tasks',
                 'tasks as new_upcoming' => function (Builder $query) use ($from, $to) {

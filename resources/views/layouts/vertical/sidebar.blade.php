@@ -10,124 +10,149 @@
                                 aria-hidden="true"></i></div>
                     </li>
 
-                    <li class="dropdown {{ Request::is('/') ? 'active' : ''}}">
-                        <a class="nav-link menu-title"
+                    <li class="dropdown">
+                        <a class="nav-link menu-title {{ Route::currentRouteName() === 'home' ? 'active' : '' }}"
                            href="{{route('home')}}"><i data-feather="home"></i><span>{{ __('Dashboard') }}</span>
                         </a>
                     </li>
                     @can('client-list')
-                        <li class="dropdown {{ Request::is('clients') ? 'active' : ''}}">
-                            <a class="nav-link menu-title"
+                        <li class="dropdown">
+                            <a class="nav-link menu-title {{ Route::currentRouteName() === 'clients.index' ? 'active' : '' }}"
                                href="{{route('clients.index')}}"><i
-                                    data-feather="users"></i><span>{{ __('Leads') }}</span>
+                                    data-feather="users"></i><span>{{ __('Leads') }}
+                                </span>
                             </a>
                         </li>
                     @endcan
                     @can('lead-list')
-                        <li class="dropdown {{ Request::is('leads') ? 'active' : ''}}">
-                            <a class="nav-link menu-title" href="{{route('leads.index')}}">
+                        <li class="dropdown">
+                            <a class="nav-link menu-title  {{ Route::currentRouteName() === 'leads.index' ? 'active' : '' }}"
+                               href="{{route('leads.index')}}">
                                 <i class="icon-layout-cta-right"></i>
                                 <span>{{ __('Deals') }}</span>
                             </a>
                         </li>
                     @endcan
                     @can('invoice-list')
-                        <li class="nav-link menu-title {{ Request::is('invoices') ? 'active' : ''}}">
-                            <a href="{{ route('invoices.index') }}">
+                        <li class="dropdown">
+                            <a href="{{ route('invoices.index') }}"
+                               class="nav-link menu-title {{ Route::currentRouteName() === 'invoices.index' ? 'active' : '' }}">
                                 <i class="icon-layout-cta-right"></i>
                                 <span> {{ __('Invoices') }}</span>
                             </a>
                         </li>
                     @endcan
                     @can('task-list')
-                        <li class="nav-link menu-title {{ Request::is('tasks') ? 'active' : ''}}">
-                            <a href="{{ route('tasks.index') }}">
+                        <li class="dropdown">
+                            <a href="{{ route('tasks.index') }}"
+                               class="nav-link menu-title {{ Route::currentRouteName() === 'tasks.index' ? 'active' : '' }}">
                                 <i class="fa fa-tasks"></i>
                                 <span> {{ __('Tasks') }}</span>
                             </a>
                         </li>
                     @endcan
                     @can('event-list')
-                        <li class="nav-link menu-title {{ Request::is('events') ? 'active' : ''}}">
-                            <a href="{{ route('events.index') }}">
+                        <li class="dropdown">
+                            <a href="{{ route('events.index') }}"
+                               class="nav-link menu-title {{ Route::currentRouteName() === 'events.index' ? 'active' : '' }}">
                                 <i class="fa fa-calendar"></i>
                                 <span> {{ __('Events') }}</span>
                             </a>
                         </li>
                     @endcan
                     @can('calender-show')
-                        <li class="nav-link menu-title {{ Request::is('calender') ? 'active' : ''}}">
-                            <a href="{{ route('calender.index') }}">
+                        <li class="dropdown">
+                            <a href="{{ route('calender.index') }}"
+                               class="nav-link menu-title {{ Route::currentRouteName() === 'calender.index' ? 'active' : '' }}">
                                 <i class="fa fa-calendar"></i>
                                 <span> {{ __('Calender') }}</span>
                             </a>
                         </li>
                     @endcan
-                    <li class="nav-link menu-title {{ Request::is('projects') ? 'active' : ''}}">
-                        <a href="{{ route('projects.index') }}">
+                    <li class="dropdown">
+                        <a href="{{ route('projects.index') }}"
+                           class="nav-link menu-title {{ Route::currentRouteName() === 'projects.index' ? 'active' : '' }}">
                             <i class="fa fa-product-hunt"></i>
                             <span> {{ __('Projects') }}</span>
                         </a>
                     </li>
                     @can('source-list')
-                        <li class="nav-link menu-title {{ Request::is('sources') ? 'active' : ''}}">
-                            <a href="{{ route('sources.index') }}">
+                        <li class="dropdown">
+                            <a href="{{ route('sources.index') }}"
+                               class="nav-link menu-title {{ Route::currentRouteName() === 'sources.index' ? 'active' : '' }}">
                                 <i class="icon-direction"></i>
                                 <span> {{ __('Sources') }}</span>
                             </a>
                         </li>
                     @endcan
                     @can('agency-list')
-                        <li class="nav-link menu-title {{ Request::is('agencies') ? 'active' : ''}}">
-                            <a href="{{ route('agencies.index') }}">
+                        <li class="dropdown">
+                            <a href="{{ route('agencies.index') }}"
+                               class="nav-link menu-title {{ Route::currentRouteName() === 'agencies.index' ? 'active' : '' }}">
                                 <i class="icon-magnet"></i>
                                 <span> {{ __('Agencies') }}</span>
                             </a>
                         </li>
                     @endcan
                     @can('stats-list')
-                        <li class="nav-link menu-title {{ Request::is('stats') ? 'active' : ''}}">
-                            <a href="{{ route('static.index') }}">
-                                <i class="icon-bar-chart"></i>
-                                <span> {{ __('Reporting') }}</span>
-                            </a>
-                        </li>
+                        @if(auth()->user()->department_id === 2)
+                            <li class="dropdown">
+                                <a href="{{ route('calls.index') }}"
+                                   class="nav-link menu-title {{ Route::currentRouteName() === 'calls.index' ? 'active' : '' }}">
+                                    <i class="icon-bar-chart"></i>
+                                    <span> {{ __('Reporting') }}</span>
+                                </a>
+                            </li>
+                        @else
+                            <li class="dropdown">
+                                <a href="{{ route('static.index') }}"
+                                   class="nav-link menu-title {{ Route::currentRouteName() === 'static.index' ? 'active' : '' }}">
+                                    <i class="icon-bar-chart"></i>
+                                    <span> {{ __('Reporting') }}</span>
+                                </a>
+                            </li>
+                        @endif
                     @endcan
                     @can('user-list')
-                        <li class="nav-link menu-title {{ Request::is('users') ? 'active' : ''}}">
-                            <a href="{{ route('users.index') }}">
+                        <li class="dropdown">
+                            <a href="{{ route('users.index') }}"
+                               class="nav-link menu-title {{ Route::currentRouteName() === 'users.index' ? 'active' : '' }}">
                                 <i class="fa fa-users"></i>
                                 <span> {{ __('Users') }}</span>
                             </a>
                         </li>
                     @endcan
                     @can('team-list')
-                        <li class="nav-link menu-title {{ Request::is('teams') ? 'active' : ''}}">
-                            <a href="{{ route('teams.index') }}">
+                        <li class="dropdown">
+                            <a href="{{ route('teams.index') }}"
+                               class="nav-link menu-title {{ Route::currentRouteName() === 'teams.index' ? 'active' : '' }}">
                                 <i class="icon-link"></i>
                                 <span> {{ __('Teams') }}</span>
                             </a>
                         </li>
                     @endcan
                     @can('department-list')
-                        <li class="nav-link menu-title {{ Request::is('departments') ? 'active' : ''}}">
-                            <a href="{{ route('departments.index') }}">
+                        <li class="dropdown">
+                            <a href="{{ route('departments.index') }}"
+                               class="nav-link menu-title {{ Route::currentRouteName() === 'departments.index' ? 'active' : '' }}">
                                 <i class="fa fa-building"></i>
                                 <span> {{ __('Departments') }}</span>
                             </a>
                         </li>
                     @endcan
                     @can('role-list')
-                        <li class="nav-link menu-title {{ Request::is('roles') ? 'active' : ''}}">
-                            <a href="{{ route('roles.index') }}">
+                        <li class="dropdown">
+                            <a href="{{ route('roles.index') }}"
+                               class="nav-link menu-title {{ Route::currentRouteName() === 'roles.index' ? 'active' : '' }}">
                                 <i class="fa fa-chain"></i>
                                 <span> {{ __('Roles') }}</span>
                             </a>
                         </li>
                     @endcan
                     @can('settings')
-                        <li class="nav-link menu-title {{ Request::is('settings') ? 'active' : ''}}">
-                            <a href="{{ route('settings.index') }}">
+                        <li class="dropdown">
+                            <a href="{{ route('settings.index') }}"
+                               class="nav-link menu-title {{ Route::currentRouteName() === 'settings.index' ? 'active' : '' }}">
                                 <i class="fa fa-gears"></i>
                                 <span> {{ __('Settings') }}</span>
                             </a>

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Spatie\Permission\Traits\HasRoles;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -218,5 +219,56 @@ class User extends Authenticatable implements Auditable
         return $this->teams->contains(function ($t) use ($team) {
                 return $t->id === $team->id;
             }) || $this->ownsTeam($team);
+    }
+
+    public function isOnline()
+    {
+        return Cache::has('user-is-online-' . $this->id);
+    }
+
+    public function getNameAndDepartmentAttribute()
+    {
+        //dd($this->name, $this->department()->toSql(), $this->department()->getBindings());
+        return $this->name . ' ' . '(' . $this->department()->name . ')';
+    }
+
+
+    public function getNameAndDepartmentEagerLoadingAttribute()
+    {
+        //dd($this->name, $this->department()->toSql(), $this->department()->getBindings());
+        return $this->name . ' ' . '(' . $this->relations['department']->name . ')';
+    }
+
+    public function moveTasks($user_id, $department_id, $team_id)
+    {
+        $tasks = $this->tasks()->get();
+        foreach ($tasks as $task) {
+            $task->user_id = $user_id;
+            $task->department_id = $department_id;
+            $task->team_id = $team_id;
+            $task->save();
+        }
+    }
+
+    public function moveLeads($user_id, $department_id, $team_id)
+    {
+        $leads = $this->leads()->get();
+        foreach ($leads as $lead) {
+            $lead->user_assigned_id = $user_id;
+            $lead->department_id = $department_id;
+            $lead->team_id = $team_id;
+            $lead->save();
+        }
+    }
+
+    public function moveClients($user_id, $department_id, $team_id)
+    {
+        $clients = $this->clients()->get();
+        foreach ($clients as $client) {
+            $client->user_id = $user_id;
+            $client->department_id = $department_id;
+            $client->team_id = $team_id;
+            $client->save();
+        }
     }
 }

@@ -33,6 +33,7 @@
                 data: function (d) {
                     d.from_date = $('input[name=from_date]').val();
                     d.to_date = $('input[name=to_date]').val();
+                    d.team = $('select[name=team]').val();
                 }
             },
             @can('can-generate-report')
@@ -55,6 +56,7 @@
         $('#refresh').click(function () {
             $('#from_date').val('{{ now()->format('Y-m-d') }}')
             $('#to_date').val('{{ now()->format('Y-m-d') }}')
+            $('#team').val('')
         });
 
         $('#search-form').on('submit', function (e) {
@@ -88,19 +90,27 @@
                                 <form method="post" id="search-form" role="form">
                                     @csrf
                                     <div class="row">
-                                        <div class="col">
+                                        <div class="form-group col-lg-3 col-md-6">
                                             <input type="date" name="from_date" id="from_date"
                                                    class="form-control form-control-sm"
                                                    placeholder="From Date" value="{{ now()->format('Y-m-d') }}"
                                                    required>
                                         </div>
-                                        <div class="col">
+                                        <div class="form-group col-lg-3 col-md-6">
                                             <input type="date" name="to_date" id="to_date"
                                                    class="form-control form-control-sm"
                                                    placeholder="To Date" value="{{ now()->format('Y-m-d') }}"
                                                    required>
                                         </div>
-                                        <div class="col">
+                                        <div class="form-group col-lg-3 col-md-6">
+                                            <select class="custom-select custom-select-sm" name="team" id="team">
+                                                <option value="">{{ __('Select team') }}</option>
+                                                @foreach($teams as $team )
+                                                    <option value="{{ $team->id }}">{{ $team->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-lg-3 col-md-6 text-right">
                                             <div class="btn-group " role="group">
                                                 <button type="submit" name="filter" id="filter"
                                                         class="btn btn-success btn-sm">{{ __('Filter') }}</button>

@@ -1,5 +1,5 @@
 @extends('layouts.vertical.master')
-@section('title', 'Edit user')
+@section('title', '| Edit user')
 
 @section('style_before')
     <!-- Notification.css -->
@@ -68,7 +68,7 @@
                             <div class="form-group">
                                 <label for="manager">{{ __('Manager') }}</label>
                                 <select class="col-sm-12 form-control" name="user_id" id="manager">
-                                    <option value=""> -- Select the manager --</option>
+                                    <option value=""> -- {{ __('Select the manager') }} --</option>
                                     @foreach($managers as $manager)
                                         @if($manager->id == $user->user_id )
                                             <option value="{{ $manager->id }}"
@@ -82,7 +82,7 @@
                             </div>
                             <div class="form-group input-group-sm">
                                 <label for="department">{{__('Department')}}</label>
-                                <select class="form-control" name="department_id" id="department">
+                                    <select class="form-control" name="department_id" id="department">
                                     <option value="0"> -- {{ __('Select department') }} --</option>
                                     @foreach($departments as $department)
                                         <option

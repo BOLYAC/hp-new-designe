@@ -77,9 +77,21 @@ class SalesController extends Controller
         $team = $user->current_team_id ?? 1;
 
         $client = Client::find($request->get('client_id'));
-        $client->update(['user_id' => $request->get('user_id'), 'team_id' => $team, 'type' => '1']);
-        $client->tasks()->update(['user_id' => $user->id, 'team_id' => $team,]);
+        $client->update([
+            'user_id' => $request->get('user_id'),
+            'team_id' => $team,
+            'type' => '1',
+            'department_id' => $user->department_id
+        ]);
+
+        $client->tasks()->update([
+            'user_id' => $user->id,
+            'team_id' => $team,
+            'department_id' => $user->department_id
+        ]);
+
         $link = route('clients.edit', $client);
+
         $data = [
             'full_name' => $client->full_name,
             'assigned_by' => Auth::user()->name,
@@ -106,14 +118,24 @@ class SalesController extends Controller
         $team = $user->current_team_id ?? 1;
 
         Client::whereIn('id', $request->get('clients'))
-            ->update(['user_id' => $request->get('user_id'), 'team_id' => $team, 'type' => '1']);
+            ->update([
+                'user_id' => $request->get('user_id'),
+                'team_id' => $team,
+                'department_id' => $user->department_id,
+                'type' => '1'
+            ]);
+
         $result = Client::whereIn('id', $request->get('clients'))->get();
 
-
-
         foreach ($result as $d) {
-            $d->tasks()->update(['user_id' => $user->id, 'team_id' => $team,]);
+            $d->tasks()->update([
+                'user_id' => $user->id,
+                'team_id' => $team,
+                'department_id' => $user->department_id,
+            ]);
+
             $link = route('clients.edit', $d->id);
+
             $data[] = array(
                 'full_name' => $d->full_name,
                 'assigned_by' => Auth::user()->name,
@@ -144,7 +166,14 @@ class SalesController extends Controller
         $team = $user->current_team_id ?? 1;
 
         $lead = Lead::find($request->get('lead_id'));
-        $lead->update(['sell_rep' => $users[0], 'team_id' => $team, 'sellers' => $users, 'sells_names' => $u]);
+        $lead->update([
+            'sell_rep' => $users[0],
+            'team_id' => $team,
+            'sellers' => $users,
+            'sells_names' => $u,
+            'department_id' => $user->department_id,
+        ]);
+
         $lead->ShareWithSelles()->detach();
         $lead->ShareWithSelles()->attach($users, ['added_by' => Auth::id(), 'user_name' => Auth::user()->name]);
 

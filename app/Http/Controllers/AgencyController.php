@@ -42,7 +42,11 @@ class AgencyController extends Controller
                     return $agency->company_type === 1 ? __('Company') : __('Freelance');
                 })
                 ->editColumn('name', function ($agency) {
-                    return '<a href="agencies/' . $agency->id . '/edit">' . $agency->name . '</a>';
+                    if (auth()->user()->hasPermissionTo('department-agencies-sell')) {
+                        return '<a href="agencies/' . $agency->id . '">' . $agency->name . '</a>';
+                    } else {
+                        return '<a href="agencies/' . $agency->id . '/edit">' . $agency->name . '</a>';
+                    }
                 })
                 ->editColumn('phone', function ($agency) {
                     return $agency->phone;
@@ -56,8 +60,10 @@ class AgencyController extends Controller
               @can(\'agency-edit\')
                   <a class="dropdown-item pl-2" href="{{ route(\'agencies.edit\', $id) }}">
                   <i class="fa fa-edit"></i> {{ __(\'Edit agency\') }}</a>
+                  @can(\'department-agencies-sell\')
                   <a class="dropdown-item pl-2" href="{{ route(\'agencies.sells-office-edit\', $id) }}">
-                  <i class="fa fa-edit"></i> edit agency sells</a>
+                  <i class="fa fa-edit"></i> {{ __(\'edit agency sells\') }}</a>
+                  @endcan
               @endcan
               @can(\'client-delete\')
                   <form

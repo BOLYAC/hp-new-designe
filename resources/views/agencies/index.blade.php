@@ -1,5 +1,5 @@
 @extends('layouts.vertical.master')
-@section('title', 'Agencies list')
+@section('title', '| Agencies')
 
 @section('style_before')
     <!-- Notification.css -->
@@ -7,21 +7,9 @@
     <link rel="stylesheet" href="{{ asset('assets/css/datatable-extension.css') }}">
 @endsection
 
-@section('style')
-
-@endsection
-
 @section('script')
 
     <script src="{{asset('assets/js/datatables/jquery.dataTables.min.js')}}"></script>
-    <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.buttons.min.js')}}"></script>
-    <script src="{{asset('assets/js/datatables/datatable-extension/buttons.bootstrap4.min.js')}}"></script>
-
-    <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.bootstrap4.min.js')}}"></script>
-    <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.responsive.min.js')}}"></script>
-    <script src="{{asset('assets/js/datatables/datatable-extension/responsive.bootstrap4.min.js')}}"></script>
-    <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.colReorder.min.js')}}"></script>
-    <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.rowReorder.min.js')}}"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.2/handlebars.min.js"></script>
 

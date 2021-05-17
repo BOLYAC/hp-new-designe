@@ -1,5 +1,5 @@
 @extends('layouts.vertical.master')
-@section('title', 'Leads')
+@section('title', '| Leads')
 @section('style_before')
     <!-- Datatables.css -->
     <link rel="stylesheet" href="{{ asset('assets/css/datatables.css') }}">
@@ -250,10 +250,6 @@
     <li class="breadcrumb-item">{{ __('Leads') }}</li>
 @endsection
 
-@section('breadcrumb-title')
-    <h3>{{ __('Leads list') }}</h3>
-@endsection
-
 @section('content')
     <div class="container-fluid">
         <div class="row">
@@ -420,44 +416,51 @@
             </div>
             <div class="col-sm-10">
                 <div class="card p-1">
-                    <div class="card-header card-no-border p-2  b-t-primary">
-                        @can('share-client')
-                            <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                <label class="btn btn-primary btn-sm">
-                                    <input id="checkAll" type="checkbox" checked
-                                           autocomplete="off">{{ __('Select/Unselect') }}
-                                </label>
-                            </div>
-                            <button type="button" id="row-select-btn" class="btn btn-primary btn-sm">
-                                {{ __('Assign Lead') }}
-                            </button>
-                            <button type="button" id="row-send-btn" class="btn btn-primary btn-sm">
-                                {{ __('Send project') }}
-                            </button>
-                            <button type="button" id="row-delete-btn" class="btn btn-danger btn-sm">
-                                {{ __('Delete') }}
-                            </button>
-                        @endcan
-                        @if(auth()->user()->hasRole('Admin'))
-                            <a class="btn btn-sm btn-outline-success m-b-20 float-right ml-2"
-                               href="{{ route('importExportZoho') }}">{{ __('Zoho
-                                Import') }}<i class="icofont icofont-upload"></i></a>
-                        @endif
-                        @can('client-import')
-                            <a class="btn btn-sm btn-outline-success m-b-20 float-right ml-2"
-                               href="{{ route('importExport') }}">{{ __('Import
-                                data') }} <i class="icofont icofont-upload"></i></a>
-                        @endcan
+                    <div class="card-header card-no-border p-2 b-t-primary row">
+                        <div class="col-lg-7 col-md-12 pr-1 pl-1">
+                            @can('share-client')
+                                <div class="btn-group btn-group-sm btn-group-toggle" data-toggle="buttons">
+                                    <label class="btn btn-primary btn-sm">
+                                        <input id="checkAll" type="checkbox" checked
+                                               autocomplete="off">{{ __('Select/Unselect') }}
+                                    </label>
+                                </div>
+                                <button type="button" id="row-select-btn" class="btn btn-primary btn-sm">
+                                    {{ __('Assign Lead') }}
+                                </button>
+                                <button type="button" id="row-send-btn" class="btn btn-primary btn-sm">
+                                    {{ __('Send project') }}
+                                </button>
+                                <button type="button" id="row-delete-btn" class="btn btn-danger btn-sm">
+                                    {{ __('Delete') }}
+                                </button>
+                            @endcan
+                        </div>
+                        <div class="col-lg-5 col-md-12 pr-1 pl-1">
+                            @if(auth()->user()->hasRole('Admin'))
+                                <a class="btn btn-sm btn-outline-success"
+                                   href="{{ route('importExportZoho') }}">
+                                    {{ __('Zoho Import') }}
+                                </a>
+                            @endif
+                            @can('client-import')
+                                <a class="btn btn-sm btn-outline-success"
+                                   href="{{ route('importExport') }}">
+                                    {{ __('Leads Import') }}
+                                </a>
+                            @endcan
 
-                        @can('client-create')
-                            <a href="{{ route('clients.create') }}"
-                               class="btn btn-sm btn-outline-primary m-b-20 float-right">{{ __('New
-                                lead') }} <i class="icofont icofont-plus"></i></a>
-                        @endcan
+                            @can('client-create')
+                                <a href="{{ route('clients.create') }}"
+                                   class="btn btn-sm btn-outline-primary">
+                                    {{ __('New lead') }}
+                                </a>
+                            @endcan
+                        </div>
                     </div>
                     <div class="card-body p-1 b-t-primary">
                         <div class="order-history dt-ext table-responsive m-2">
-                            <table id="leads-table" class="display">
+                            <table id="leads-table" class="display" width="100%" cellspacing="0">
                                 <thead>
                                 <tr>
                                     <th>ID</th>

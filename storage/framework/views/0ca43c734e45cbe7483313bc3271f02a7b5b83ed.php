@@ -10,124 +10,150 @@
                                 aria-hidden="true"></i></div>
                     </li>
 
-                    <li class="dropdown <?php echo e(Request::is('/') ? 'active' : ''); ?>">
-                        <a class="nav-link menu-title"
+                    <li class="dropdown">
+                        <a class="nav-link menu-title <?php echo e(Route::currentRouteName() === 'home' ? 'active' : ''); ?>"
                            href="<?php echo e(route('home')); ?>"><i data-feather="home"></i><span><?php echo e(__('Dashboard')); ?></span>
                         </a>
                     </li>
                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('client-list')): ?>
-                        <li class="dropdown <?php echo e(Request::is('clients') ? 'active' : ''); ?>">
-                            <a class="nav-link menu-title"
+                        <li class="dropdown">
+                            <a class="nav-link menu-title <?php echo e(Route::currentRouteName() === 'clients.index' ? 'active' : ''); ?>"
                                href="<?php echo e(route('clients.index')); ?>"><i
-                                    data-feather="users"></i><span><?php echo e(__('Leads')); ?></span>
+                                    data-feather="users"></i><span><?php echo e(__('Leads')); ?>
+
+                                </span>
                             </a>
                         </li>
                     <?php endif; ?>
                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('lead-list')): ?>
-                        <li class="dropdown <?php echo e(Request::is('leads') ? 'active' : ''); ?>">
-                            <a class="nav-link menu-title" href="<?php echo e(route('leads.index')); ?>">
+                        <li class="dropdown">
+                            <a class="nav-link menu-title  <?php echo e(Route::currentRouteName() === 'leads.index' ? 'active' : ''); ?>"
+                               href="<?php echo e(route('leads.index')); ?>">
                                 <i class="icon-layout-cta-right"></i>
                                 <span><?php echo e(__('Deals')); ?></span>
                             </a>
                         </li>
                     <?php endif; ?>
                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('invoice-list')): ?>
-                        <li class="nav-link menu-title <?php echo e(Request::is('invoices') ? 'active' : ''); ?>">
-                            <a href="<?php echo e(route('invoices.index')); ?>">
+                        <li class="dropdown">
+                            <a href="<?php echo e(route('invoices.index')); ?>"
+                               class="nav-link menu-title <?php echo e(Route::currentRouteName() === 'invoices.index' ? 'active' : ''); ?>">
                                 <i class="icon-layout-cta-right"></i>
                                 <span> <?php echo e(__('Invoices')); ?></span>
                             </a>
                         </li>
                     <?php endif; ?>
                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('task-list')): ?>
-                        <li class="nav-link menu-title <?php echo e(Request::is('tasks') ? 'active' : ''); ?>">
-                            <a href="<?php echo e(route('tasks.index')); ?>">
+                        <li class="dropdown">
+                            <a href="<?php echo e(route('tasks.index')); ?>"
+                               class="nav-link menu-title <?php echo e(Route::currentRouteName() === 'tasks.index' ? 'active' : ''); ?>">
                                 <i class="fa fa-tasks"></i>
                                 <span> <?php echo e(__('Tasks')); ?></span>
                             </a>
                         </li>
                     <?php endif; ?>
                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('event-list')): ?>
-                        <li class="nav-link menu-title <?php echo e(Request::is('events') ? 'active' : ''); ?>">
-                            <a href="<?php echo e(route('events.index')); ?>">
+                        <li class="dropdown">
+                            <a href="<?php echo e(route('events.index')); ?>"
+                               class="nav-link menu-title <?php echo e(Route::currentRouteName() === 'events.index' ? 'active' : ''); ?>">
                                 <i class="fa fa-calendar"></i>
                                 <span> <?php echo e(__('Events')); ?></span>
                             </a>
                         </li>
                     <?php endif; ?>
                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('calender-show')): ?>
-                        <li class="nav-link menu-title <?php echo e(Request::is('calender') ? 'active' : ''); ?>">
-                            <a href="<?php echo e(route('calender.index')); ?>">
+                        <li class="dropdown">
+                            <a href="<?php echo e(route('calender.index')); ?>"
+                               class="nav-link menu-title <?php echo e(Route::currentRouteName() === 'calender.index' ? 'active' : ''); ?>">
                                 <i class="fa fa-calendar"></i>
                                 <span> <?php echo e(__('Calender')); ?></span>
                             </a>
                         </li>
                     <?php endif; ?>
-                    <li class="nav-link menu-title <?php echo e(Request::is('projects') ? 'active' : ''); ?>">
-                        <a href="<?php echo e(route('projects.index')); ?>">
+                    <li class="dropdown">
+                        <a href="<?php echo e(route('projects.index')); ?>"
+                           class="nav-link menu-title <?php echo e(Route::currentRouteName() === 'projects.index' ? 'active' : ''); ?>">
                             <i class="fa fa-product-hunt"></i>
                             <span> <?php echo e(__('Projects')); ?></span>
                         </a>
                     </li>
                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('source-list')): ?>
-                        <li class="nav-link menu-title <?php echo e(Request::is('sources') ? 'active' : ''); ?>">
-                            <a href="<?php echo e(route('sources.index')); ?>">
+                        <li class="dropdown">
+                            <a href="<?php echo e(route('sources.index')); ?>"
+                               class="nav-link menu-title <?php echo e(Route::currentRouteName() === 'sources.index' ? 'active' : ''); ?>">
                                 <i class="icon-direction"></i>
                                 <span> <?php echo e(__('Sources')); ?></span>
                             </a>
                         </li>
                     <?php endif; ?>
                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('agency-list')): ?>
-                        <li class="nav-link menu-title <?php echo e(Request::is('agencies') ? 'active' : ''); ?>">
-                            <a href="<?php echo e(route('agencies.index')); ?>">
+                        <li class="dropdown">
+                            <a href="<?php echo e(route('agencies.index')); ?>"
+                               class="nav-link menu-title <?php echo e(Route::currentRouteName() === 'agencies.index' ? 'active' : ''); ?>">
                                 <i class="icon-magnet"></i>
                                 <span> <?php echo e(__('Agencies')); ?></span>
                             </a>
                         </li>
                     <?php endif; ?>
                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('stats-list')): ?>
-                        <li class="nav-link menu-title <?php echo e(Request::is('stats') ? 'active' : ''); ?>">
-                            <a href="<?php echo e(route('static.index')); ?>">
-                                <i class="icon-bar-chart"></i>
-                                <span> <?php echo e(__('Reporting')); ?></span>
-                            </a>
-                        </li>
+                        <?php if(auth()->user()->department_id === 2): ?>
+                            <li class="dropdown">
+                                <a href="<?php echo e(route('calls.index')); ?>"
+                                   class="nav-link menu-title <?php echo e(Route::currentRouteName() === 'calls.index' ? 'active' : ''); ?>">
+                                    <i class="icon-bar-chart"></i>
+                                    <span> <?php echo e(__('Reporting')); ?></span>
+                                </a>
+                            </li>
+                        <?php else: ?>
+                            <li class="dropdown">
+                                <a href="<?php echo e(route('static.index')); ?>"
+                                   class="nav-link menu-title <?php echo e(Route::currentRouteName() === 'static.index' ? 'active' : ''); ?>">
+                                    <i class="icon-bar-chart"></i>
+                                    <span> <?php echo e(__('Reporting')); ?></span>
+                                </a>
+                            </li>
+                        <?php endif; ?>
                     <?php endif; ?>
                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('user-list')): ?>
-                        <li class="nav-link menu-title <?php echo e(Request::is('users') ? 'active' : ''); ?>">
-                            <a href="<?php echo e(route('users.index')); ?>">
+                        <li class="dropdown">
+                            <a href="<?php echo e(route('users.index')); ?>"
+                               class="nav-link menu-title <?php echo e(Route::currentRouteName() === 'users.index' ? 'active' : ''); ?>">
                                 <i class="fa fa-users"></i>
                                 <span> <?php echo e(__('Users')); ?></span>
                             </a>
                         </li>
                     <?php endif; ?>
                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('team-list')): ?>
-                        <li class="nav-link menu-title <?php echo e(Request::is('teams') ? 'active' : ''); ?>">
-                            <a href="<?php echo e(route('teams.index')); ?>">
+                        <li class="dropdown">
+                            <a href="<?php echo e(route('teams.index')); ?>"
+                               class="nav-link menu-title <?php echo e(Route::currentRouteName() === 'teams.index' ? 'active' : ''); ?>">
                                 <i class="icon-link"></i>
                                 <span> <?php echo e(__('Teams')); ?></span>
                             </a>
                         </li>
                     <?php endif; ?>
                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('department-list')): ?>
-                        <li class="nav-link menu-title <?php echo e(Request::is('departments') ? 'active' : ''); ?>">
-                            <a href="<?php echo e(route('departments.index')); ?>">
+                        <li class="dropdown">
+                            <a href="<?php echo e(route('departments.index')); ?>"
+                               class="nav-link menu-title <?php echo e(Route::currentRouteName() === 'departments.index' ? 'active' : ''); ?>">
                                 <i class="fa fa-building"></i>
                                 <span> <?php echo e(__('Departments')); ?></span>
                             </a>
                         </li>
                     <?php endif; ?>
                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('role-list')): ?>
-                        <li class="nav-link menu-title <?php echo e(Request::is('roles') ? 'active' : ''); ?>">
-                            <a href="<?php echo e(route('roles.index')); ?>">
+                        <li class="dropdown">
+                            <a href="<?php echo e(route('roles.index')); ?>"
+                               class="nav-link menu-title <?php echo e(Route::currentRouteName() === 'roles.index' ? 'active' : ''); ?>">
                                 <i class="fa fa-chain"></i>
                                 <span> <?php echo e(__('Roles')); ?></span>
                             </a>
                         </li>
                     <?php endif; ?>
                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('settings')): ?>
-                        <li class="nav-link menu-title <?php echo e(Request::is('settings') ? 'active' : ''); ?>">
-                            <a href="<?php echo e(route('settings.index')); ?>">
+                        <li class="dropdown">
+                            <a href="<?php echo e(route('settings.index')); ?>"
+                               class="nav-link menu-title <?php echo e(Route::currentRouteName() === 'settings.index' ? 'active' : ''); ?>">
                                 <i class="fa fa-gears"></i>
                                 <span> <?php echo e(__('Settings')); ?></span>
                             </a>

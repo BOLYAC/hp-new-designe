@@ -188,7 +188,7 @@
                                                     {{ __('Filter') }}
                                                 </button>
                                                 <button type="button" name="refresh" id="refresh"
-                                                        class="btn btn-inverse btn-sm">
+                                                        class="btn btn-dark btn-sm">
                                                     {{ __('Refresh') }} <i
                                                         class="icofont icofont-refresh"></i></button>
                                             </div>
