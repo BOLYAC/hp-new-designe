@@ -1,8 +1,8 @@
 <div class="page-main-header">
     <div class="main-header-right">
         <div class="main-header-left">
-            <div class="logo-wrapper"><a href="<?php echo e(route('home')); ?>"><img src="<?php echo e(asset('assets/images/logo/hp.png')); ?>"
-                                                                       alt=""></a>
+            <div class="logo-wrapper"><a href="<?php echo e(route('home')); ?>">
+                    <img src="<?php echo e(asset('assets/images/logo/hp.png')); ?>" alt=""></a>
             </div>
         </div>
         <div class="mobile-sidebar">

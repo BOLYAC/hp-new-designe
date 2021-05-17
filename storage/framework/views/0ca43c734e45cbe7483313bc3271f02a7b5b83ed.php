@@ -57,7 +57,7 @@
                             <a href="<?php echo e(route('events.index')); ?>"
                                class="nav-link menu-title <?php echo e(Route::currentRouteName() === 'events.index' ? 'active' : ''); ?>">
                                 <i class="fa fa-calendar"></i>
-                                <span> <?php echo e(__('Events')); ?></span>
+                                <span> <?php echo e(__('Appointments')); ?></span>
                             </a>
                         </li>
                     <?php endif; ?>

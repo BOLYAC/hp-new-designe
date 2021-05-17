@@ -39,8 +39,6 @@
     </script>
 
 @endsection
-
-
 @section('breadcrumb-items')
     <li class="breadcrumb-item">{{ __('Events') }}</li>
 @endsection

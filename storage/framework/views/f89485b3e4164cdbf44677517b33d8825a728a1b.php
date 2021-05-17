@@ -26,8 +26,10 @@
     <!-- Page Body Start-->
     <div class="page-body-wrapper horizontal-menu">
         <nav-menus></nav-menus>
-    <?php echo $__env->make('layouts.vertical.sidebar', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-    <!-- Page Sidebar Ends-->
+
+
+        <?php echo $__env->make('layouts.vertical.sidebar', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>f
+        <!-- Page Sidebar Ends-->
         <div class="page-body">
             <div class="container-fluid">
                 <div class="page-header">

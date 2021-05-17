@@ -1,4 +1,4 @@
-@if(in_array(auth()->id(), $event->sellers) || auth()->id() == 1)
+@if( auth()->id() == 1 || in_array(auth()->id(), $event->sellers))
     @can('chose-results')
         <div class="form-group">
             <label for="results">{{ __('Results') }}</label>

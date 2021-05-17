@@ -25,8 +25,10 @@
     <!-- Page Body Start-->
     <div class="page-body-wrapper horizontal-menu">
         <nav-menus></nav-menus>
-    @include('layouts.vertical.sidebar')
-    <!-- Page Sidebar Ends-->
+
+
+        @include('layouts.vertical.sidebar')f
+        <!-- Page Sidebar Ends-->
         <div class="page-body">
             <div class="container-fluid">
                 <div class="page-header">

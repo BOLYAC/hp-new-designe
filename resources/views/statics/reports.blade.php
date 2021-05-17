@@ -1,5 +1,5 @@
 @extends('layouts.vertical.master')
-@section('title', 'Report')
+@section('title', '| Report')
 
 @section('style')
     <!-- Notification.css -->
@@ -154,9 +154,6 @@
     <li class="breadcrumb-item">{{ __('Tasks list') }}</li>
 @endsection
 
-@section('breadcrumb-title')
-
-@endsection
 @section('content')
     <div class="container-fluid">
         <div class="row">

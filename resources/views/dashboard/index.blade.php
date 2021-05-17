@@ -37,13 +37,12 @@
                 },
                 columns: [
                     {
-                        data: 'id',
-                        name: 'id',
-                        visible: false
+                        data: 'created_at',
+                        name: 'created_at',
                     },
                     {
-                        data: 'public_id',
-                        name: 'public_id'
+                        data: 'updated_at',
+                        name: 'updated_at',
                     },
                     {
                         data: 'full_name',
@@ -68,10 +67,6 @@
                         name: 'priority',
                         orderable: false,
                         searchable: false,
-                    },
-                    {
-                        data: 'appointment_date',
-                        name: 'appointment_date',
                     }
                 ],
             });
@@ -158,14 +153,13 @@
                                 <table class="display" id="lead-table">
                                     <thead>
                                     <tr>
-                                        <th data-priority="1">ID</th>
-                                        <th data-priority="2">N°</th>
+                                        <th data-priority="1">{{ __('Created') }}</th>
+                                        <th data-priority="2">{{ __('Updated') }}</th>
                                         <th>{{ __('Name') }}</th>
                                         <th>{{ __('Country') }}</th>
                                         <th>{{ __('Nationality') }}</th>
                                         <th>{{ __('Status') }}</th>
                                         <th>{{ __('Priority') }}</th>
-                                        <th data-priority="3">{{ __('Date of coming') }}</th>
                                     </tr>
                                     </thead>
                                 </table>

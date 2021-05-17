@@ -1,4 +1,4 @@
-@extends('layouts.errors.master')
+@extends('errors.master'))
 @section('title', ' | error-401')
 
 @section('css')

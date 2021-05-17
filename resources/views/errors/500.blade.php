@@ -1,4 +1,4 @@
-@extends('layouts.errors.master')
+@extends('errors.master')
 @section('title', '| error-500')
 
 @section('css')

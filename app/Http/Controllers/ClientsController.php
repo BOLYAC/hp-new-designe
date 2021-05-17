@@ -448,10 +448,6 @@ class ClientsController extends Controller
             }
         }
 
-        /*        */
-//+    $fullname = $request->first_name . ' ' . $request->last_name;
-
-        $data_request['type'] = $request->has('type') ? 1 : 0;
         if (!$request->lang) {
             $data_request['lang'] = null;
         }

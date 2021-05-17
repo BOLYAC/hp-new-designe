@@ -1,13 +1,9 @@
 @extends('layouts.vertical.master')
-@section('title', 'Tasks')
+@section('title', '| Tasks')
 @section('style_before')
     <!-- Notification.css -->
     <link rel="stylesheet" href="{{ asset('assets/css/datatables.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/datatable-extension.css') }}">
-@endsection
-
-@section('style')
-
 @endsection
 
 @section('script')
@@ -71,7 +67,7 @@
                         }
                     },
                     @can('can-generate-report')
-                    dom: 'Bfrtip',
+                    dom: 'lfrtBip',
                     buttons: [
                         {
                             extend: 'excel',
@@ -167,7 +163,7 @@
                         success: function (response) {
                             table.ajax.reload(null, false);
                             $('.modal').modal('hide');
-                            notify('Task transferred','success');
+                            notify('Task transferred', 'success');
                         },
                         error: function (response) {
                             notify('Something wrong', 'danger');
@@ -217,7 +213,6 @@
     <li class="breadcrumb-item">{{ __('Tasks list') }}</li>
 @endsection
 
-
 @section('content')
     <div class="container-fluid">
         <div class="row">
@@ -225,13 +220,15 @@
                 <!-- Zero config.table start -->
                 @include('partials.flash-message')
                 <div class="card">
-                    <div class="card-header b-b-primary b-t-primary justify-content-between">
+                    <div class="card-header p-2 b-b-primary b-t-primary row">
                         @can('task-create')
-                            <button class="btn btn-outline-success btn-sm" data-toggle="modal"
-                                    data-target="#sign-in-modal">{{ __('New Task') }}
-                                <i class="icon-plus"></i></button>
+                            <div class="col-2">
+                                <button class="btn btn-outline-success btn-sm" data-toggle="modal"
+                                        data-target="#sign-in-modal">{{ __('New Task') }}
+                                    <i class="icon-plus"></i></button>
+                            </div>
                         @endcan
-                        <div class="form-radio pull-right">
+                        <div class="form-radio m-2 col text-right">
                             <form id="radioForm">
                                 <div class="form-group m-checkbox-inline mb-0 custom-radio-ml">
                                     <div class="radio radio-primary">
@@ -293,7 +290,7 @@
                                     <th width="20%">{{ __('Country') }}</th>
                                     <th width="20%">{{ __('Nationality') }}</th>
                                     <th width="20%">{{ __('Assigned') }}</th>
-                                    <th width="20%">{{ __('Archive') }}</th>
+                                    <th width="20%">{{ __('Process') }}</th>
                                     <th>{{ __('Action') }}</th>
                                 </tr>
                                 </thead>

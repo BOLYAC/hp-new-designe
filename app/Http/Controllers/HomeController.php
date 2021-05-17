@@ -42,10 +42,8 @@ class HomeController extends Controller
         $todayTasks = Task::with(['agency', 'client'])->archive(false)->whereDate('date', Carbon::today())->get();
         $olderTask = Task::with(['agency', 'client'])->archive(true)->whereDate('date', '<', Carbon::today())->count();
         $tomorrowTasks = Task::with(['agency', 'client'])->archive(false)->whereDate('date', Carbon::tomorrow())->get();
-//        $futureTask = Task::with('client')->archive(false)->whereDate('date', '>', Carbon::today())->get();
         $pendingTasks = Task::with(['agency', 'client'])->archive(false)->whereDate('date', '<', Carbon::today())->get();
         $completedTasks = Task::with(['agency', 'client'])->archive(true)->get();
-        //$roleName = auth()->user()->getRoleNames();
         if (auth()->user()->hasRole('User')) {
             $events = Event::whereHas('user', function ($query) {
                 $query->whereDate('event_date', Carbon::today())
@@ -61,12 +59,15 @@ class HomeController extends Controller
 
     public function userNew()
     {
-        $clients = Client::select(['id', 'full_name', 'country', 'nationality', 'status', 'priority', 'type', 'appointment_date', 'public_id'])
+        $clients = Client::select(['id', 'full_name', 'country', 'nationality', 'status', 'priority', 'type', 'created_at', 'updated_at'])
             ->where('type', true);
         return Datatables::of($clients)
             ->setRowId('id')
-            ->editColumn('public_id', function ($clients) {
-                return $clients->public_id;
+            ->editColumn('created_at', function ($clients) {
+                return optional($clients->created_at)->format('d-m-Y') ?? '';
+            })
+            ->editColumn('updated_at', function ($clients) {
+                return optional($clients->updated_at)->format('d-m-Y') ?? '';
             })
             ->editColumn('full_name', function ($clients) {
                 return '<div class="product-name"><a href="clients/' . $clients->id . '/edit">' . $clients->full_name . '</a></div>';
@@ -100,43 +101,40 @@ class HomeController extends Controller
                     $i = $clients->status;
                     switch ($i) {
                         case 1:
-                            return '<span class="label label-inverse-info">New Lead</span>';
+                            return '<span class="badge badge-primary">' . __('New Lead') . '</span>';
                             break;
                         case 8:
-                            return '<span class="label label-inverse-info">No Answer</span>';
+                            return '<span class="badge badge-primary">' . __('No Answer') . '</span>';
                             break;
                         case 12:
-                            return '<span class="label label-inverse-info">In progress</span>';
+                            return '<span class="badge badge-primary">' . __('In progress') . '</span>';
                             break;
                         case 3:
-                            return '<span class="label label-inverse-info">Potential
-                            appointment</span>';
+                            return '<span class="badge badge-primary">' . __('Potential appointment') . '</span>';
                             break;
                         case 4:
-                            return '<span class="label label-inverse-info">Appointment
-                            set</span>';
+                            return '<span class="badge badge-primary">' . __('Appointment set') . '</span>';
                             break;
                         case 10:
-                            return '<span class="label label-inverse-info">Appointment
-                            follow up</span>';
+                            return '<span class="badge badge-primary">' . __('Appointment follow up') . '</span>';
                             break;
                         case 5:
-                            return '<span class="label label-inverse-success">Sold</span>';
+                            return '<span class="badge badge-primary">' . __('Sold') . '</span>';
                             break;
                         case 13:
-                            return '<span class="label label-inverse-danger">Unreachable</span>';
+                            return '<span class="badge badge-danger">' . __('Unreachable') . '</span>';
                             break;
                         case 7:
-                            return '<span class="label label-inverse-danger">Not interested</span>';
+                            return '<span class="badge badge-danger">' . __('Not interested') . '</span>';
                             break;
                         case 11:
-                            return '<span class="label label-inverse-danger">Low budget</span>';
+                            return '<span class="badge badge-danger">' . __('Low budget') . '</span>';
                             break;
                         case 9:
-                            return '<span class="label label-inverse-danger">Wrong Number</span>';
+                            return '<span class="badge badge-danger">' . __('Wrong Number') . '</span>';
                             break;
                         case 14:
-                            return '<span class="label label-inverse-danger">Unqualified</span>';
+                            return '<span class="badge badge-danger">' . __('Unqualified') . '</span>';
                             break;
                     };
                 })
@@ -144,13 +142,13 @@ class HomeController extends Controller
                 $i = $clients->priority;
                 switch ($i) {
                     case 1:
-                        return '<label class="txt-success">Low</label>';
+                        return '<label class="txt-success f-w-600">' . __('Low') . '</label>';
                         break;
                     case 2:
-                        return '<label class="txt-warning">Medium</label>';
+                        return '<label class="txt-warning f-w-600">' . __('Medium') . '</label>';
                         break;
                     case 3:
-                        return '<label class="txt-danger">High</label>';
+                        return '<label class="txt-danger f-w-600">' . __('High') . '</label>';
                         break;
                 };
             })

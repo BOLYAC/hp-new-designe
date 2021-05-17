@@ -11,15 +11,22 @@ trait DealsTenantable
     {
         if (auth()->check()) {
 
-            //$roleName = auth()->user()->getRoleNames();
+            static::creating(function ($model) {
+                $model->created_by = auth()->id();
+                $model->department_id = auth()->user()->department_id;
+            });
+
+            static::updating(function ($model) {
+                $model->updated_by = auth()->id();
+            });
 
             $l[] = json_encode(auth()->id());
 
 
             if (auth()->user()->hasPermissionTo('simple-user')) {
                 static::addGlobalScope('user_id', function (Builder $builder) use ($l) {
-                  $builder->whereJsonContains('sellers', $l)
-                    ->orWhere('user_id', auth()->id());
+                    $builder->whereJsonContains('sellers', $l)
+                        ->orWhere('user_id', auth()->id());
                 });
             }
 

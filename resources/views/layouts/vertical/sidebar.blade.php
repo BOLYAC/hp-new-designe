@@ -56,7 +56,7 @@
                             <a href="{{ route('events.index') }}"
                                class="nav-link menu-title {{ Route::currentRouteName() === 'events.index' ? 'active' : '' }}">
                                 <i class="fa fa-calendar"></i>
-                                <span> {{ __('Events') }}</span>
+                                <span> {{ __('Appointments') }}</span>
                             </a>
                         </li>
                     @endcan

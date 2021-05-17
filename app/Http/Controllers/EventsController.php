@@ -10,11 +10,11 @@ use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
-use Spatie\GoogleCalendar\Event as CalenderEvent;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Ramsey\Uuid\Uuid;
 
 class EventsController extends Controller
 {
@@ -154,9 +154,13 @@ class EventsController extends Controller
      */
     public function update(Request $request, Event $event): RedirectResponse
     {
-        $users = $request->get('share_with');
-        $u = User::whereIn('id', $users)->pluck('name');
+        $lead = Lead::findOrfail($event->lead_id);
 
+        $users = $request->get('share_with');
+
+        if ($request->has('share_with')) {
+            $u = User::whereIn('id', $users)->pluck('name');
+        }
         $user = User::find($request->user_id);
         $team = $user->current_team_id ?? 1;
 
@@ -175,7 +179,11 @@ class EventsController extends Controller
 
         $event->update($data);
         $event->SharedEvents()->detach();
-
+        $lead->comments()->create([
+            'external_id' => Uuid::uuid4()->toString(),
+            'description' => $request->get('feedback'),
+            'user_id' => $request->user_id ?? Auth::id()
+        ]);
         if ($request->has('share_with')) {
             $event->SharedEvents()->attach($users, ['added_by' => Auth::id(), 'user_name' => Auth::user()->name]);
         }

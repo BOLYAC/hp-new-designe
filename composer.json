@@ -13,6 +13,7 @@
         "fideloper/proxy": "^4.4.1",
         "fruitcake/laravel-cors": "^2.0.3",
         "guzzlehttp/guzzle": "^7.3.0",
+        "jenssegers/agent": "^2.6",
         "laravel/framework": "^8.37.0",
         "laravel/tinker": "^v2.6.1",
         "livewire/livewire": "^2.4.3",

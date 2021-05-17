@@ -734,7 +734,8 @@
                                                         @foreach($agencies as $agency)
                                                             <option value="{{ $agency->id }}"
                                                                 {{ $client->agency_id == $agency->id ? 'selected' : '' }}>
-                                                                {{ $agency->name }}</option>
+                                                                {{ $agency->name }}
+                                                            </option>
                                                         @endforeach
                                                     </select>
                                                     @error('agency_id')
@@ -756,8 +757,7 @@
                                                     <label for="duration_stay">{{ __('Duration of Stay')}}</label>
                                                     <select name="duration_stay" id="duration_stay"
                                                             class="form-control form-control-sm">
-                                                        <option
-                                                            selected>{{ __('-- Select duration of Stay --') }}</option>
+                                                        <option value="" selected>{{ __('-- Select duration of Stay --') }}</option>
                                                         <option
                                                             value="1" {{ old('duration_stay', $client->duration_stay) == 1 ? 'selected' : '' }}>
                                                             {{ __('1 Day') }}

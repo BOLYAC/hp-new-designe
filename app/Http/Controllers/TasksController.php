@@ -52,7 +52,7 @@ class TasksController extends Controller
 
         switch ($request->get('name')) {
             case 'today-tasks':
-                $tasks->whereDate('date',  Carbon::today());
+                $tasks->whereDate('date', Carbon::today());
                 break;
             case 'future-tasks':
                 $tasks->whereDate('date', '>', Carbon::today());
@@ -66,7 +66,7 @@ class TasksController extends Controller
             case 'completed-tasks':
                 $tasks->archive(true);
                 break;
-            }
+        }
         return Datatables::of($tasks)
             ->setRowId('id')
             ->editColumn('date', function ($tasks) {
@@ -79,25 +79,25 @@ class TasksController extends Controller
                 return ($tasks->client->id <> 0 ? '<a href="clients/' . $tasks->client->id . '/edit">' : 'Its not your client') . $tasks->client->full_name ?? '' . '</a>';
             })
             ->addColumn('country', function ($tasks) {
-                if (is_null($tasks->client->country)){
+                if (is_null($tasks->client->country)) {
                     return $tasks->client->getRawOriginal('country') ?? '';
-                } else  {
+                } else {
                     $cou = '';
                     $countries = collect($tasks->client->country)->toArray();
-                    foreach( $countries as $name) {
-                        $cou .=  '<span class="badge badge-light-primary">' .  $name . '</span>';
+                    foreach ($countries as $name) {
+                        $cou .= '<span class="badge badge-light-primary">' . $name . '</span>';
                     }
                     return $cou;
                 }
             })
             ->addColumn('nationality', function ($tasks) {
-                if (is_null($tasks->client->nationality)){
+                if (is_null($tasks->client->nationality)) {
                     return $tasks->client->getRawOriginal('nationality') ?? '';
-                } else  {
+                } else {
                     $cou = '';
                     $nat = collect($tasks->client->nationality)->toArray();
-                    foreach( $nat as $name) {
-                        $cou .=  '<span class="badge badge-light-primary">' .  $name . '</span>';
+                    foreach ($nat as $name) {
+                        $cou .= '<span class="badge badge-light-primary">' . $name . '</span>';
                     }
                     return $cou;
                 }
@@ -107,7 +107,7 @@ class TasksController extends Controller
                     return '<span class="badge badge-success">' . optional($tasks->user)->name . '</span> <a href="#" class="assign"><i class="icofont icofont-plus f-w-600"></i></a>';
                 })
             ->addColumn('archive', function ($tasks) {
-                return $tasks->archive === true ? '<label class="txt-success">Yes</label>' : '<label class="txt-danger">No</label>';
+                return $tasks->archive === true ? '<label class="txt-success f-w-600">' . __('Done') . '</label>' : '<label class="txt-danger f-w-600">' . __('Pending') . '</label>';
             })
             ->addColumn('action', '<a class="dropdown-toggle addon-btn" data-toggle="dropdown"
                                                        aria-expanded="true">
@@ -252,14 +252,14 @@ class TasksController extends Controller
 
     public function assigneTask(Request $request)
     {
-      $task = Task::find($request->task_assigned_id);
-      $task->update([
-        'user_id' => $request->user_id,
-      ]);
-      try {
-        return json_encode($task, JSON_THROW_ON_ERROR);
-      } catch (JsonException $e) {
-        return back()->withError($e->getMessage())->withInput();
-      }
+        $task = Task::find($request->task_assigned_id);
+        $task->update([
+            'user_id' => $request->user_id,
+        ]);
+        try {
+            return json_encode($task, JSON_THROW_ON_ERROR);
+        } catch (JsonException $e) {
+            return back()->withError($e->getMessage())->withInput();
+        }
     }
 }

@@ -1,4 +1,4 @@
-@if($event->user_id !== auth()->id() || auth()->id() == 1)
+@if( auth()->id() == 1 || in_array(auth()->id(), $event->sellers))
     <div class="row">
         <div class="form-group input-group-sm col-md-6">
             <label for="name">{{ __('Title') }}</label>

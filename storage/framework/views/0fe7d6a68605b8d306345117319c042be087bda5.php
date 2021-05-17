@@ -6,6 +6,7 @@
 <script src="<?php echo e(asset('assets/js/icons/feather-icon/feather.min.js')); ?>"></script>
 <script src="<?php echo e(asset('assets/js/icons/feather-icon/feather-icon.js')); ?>"></script>
 <!-- Sidebar jquery-->
+
 <script src="<?php echo e(asset('assets/js/vertical-sidebar-menu.js')); ?>"></script>
 <script src="<?php echo e(asset('assets/js/config.js')); ?>"></script>
 <!-- Plugins JS start-->
