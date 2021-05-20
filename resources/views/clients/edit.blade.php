@@ -1,5 +1,5 @@
 @extends('layouts.vertical.master')
-@section('title', 'Lead Edit')
+@section('title', '| Lead Edit')
 @section('style_before')
     <!-- Plugins css start-->
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/summernote.css') }}">

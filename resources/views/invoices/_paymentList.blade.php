@@ -18,7 +18,7 @@
     </div>
 </div>
 
-@section('scripts')
+@section('script_after')
     <script>
         $(function () {
             var table = $('#payments-table').DataTable({
@@ -28,13 +28,7 @@
                 bFilter: false,
                 bPaginate: false,
                 ajax: '{!! route('invoice.paymentsDataTable', $invoice->external_id) !!}',
-                drawCallback: function () {
-                    var length_select = $(".dataTables_length");
-                    var select = $(".dataTables_length").find("select");
-                    select.addClass("tablet__select");
-                },
                 columns: [
-
                     {data: 'payment_date', name: 'payment_date', searchable: false},
                     {data: 'payment_source', name: 'payment_source', searchable: false},
                     {data: 'amount', name: 'amount', searchable: false},

@@ -74,9 +74,8 @@
                                         <td class="flex-container">
                                             <div class="btn-group pull-right">
                                                 <a class="btn btn-sm btn-outline-primary"
-                                                   href="{{ route('invoices.edit', $invoice) }}">{{__('View sales')}}
-                                                    <i
-                                                        class="icon-eye"></i></a>
+                                                   href="{{ route('invoices.show', $invoice) }}">{{__('View sales')}}
+                                                    <i class="icon-eye"></i></a>
                                             </div>
                                             @can('event-delete')
                                                 <form

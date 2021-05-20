@@ -77,6 +77,29 @@
             window.livewire.on('alert', param => {
                 notify(param['type'], param['message'], param['icon'])
             })
+
+            var maxField = 10; //Input fields increment limitation
+            var addButton = $('.add_button'); //Add button selector
+            var wrapper = $('.field_wrapper'); //Input field wrapper
+            var fieldHTML = '<div class="col-3 pr-1 pl-1"><input type="text" name="projects[]" value=""/><a href="javascript:void(0);" class="ml-1 remove_button"><i class="fa fa-trash"></i></a></div>'; //New input field html
+            var x = 1; //Initial field counter is 1
+
+            //Once add button is clicked
+            $(addButton).click(function () {
+                console.log('clicked')
+                //Check maximum number of input fields
+                if (x < maxField) {
+                    x++; //Increment field counter
+                    $(wrapper).append(fieldHTML); //Add field html
+                }
+            });
+
+            //Once remove button is clicked
+            $(wrapper).on('click', '.remove_button', function (e) {
+                e.preventDefault();
+                $(this).parent('div').remove(); //Remove field html
+                x--; //Decrement field counter
+            });
         });
     </script>
 
@@ -179,6 +202,48 @@
                                                     </div>
                                                 </div>
                                                 <div class="row">
+                                                    <div class="form-group input-group-sm col">
+                                                        <label for="in_charge">{{ __('Representative') }}</label>
+                                                        <input class="form-control sm" type="text" name="rep_1"
+                                                               id="rep_1"
+                                                               value="{{ old('rep_1', $agency->rep_1) }}">
+                                                    </div>
+                                                    <div class="form-group input-group-sm col">
+                                                        <label for="tax_number">{{ __('Rep phone') }}</label>
+                                                        <input class="form-control sm" type="text" name="rep_phone_1"
+                                                               id="rep_phone_1"
+                                                               value="{{ old('rep_phone_1' , $agency->rep_phone_1) }}">
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group input-group-sm col">
+                                                        <label for="in_charge">{{ __('Representative 2') }}</label>
+                                                        <input class="form-control sm" type="text" name="rep_2"
+                                                               id="rep_2"
+                                                               value="{{ old('rep_2', $agency->rep_2) }}">
+                                                    </div>
+                                                    <div class="form-group input-group-sm col">
+                                                        <label for="tax_number">{{ __('Rep phone 2') }}</label>
+                                                        <input class="form-control sm" type="text" name="rep_phone_2"
+                                                               id="rep_phone_2"
+                                                               value="{{ old('rep_phone_2' , $agency->rep_phone_2) }}">
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group input-group-sm col">
+                                                        <label for="in_charge">{{ __('Representative 3') }}</label>
+                                                        <input class="form-control sm" type="text" name="rep_3"
+                                                               id="rep_3"
+                                                               value="{{ old('rep_3', $agency->rep_3) }}">
+                                                    </div>
+                                                    <div class="form-group input-group-sm col">
+                                                        <label for="tax_number">{{ __('Rep phone 3') }}</label>
+                                                        <input class="form-control sm" type="text" name="rep_phone_3"
+                                                               id="rep_phone_3"
+                                                               value="{{ old('rep_phone_3' , $agency->rep_phone_3) }}">
+                                                    </div>
+                                                </div>
+                                                <div class="row">
                                                     <div class="form-group input-group-sm col-md">
                                                         <label for="commission_rate">{{ __('Commission rate') }}</label>
                                                         <input class="form-control sm" type="text"
@@ -208,13 +273,46 @@
                                                                   id="note">{{ old('note', $agency->note) }}</textarea>
                                                     </div>
                                                 </div>
+                                                <div class="col-form-label">
+                                                    {{ __('Projects') }}
+                                                </div>
+                                                <div class="field_wrapper row">
+                                                    @if(is_null($agency->projects))
+                                                        <div class="col-3 pr-1">
+                                                            <input type="text" name="projects[]" value=""/>
+                                                            <a href="javascript:void(0);" class="add_button"
+                                                               title="Add field"><i class="fa fa-plus-square"></i></a>
+                                                        </div>
+                                                    @else
+                                                        @foreach($agency->projects as $project)
+                                                            @if($loop->first)
+                                                                <div class="col-3 pr-1 pl-1">
+                                                                    <input type="text" name="projects[]"
+                                                                           value="{{ $project }}"/>
+                                                                    <a href="javascript:void(0);" class="add_button"
+                                                                       title="Add field"><i
+                                                                            class="fa fa-plus-square"></i></a>
+                                                                </div>
+                                                            @else
+                                                                <div class="col-3 pr-1 pl-1">
+                                                                    <input type="text" name="projects[]"
+                                                                           value="{{ $project }}"/><a
+                                                                        href="javascript:void(0);"
+                                                                        class="ml-1 remove_button"><i
+                                                                            class="fa fa-trash"></i></a></div>
+                                                            @endif
+                                                        @endforeach
+                                                    @endif
+                                                </div>
+
+                                                {{--
                                                 <div class="form-group">
-                                                    <div class="col-sm-12 col-xl-4 m-b-30">
-                                                        <input name="status" type="checkbox"
-                                                               class="js-single" {{ $agency->status == 1 ? 'checked' : '' }}/>
-                                                        <label>{{ __('Active') }}</label>
+                                                    <div class="col-sm-12 col-xl-4 m-b-30 checkbox">
+                                                        <input name="status" type="checkbox" id="checkbox1" {{ $agency->status == 1 ? 'checked' : '' }}/>
+                                                        <label for="checkbox1">{{ __('Active') }}</label>
                                                     </div>
                                                 </div>
+                                                --}}
                                             </div>
                                             <div class="card-footer">
                                                 <button type="submit" class="btn btn-sm btn-primary">

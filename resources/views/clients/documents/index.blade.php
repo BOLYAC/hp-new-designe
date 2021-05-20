@@ -65,7 +65,7 @@
                         aria-hidden="true">×</span>
                 </button>
             </div>
-            <form action="{{ route('documents.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ $client->getCreateDocumentEndpoint() }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-body">
                     <input type="hidden" name="client_id" value="{{ $client->id }}">

@@ -1,14 +1,10 @@
 @extends('layouts.vertical.master')
-@section('title', 'Lead Create')
+@section('title', '| Lead Create')
 @section('style_before')
     <!-- Select 2 css -->
     <link rel="stylesheet" href="{{ asset('assets/css/select2.css') }}"/>
     <!-- Plugins css start-->
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/summernote.css') }}">
-@endsection
-
-@section('style')
-
 @endsection
 
 @section('script')
@@ -81,22 +77,15 @@
 @endsection
 
 @section('breadcrumb-items')
-    <li class="breadcrumb-item">Leads</li>
+    <li class="breadcrumb-item"><a href="{{ route('leads.index') }}">{{ __('Leads') }}</a></li>
+    <li class="breadcrumb-item">{{ __('Create lead') }}</li>
 @endsection
-
-@section('breadcrumb-title')
-
-@endsection
-
 
 @section('content')
     <!-- Main-body start -->
+    @include('partials.flash-message')
     <div class="container-fluid">
-        @include('partials.flash-message')
         <div class="card">
-            <div class="card-header">
-                <h5 class="card-header-text">Contact information</h5>
-            </div>
             <div class="card-body">
                 <form action="{{ route('clients.store') }}" method="POST"
                       role="form">
@@ -183,7 +172,7 @@
                                 <label for="agency">Agency</label>
                                 <select name="agency" id="agency"
                                         class="form-control form-control-sm">
-                                    <option value="0" selected> -- Select agency --
+                                    <option value="" selected disabled> -- Select agency --
                                     </option>
                                     @foreach ($agencies as $agency)
                                         <option
@@ -327,7 +316,7 @@
                                 <label for="source">Source</label>
                                 <select name="source" id="source"
                                         class="form-control form-control-sm">
-                                    <option value="0" selected disabled> -- Select
+                                    <option value="" selected disabled> -- Select
                                         source --
                                     </option>
                                     @foreach($sources as $source)
@@ -341,7 +330,7 @@
                                     <label for="duration_stay">Duration of Stay</label>
                                     <select name="duration_stay" id="duration_stay"
                                             class="form-control form-control-sm">
-                                        <option selected> -- Select duration of Stay
+                                        <option value="" selected> -- Select duration of Stay
                                             --
                                         </option>
                                         <option value="1">1 Day</option>

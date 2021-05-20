@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Client;
 use App\Models\Invoice;
+use App\Models\Models\Project;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
@@ -64,12 +63,8 @@ class OrderController extends Controller
      */
     public function edit(Invoice $invoice)
     {
-        if ($invoice->status == 3) {
-            $amount = $invoice->price - $invoice->installment - $invoice->payments()->sum('amount');
-            return view('invoices.show', compact('invoice', 'amount'));
-        } else {
-            return view('invoices.edit', compact('invoice'));
-        }
+        $projects = Project::all();
+        return view('invoices.edit', compact('invoice', 'projects'));
     }
 
     /**
@@ -81,6 +76,11 @@ class OrderController extends Controller
      */
     public function update(Request $request, Invoice $invoice)
     {
+
+        $request->validate([
+            'project_id' => 'required',
+        ]);
+
         $data = $request->except('_token', 'files');
         $m = $request->get('price') - $request->get('installment') - $invoice->payments()->sum('amount');
 
@@ -92,7 +92,7 @@ class OrderController extends Controller
 
         $invoice->update($data);
         $amount = $invoice->price - $invoice->installment - $invoice->payments()->sum('amount');
-        return view('invoices.show', compact('invoice','amount'))
+        return view('invoices.show', compact('invoice', 'amount'))
             ->with('success', 'Invoice updated successfully');
     }
 
@@ -111,6 +111,17 @@ class OrderController extends Controller
             return back()->withError($e->getMessage())->withInput();
         }
         return redirect()->route('invoices.index');
+    }
+
+    public function commissionStat(Request $request)
+    {
+
+        $invoice = Invoice::where('id', $request->get('invoice_id'));
+
+        $invoice->update([
+            'commission_stat' => $request->get('title')
+        ]);
+
     }
 
 }

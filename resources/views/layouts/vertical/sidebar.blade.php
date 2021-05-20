@@ -113,6 +113,13 @@
                             </li>
                         @endif
                     @endcan
+                    <li class="dropdown">
+                        <a href="{{ route('contact.index') }}"
+                           class="nav-link menu-title {{ Route::currentRouteName() === 'contact.index' ? 'active' : '' }}">
+                            <i class="icon-user"></i>
+                            <span> {{ __('Contacts') }}</span>
+                        </a>
+                    </li>
                     @can('user-list')
                         <li class="dropdown">
                             <a href="{{ route('users.index') }}"

@@ -10,94 +10,57 @@ use Illuminate\Support\Facades\Auth;
 class DocumentController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Create a comment for tasks and leads
+     * @param Request $request
+     * @return mixed
+     * @throws ValidationException
+     * @throws Exception
      */
-    public function index()
+    public function store(Request $request): \Illuminate\Http\RedirectResponse
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        /*$this->validate($request, [
-            'title' => ['required'],
-            'full' => ['required']
-        ]);*/
         $data = $request->all();
-        $client = Client::where('id', $request->client_id)->pluck('full_name');
-        if ($request->hasFile('full')) {
-            $imagePath = $data['full']->store('clients/' . $client[0], 'public');
-        }
-        $data['user_id'] = Auth::id();
-        $data['created_by'] = Auth::id();
-        $data['updated_by'] = Auth::id();
-        $data['full'] = $imagePath;
 
-        ClientDocument::create($data);
+
+        if ($request->hasFile('full')) {
+            $imagePath = $data['full']->store('clients', 'public');
+        }
+
+        $modelsMapping = [
+            'agency' => 'App\Agency',
+            'client' => 'App\Models\Client'
+        ];
+
+        if (!array_key_exists($request->type, $modelsMapping)) {
+            Session::flash('flash_message_warning', __('Could not create document, type not found! Please contact support'));
+            throw new Exception("Could not create comment with type " . $request->type);
+            return redirect()->back();
+        }
+
+        $model = $modelsMapping[$request->type];
+        $source = $model::where('id', '=', $request->external_id)->first();
+        $source->documents()->create(
+            [
+                'excerpt' => $request->excerpt,
+                'user_id' => auth()->user()->id,
+                'created_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'full' => $imagePath
+            ]
+        );
+
+        //ClientDocument::create($data);
 
         return redirect()->back()
             ->with('toast_success', 'File add successfully');
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
      * Remove the specified resource from storage.
      *
      * @param $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($id)
+    public function destroy($id): \Illuminate\Http\RedirectResponse
     {
         $clientDocument = ClientDocument::findOrFail($id);
         try {

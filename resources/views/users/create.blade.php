@@ -1,5 +1,5 @@
 @extends('layouts.vertical.master')
-@section('title', 'New user')
+@section('title', '| New user')
 
 @section('style_before')
     <!-- Notification.css -->
@@ -48,6 +48,14 @@
                             <div class="form-group input-group-sm">
                                 <label for="password">{{ __('Password') }}</label>
                                 <input class="form-control" type="password" name="password" id="password">
+                            </div>
+                            <div class="form-group input-group-sm">
+                                <label for="password">{{ __('Phone') }}</label>
+                                <input class="form-control" type="text" name="phone_1" id="phone_1">
+                            </div>
+                            <div class="form-group input-group-sm">
+                                <label for="password">{{ __('Phone 2') }}</label>
+                                <input class="form-control" type="text" name="phone_2" id="phone_2">
                             </div>
                             <div class="form-group input-group-sm">
                                 <label for="roles">{{__('Role')}}</label>

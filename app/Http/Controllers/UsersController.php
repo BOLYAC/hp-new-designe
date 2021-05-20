@@ -481,4 +481,10 @@ class UsersController extends Controller
         $users = User::orderBy('created_at', 'desc')->get();
         return response()->json($users);
     }
+
+    public function getContact()
+    {
+        $users = User::all();
+        return \view('users.contact', compact('users'));
+    }
 }

@@ -1,5 +1,5 @@
 @extends('layouts.vertical.master')
-@section('title', '| Events')
+@section('title', '| Appointments')
 
 @section('style_before')
     <!-- Notification.css -->
@@ -40,7 +40,7 @@
 
 @endsection
 @section('breadcrumb-items')
-    <li class="breadcrumb-item">{{ __('Events') }}</li>
+    <li class="breadcrumb-item">{{ __('Appointments') }}</li>
 @endsection
 @section('content')
     <div class="container-fluid">
@@ -51,7 +51,7 @@
                     <div class="card-header card-no-border p-2  b-t-primary b-b-primary">
                         @can('event-create')
                             <a href="{{ route('events.create') }}" class="btn btn-sm btn-outline-primary">
-                                {{ __('New Event') }} <i class="icon-plus"></i></a>
+                                {{ __('New Appointment') }} <i class="icon-plus"></i></a>
                         @endcan
                         @can('can-generate-report')
                             <a href="{{ route('view.report', 'today') }}" class="btn btn-sm btn-outline-success">

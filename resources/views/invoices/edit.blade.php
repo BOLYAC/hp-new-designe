@@ -20,53 +20,87 @@
     <!-- Plugins JS start-->
     <script src="{{ asset('assets/js/editor/summernote/summernote.js') }}"></script>
     <script src="{{ asset('assets/js/editor/summernote/summernote.custom.js') }}"></script>
-    <scritp>
-        <script>
-            $('select[name="currency"]').on('change', function () {
-                var currency = $(this).val();
-                $('.currIco').html('');
-                switch (currency) {
-                    case "TRY":
-                        $('.currIco').append(`₺`)
-                        break;
-                    case "USD":
-                        $('.currIco').append(`$`)
-                        break;
-                    case "EUR":
-                        $('.currIco').append(`€`)
-                        break;
-                    default:
-                        $('.currIco').append(``)
-                }
-            });
-
-            function percentage(num, per) {
-                return (num / 100) * per;
+    <script>
+        $('select[name="currency"]').on('change', function () {
+            var currency = $(this).val();
+            $('.currIco').html('');
+            switch (currency) {
+                case "TRY":
+                    $('.currIco').append(`₺`)
+                    break;
+                case "USD":
+                    $('.currIco').append(`$`)
+                    break;
+                case "EUR":
+                    $('.currIco').append(`€`)
+                    break;
+                default:
+                    $('.currIco').append(``)
             }
+        });
 
-            $('input[name="month"], input[name="price"], input[name="installment"]').on('change keyup', function () {
-                let month = $('#month').val();
-                let price = $('#price').val();
-                let installment = $('#installment').val();
-                let total = (price - installment) / month;
-                let granTotal = Math.round((total + Number.EPSILON) * 100) / 100
-                $('#monthly_payment').val(granTotal)
+        function percentage(num, per) {
+            return (num / 100) * per;
+        }
+
+        function valueChanged() {
+            let rate = $('#commission_rate').val();
+            //let total = $('#commission_total').val();
+            let price = $('#price').val();
+            let total = percentage(rate, price)
+            $('#commission_total').val(total)
+        }
+
+        $('input[name="month"], input[name="price"], input[name="installment"]').on('change keyup', function () {
+            let month = $('#month').val();
+            let price = $('#price').val();
+            let installment = $('#installment').val();
+            let total = (price - installment) / month;
+            let granTotal = Math.round((total + Number.EPSILON) * 100) / 100
+            $('#monthly_payment').val(granTotal)
+            valueChanged()
+        });
+
+        $('input[name="commission_rate"]').on('change keyup', function () {
+            let rate = $('#commission_rate').val();
+            //let total = $('#commission_total').val();
+            let price = $('#price').val();
+            let total = percentage(rate, price)
+            $('#commission_total').val(total)
+        });
+
+        $('input[name="commission_total"]').on('change keyup', function () {
+            let total = $('#commission_total').val();
+            let price = $('#price').val();
+            let rate = Math.round(((total / price) * 100)) + "%";
+            $('#commission_rate').val(rate)
+        });
+
+        $(document).ready(function () {
+
+            // Department Change
+            $('#project_id').change(function () {
+
+                // Department id
+                var id = $(this).val();
+                // Empty the dropdown
+                $('#sel_emp').find('option').not(':first').remove();
+                // AJAX request
+                $.ajax({
+                    url: '/projects/getProject/' + id,
+                    type: 'get',
+                    dataType: 'json',
+                    success: function (response) {
+                        console.log(response[0]['commission_rate'])
+                        $('#commission_rate').val(response[0]['commission_rate']);
+                    }
+                });
             });
-            $('input[name="commission_rate"]').on('change keyup', function () {
-                let rate = $('#commission_rate').val();
-                //let total = $('#commission_total').val();
-                let price = $('#price').val();
-                let total = percentage(rate, price)
-                $('#commission_total').val(total)
-            });
-            $('input[name="commission_total"]').on('change keyup', function () {
-                let total = $('#commission_total').val();
-                let price = $('#price').val();
-                let rate = Math.round(((total / price) * 100)) + "%";
-                $('#commission_rate').val(rate)
-            });
-        </script>
-    </scritp>
+
+        });
+
+    </script>
+
 @endsection
 
 @section('breadcrumb-items')
@@ -89,13 +123,13 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="form-group col">
-                                    <label for="nationality">Nationality</label>
+                                    <label for="nationality">{{ __('Nationality') }}</label>
                                     <input class="form-control form-control-sm" name="nationality"
                                            id="nationality"
                                            value="{{ old('nationality', $invoice->nationality) }}">
                                 </div>
                                 <div class="form-group col">
-                                    <label for="passport_id">Passport or ID number</label>
+                                    <label for="passport_id">{{ __('Passport or ID number') }}</label>
                                     <input class="form-control form-control-sm" name="passport_id"
                                            id="passport_id"
                                            value="{{ old('passport_id', $invoice->passport_id) }}">
@@ -108,12 +142,19 @@
                             </div>
                             <div class="row">
                                 <div class="form-group col-12">
-                                    <label for="project">Project name</label>
-                                    <input class="form-control form-control-sm" name="project"
-                                           id="project" value="{{ old('project', $invoice->project) }}">
+                                    <label for="project_id">{{ __('Project name') }}</label>
+                                    <select class="form-control form-control-sm" name="project_id" id="project_id">
+                                        <option value="">{{ __('Select project') }}</option>
+                                        @foreach($projects as $project)
+                                            <option
+                                                value="{{ $project->id }}" {{ $invoice->project_id == $project->id ? 'selected' : '' }}>
+                                                {{ $project->project_name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                 </div>
                                 <div class="form-group col">
-                                    <label for="country_province">Province/Country</label>
+                                    <label for="country_province">{{ __('Province/Country') }}</label>
                                     <input class="form-control form-control-sm" name="country_province"
                                            id="country_province"
                                            value="{{ old('country_province', $invoice->country_province) }}">
@@ -121,18 +162,18 @@
                             </div>
                             <div class="row">
                                 <div class="form-group col">
-                                    <label for="section_plot">Section/Plot</label>
+                                    <label for="section_plot">{{ __('Section/Plot') }}</label>
                                     <input class="form-control form-control-sm" name="section_plot"
                                            id="section_plot"
                                            value="{{ old('section_plot', $invoice->section_plot) }}">
                                 </div>
                                 <div class="form-group col">
-                                    <label for="block_num">Block No</label>
+                                    <label for="block_num">{{ __('Block No') }}</label>
                                     <input class="form-control form-control-sm" name="block_num"
                                            id="block_num" value="{{ old('block_num', $invoice->block_num) }}">
                                 </div>
                                 <div class="form-group col">
-                                    <label for="room_number">No of room</label>
+                                    <label for="room_number">{{ __('No of room') }}</label>
                                     <input class="form-control form-control-sm" name="room_number"
                                            id="room_number"
                                            value="{{ old('room_number', $invoice->room_number) }}">
@@ -140,7 +181,7 @@
                             </div>
                             <div class="row">
                                 <div class="form-group col">
-                                    <label for="floor_number">Floor No</label>
+                                    <label for="floor_number"></label>
                                     <input class="form-control form-control-sm" name="floor_number"
                                            id="floor_number"
                                            value="{{ old('floor_number', $invoice->floor_number) }}">
@@ -152,15 +193,15 @@
                                            value="{{ old('gross_square', $invoice->gross_square) }}">
                                 </div>
                                 <div class="form-group col">
-                                    <label for="flat_num">Flat No</label>
+                                    <label for="flat_num">{{ __('Flat No') }}</label>
                                     <input class="form-control form-control-sm" name="flat_num"
                                            id="flat_num" value="{{ old('flat_num', $invoice->flat_num) }}">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="currency">Currency</label>
+                                <label for="currency">{{ __('Currency') }}</label>
                                 <select class="form-control" name="currency" id="currency">
-                                    <option value="" selected>-- Select currency</option>
+                                    <option value="" selected>-- {{ __('Select currency') }} --</option>
                                     <option
                                         value="TRY" {{ old('currency', $invoice->currency) == 'TRY' ? 'selected' : '' }}>
                                         TRY
@@ -277,8 +318,8 @@
                                 <input type="text" class="form-control"
                                        name="commission_rate" id="commission_rate"
                                        value="{{ old('commission_rate', $invoice->commission_rate) }}">
-                                <div class="input-group-append"><span class="input-group-text currIco"
-                                                                      id="basic-addon3"></span></div>
+                                <div class="input-group-append"><span class="input-group-text"
+                                                                      id="basic-addon3">%</span></div>
                             </div>
                         </div>
                         <div class="form-group">

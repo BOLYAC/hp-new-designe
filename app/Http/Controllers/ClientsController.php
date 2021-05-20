@@ -345,6 +345,7 @@ class ClientsController extends Controller
     {
         $request->validate([
             'source' => 'required',
+            'agency' => 'required',
             'client_email' => ['nullable', 'string', 'email', 'max:255', 'unique:clients,client_email,deleted_at'],
             'client_email_2' => ['nullable', 'string', 'email', 'max:255', 'unique:clients,client_email_2,deleted_at'],
             'client_number' => ['nullable', 'string', 'max:255', 'unique:clients,client_number,deleted_at'],
@@ -429,6 +430,7 @@ class ClientsController extends Controller
     {
         $request->validate([
             'source_id' => 'required',
+            'agency_id' => 'required',
             'client_email' => ['nullable', 'string', 'email', 'max:255', 'unique:clients,client_email,' . $client->id . ',id,deleted_at,NULL'],
             'client_email_2' => ['nullable', 'string', 'email', 'max:255', 'unique:clients,client_email_2,' . $client->id . ',id,deleted_at,NULL'],
             'client_number' => ['nullable', 'string', 'max:255', 'unique:clients,client_number,' . $client->id . ',id,deleted_at,NULL'],
@@ -458,7 +460,7 @@ class ClientsController extends Controller
             $data_request['nationality'] = null;
         }
 
-        $data_request['type'] = 1;
+        $data_request['type'] = 0;
 
         $client->fill($data_request)->save();
         /*$client->fill([

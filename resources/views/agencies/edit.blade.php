@@ -22,6 +22,28 @@
         $(document).ready(function () {
             // Start Edit record
             let table = $('#res-config').DataTable();
+            var maxField = 10; //Input fields increment limitation
+            var addButton = $('.add_button'); //Add button selector
+            var wrapper = $('.field_wrapper'); //Input field wrapper
+            var fieldHTML = '<div class="col-6 pr-1 pl-1"><input type="text" name="projects[]" value=""/><a href="javascript:void(0);" class="ml-1 remove_button"><i class="fa fa-trash"></i></a></div>'; //New input field html
+            var x = 1; //Initial field counter is 1
+
+            //Once add button is clicked
+            $(addButton).click(function () {
+                console.log('clicked')
+                //Check maximum number of input fields
+                if (x < maxField) {
+                    x++; //Increment field counter
+                    $(wrapper).append(fieldHTML); //Add field html
+                }
+            });
+
+            //Once remove button is clicked
+            $(wrapper).on('click', '.remove_button', function (e) {
+                e.preventDefault();
+                $(this).parent('div').remove(); //Remove field html
+                x--; //Decrement field counter
+            });
         });
     </script>
 @endsection
@@ -57,12 +79,12 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="form-group input-group-sm col">
+                                <div class="form-group input-group-sm col-6">
                                     <label for="in_charge">{{ __('Owner') }}</label>
                                     <input class="form-control sm" type="text" name="in_charge" id="in_charge"
                                            value="{{ old('in_charge', $agency->in_charge) }}">
                                 </div>
-                                <div class="form-group input-group-sm col">
+                                <div class="form-group input-group-sm col-6">
                                     <label for="tax_number">{{ __('Tax number') }}</label>
                                     <input class="form-control sm" type="text" name="tax_number" id="tax_number"
                                            value="{{ old('tax_number' , $agency->tax_number) }}">
@@ -105,6 +127,37 @@
                                 <textarea name="note"
                                           class="summernote"
                                           id="note">{{ old('note', $agency->note) }}</textarea>
+                            </div>
+                            <div class="col-form-label">
+                                {{ __('Projects') }}
+                            </div>
+                            <div class="field_wrapper row">
+                                @if(is_null($agency->projects))
+                                    <div class="col-4 pr-1">
+                                        <input type="text" name="projects[]" value=""/>
+                                        <a href="javascript:void(0);" class="add_button"
+                                           title="Add field"><i class="fa fa-plus-square"></i></a>
+                                    </div>
+                                @else
+                                    @foreach($agency->projects as $project)
+                                        @if($loop->first)
+                                            <div class="col-6 pr-1 pl-1">
+                                                <input type="text" name="projects[]"
+                                                       value="{{ $project }}"/>
+                                                <a href="javascript:void(0);" class="add_button"
+                                                   title="Add field"><i
+                                                        class="fa fa-plus-square"></i></a>
+                                            </div>
+                                        @else
+                                            <div class="col-6 pr-1 pl-1">
+                                                <input type="text" name="projects[]"
+                                                       value="{{ $project }}"/><a
+                                                    href="javascript:void(0);"
+                                                    class="ml-1 remove_button"><i
+                                                        class="fa fa-trash"></i></a></div>
+                                        @endif
+                                    @endforeach
+                                @endif
                             </div>
                             {{--<div class="form-group">
                                 <div class="border-checkbox-section pl-4">

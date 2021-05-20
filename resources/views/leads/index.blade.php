@@ -1,5 +1,5 @@
 @extends('layouts.vertical.master')
-@section('title', 'Dashboard')
+@section('title', '| Deals')
 
 @section('style_before')
     <!-- Notification.css -->
@@ -57,7 +57,7 @@
                     <div class="card-header p-3 b-t-primary">
                         @can('lead-create')
                             <a href="{{ route('leads.create') }}"
-                               class="btn btn-sm btn-outline-primary">{{__('New lead')}}<i class="icon-plus"></i></a>
+                               class="btn btn-sm btn-outline-primary">{{__('New deal')}}<i class="icon-plus"></i></a>
                         @endcan
                     </div>
                     <div class="card-body">

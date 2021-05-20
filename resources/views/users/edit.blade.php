@@ -52,6 +52,16 @@
                                 <label for="password">{{ __('Password') }}</label>
                                 <input class="form-control" type="password" name="password" id="password">
                             </div>
+                            <div class="form-group input-group-sm">
+                                <label for="password">{{ __('Phone') }}</label>
+                                <input class="form-control" type="text" name="phone_1" id="phone_1"
+                                       value="{{ $user->phone_1 ?? '' }}">
+                            </div>
+                            <div class="form-group input-group-sm">
+                                <label for="password">{{ __('Phone 2') }}</label>
+                                <input class="form-control" type="text" name="phone_2" id="phone_2"
+                                       value="{{ $user->phone_2 ?? '' }}">
+                            </div>
                             <div class="form-group">
                                 <label for="roles">{{ __('Role') }}</label>
                                 <select class="js-example-basic-multiple col-sm-12" name="roles[]" id="roles"
@@ -82,7 +92,7 @@
                             </div>
                             <div class="form-group input-group-sm">
                                 <label for="department">{{__('Department')}}</label>
-                                    <select class="form-control" name="department_id" id="department">
+                                <select class="form-control" name="department_id" id="department">
                                     <option value="0"> -- {{ __('Select department') }} --</option>
                                     @foreach($departments as $department)
                                         <option

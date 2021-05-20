@@ -28,7 +28,8 @@ class Agency extends Model implements Documentable, Taskable, Noteable
      * @var array
      */
     protected $casts = [
-        'status' => 'boolean'
+        'status' => 'boolean',
+        'projects' => 'array'
     ];
 
     public function clients(): HasMany

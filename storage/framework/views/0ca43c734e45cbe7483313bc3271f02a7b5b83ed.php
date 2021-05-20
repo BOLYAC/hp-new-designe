@@ -114,6 +114,13 @@
                             </li>
                         <?php endif; ?>
                     <?php endif; ?>
+                    <li class="dropdown">
+                        <a href="<?php echo e(route('contact.index')); ?>"
+                           class="nav-link menu-title <?php echo e(Route::currentRouteName() === 'contact.index' ? 'active' : ''); ?>">
+                            <i class="icon-user"></i>
+                            <span> <?php echo e(__('Contacts')); ?></span>
+                        </a>
+                    </li>
                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('user-list')): ?>
                         <li class="dropdown">
                             <a href="<?php echo e(route('users.index')); ?>"

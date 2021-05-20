@@ -40,7 +40,7 @@ class PaymentController extends Controller
             'user_id' => $request->user_id
         ]);
 
-        return redirect()->back()->with('success', 'Payment successfully added');
+        return redirect()->back()->with('toast_success', 'Payment successfully added');
     }
 
     public function paymentsDataTable(Invoice $invoice)
@@ -51,7 +51,7 @@ class PaymentController extends Controller
 
         return Datatables::of($payments)
             ->editColumn('amount', function ($payments) use ($invoice) {
-                return number_format($payments->amount, 2). ' ' . $invoice->currency;
+                return number_format($payments->amount, 2) . ' ' . $invoice->currency;
             })
             ->editColumn('payment_date', function ($payments) {
                 return $payments->payment_date ? with(new Carbon($payments->payment_date))
@@ -66,7 +66,7 @@ class PaymentController extends Controller
             ->addColumn('delete', '
                 <form action="{{ route(\'payments.destroy\', $external_id) }}" method="POST">
             <input type="hidden" name="_method" value="DELETE">
-            <input type="submit" name="submit" value="' . __('Delete') . '" class="btn btn-danger" onClick="return confirm(\'Are you sure you want to delete the payment?\')"">
+            <input type="submit" name="submit" value="' . __('Delete') . '" class="btn btn-sm btn-danger" onClick="return confirm(\'Are you sure you want to delete the payment?\')"">
             {{csrf_field()}}
             </form>')
             ->rawColumns(['delete', 'description'])
@@ -83,6 +83,6 @@ class PaymentController extends Controller
     public function destroy(Payment $payment)
     {
         $payment->delete();
-        return redirect()->back()->with('success', 'Payment successfully deleted');
+        return redirect()->back()->with('toast_success', 'Payment successfully deleted');
     }
 }

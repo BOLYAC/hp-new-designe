@@ -37,7 +37,7 @@ Route::group(
         Route::resource('invoices', 'OrderController');
         Route::resource('documents', 'DocumentController');
         Route::resource('payments', 'PaymentController');
-        Route::get('/payments-data/{invoice}', 'PaymentController@paymentsDataTable')->name('invoice.paymentsDataTable');
+
 
         Route::post('/covert-to-order/{lead}', 'LeadsController@convertToOrder')->name('lead.convert.order');
         Route::post('/comments/{type}/{external_id}', 'CommentController@store')->name('comments.create');
@@ -50,6 +50,11 @@ Route::group(
         Route::post('lead/change-owner', 'LeadsController@dealChangeOwner')->name('deal.change.owner');
         Route::get('event/search/client', 'EventsController@dataAjax')->name('event.client.filter');
         Route::resource('teams', 'TeamController');
+
+        // Invoices
+        Route::post('/invoices/commission-stat', 'OrderController@commissionStat')->name('change.commission_stat');
+        Route::resource('invoices', 'OrderController');
+        Route::get('/payments-data/{invoice}', 'PaymentController@paymentsDataTable')->name('invoice.paymentsDataTable');
 
         // Report For events
         Route::get('/show-report/{val}', 'EventsController@showReport')->name('view.report');
@@ -68,6 +73,7 @@ Route::group(
         Route::get('/leaddata/{id?}', 'UsersController@leadData')->name('users.leaddata');
         Route::get('/clientdata/{id?}', 'UsersController@clientData')->name('users.clientdata');
         Route::get('/appointmentdata/{id?}', 'UsersController@appointmentData')->name('users.appointmentdata');
+        Route::get('/contact', 'UsersController@getContact')->name('contact.index');
         //// Tasks
         Route::get('data', 'TasksController@anyData')->name('tasks.data');
         Route::post('assigne/task', 'TasksController@assigneTask')->name('tasks.assigne');
@@ -79,7 +85,7 @@ Route::group(
         });
         Route::resource('departments', 'DepartmentController');
         //// Projects
-        Route::get('/project', 'ProjectsController@getProject')->name('project.api');
+        Route::get('/projects/getProject/{id}', 'ProjectsController@getProject')->name('project.api');
         Route::get('/project/show/{id}', 'ProjectsController@getSingleProject')->name('project.api.show');
         // Agencies
         Route::get('agencies/{id}', 'AgencyController@getAgencySellsOffice')->name('agencies.sells-office-edit');

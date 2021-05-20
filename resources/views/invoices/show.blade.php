@@ -17,9 +17,66 @@
     <!-- Datatables.js -->
     <script src="{{asset('assets/js/datatables/jquery.dataTables.min.js')}}"></script>
     <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.bootstrap4.min.js')}}"></script>
+    <script src="{{ asset('assets/js/notify/bootstrap-notify.min.js') }}"></script>
     <!-- Plugins JS start-->
     <script src="{{ asset('assets/js/editor/summernote/summernote.js') }}"></script>
     <script src="{{ asset('assets/js/editor/summernote/summernote.custom.js') }}"></script>
+    <script>
+        function notify(title, type) {
+            $.notify({
+                    title: title
+                },
+                {
+                    type: type,
+                    allow_dismiss: true,
+                    newest_on_top: true,
+                    mouse_over: true,
+                    spacing: 10,
+                    timer: 2000,
+                    placement: {
+                        from: 'top',
+                        align: 'right'
+                    },
+                    offset: {
+                        x: 30,
+                        y: 30
+                    },
+                    delay: 1000,
+                    z_index: 10000,
+                    animate: {
+                        enter: 'animated bounce',
+                        exit: 'animated bounce'
+                    }
+                });
+        }
+
+        $("#commissionSelect input[type='radio']").change(function (e) {
+            // this will contain a reference to the checkbox
+            e.preventDefault();
+            if (this.checked) {
+                let title = $(this).val()
+                let invoice_id = '{{ $invoice->id }}';
+                console.log(invoice_id)
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ route('change.commission_stat') }}',
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                        title,
+                        invoice_id
+                    },
+                    success: function (r) {
+                        notify('Update commission status', 'success');
+                    }
+                    , error: function (error) {
+                        notify('Ops!! Something wrong', 'danger');
+                    }
+                });
+            } else {
+                // the checkbox is now no longer checked
+            }
+        });
+    </script>
 @endsection
 
 @section('breadcrumb-items')
@@ -118,6 +175,28 @@
                                 <ul>
                                     <li><strong>{{ __('Invoice created:') }}</strong></li>
                                     <li>{{ $invoice->created_at->format('m/d/Y') }}</li>
+                                    <li><strong>{{ __('Created by:') }}</strong></li>
+                                    <li><span
+                                            class="badge badge-success">{{ $invoice->owner_name ?? $invoice->user->name }}</span>
+                                    </li>
+                                    <li><strong>{{ __('Commission Received') }}</strong></li>
+                                    <li>
+                                        <div class="form-group m-checkbox-inline mb-0 custom-radio-ml"
+                                             id="commissionSelect">
+                                            <div class="radio radio-primary">
+                                                <input id="radioinline1" type="radio" name="radio1"
+                                                       value="1"
+                                                    {{ $invoice->commission_stat == '1' ? 'checked' : '' }}>
+                                                <label class="mb-0" for="radioinline1">{{ __('Yes') }}</span></label>
+                                            </div>
+                                            <div class="radio radio-primary">
+                                                <input id="radioinline2" type="radio" name="radio1"
+                                                       value="2" {{ $invoice->commission_stat == '2' ? 'checked' : '' }}>
+                                                <label class="mb-0" for="radioinline2">{{ __('No') }}</label>
+                                            </div>
+                                        </div>
+                                    </li>
+
                                     <li><strong>{{ __('Status:') }}</strong></li>
                                     <li>{{ $invoice->status == 2 ? 'Partially paid' : 'Paid' }}</li>
                                 </ul>
@@ -139,6 +218,20 @@
                         <h5 class="text-muted">{{ __('Client:') }} {{ $invoice->client->full_name }}</h5>
                     </div>
                     <div class="card-body">
+                        <div>
+                            {{ __('Owner:') }}
+                            <span class="badge badge-success">{{ $invoice->owner_name }}</span>
+                        </div>
+                        <br>
+                        <div>
+                            {{ __('Seller(s):') }}
+                            @php $sellRep = collect($invoice->sells_name)->toArray() @endphp
+                            @foreach( $sellRep as $name)
+                                <span class="label label-inverse">{{ $name }}</span>
+                            @endforeach
+                        </div>
+                    </div>
+                    <div class="card-body">
                         <div class="row">
                             <div class="col">
                                 <ul>
@@ -157,7 +250,34 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-12 text-right">
+                <div class="card">
+                    <div class="card-header b-b-primary">
+                        <h5 class="text-muted">{{ __('Company:') }} {{ $invoice->project->company_name ?? $invoice->project->project_name ?? $invoice->project_name }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <ul>
+                                    <li><strong>{{ __('Phone:') }}</strong></li>
+                                    <li>{{ $invoice->project->phone_1 ?? '' }}</li>
+                                    <br>
+                                    <li><strong>{{ __('Passport or ID:') }}</strong></li>
+                                    <li>{!! $invoice->project->address ?? ''!!}</li>
+                                    <br>
+                                    <li><strong>{{ __('Text office:') }}</strong></li>
+                                    <li>{{ $invoice->project->text_office ?? '' }}</li>
+                                    <br>
+                                    <li><strong>{{ __('Text address:') }}</strong></li>
+                                    <li>{{ $invoice->project->text_address ?? '' }}</li>
+                                    <br>
+                                    <li><strong>{{ __('Commission rate:') }}</strong></li>
+                                    <li>{{ $invoice->commission_rate ?? '' }} %</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 text-right mb-4 mt-1 pt-1">
                     <button type="submit" class="btn btn-primary"
                             data-toggle="modal"
                             data-target="#paymentModal">{{ __('Register payment') }}
@@ -172,7 +292,7 @@
     <!-- Page body end -->
     <!-- Edit modal start -->
     <div class="modal fade" id="paymentModal" tabindex="-1">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">{{ __('Add Payment') }}</h5>

@@ -41,10 +41,6 @@
                         name: 'created_at',
                     },
                     {
-                        data: 'updated_at',
-                        name: 'updated_at',
-                    },
-                    {
                         data: 'full_name',
                         name: 'full_name',
                     },
@@ -154,7 +150,6 @@
                                     <thead>
                                     <tr>
                                         <th data-priority="1">{{ __('Created') }}</th>
-                                        <th data-priority="2">{{ __('Updated') }}</th>
                                         <th>{{ __('Name') }}</th>
                                         <th>{{ __('Country') }}</th>
                                         <th>{{ __('Nationality') }}</th>

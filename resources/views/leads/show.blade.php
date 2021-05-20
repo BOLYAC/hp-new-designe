@@ -1,5 +1,5 @@
 @extends('layouts.vertical.master')
-@section('title', 'Lead Edit')
+@section('title', '| Deal Edit')
 @section('style_before')
     <!-- Select 2 css -->
     <link rel="stylesheet" href="{{ asset('assets/css/select2.css') }}"/>

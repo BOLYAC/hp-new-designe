@@ -1,5 +1,5 @@
 @extends('layouts.vertical.master')
-@section('title', 'Dashboard')
+@section('title', '| Appointment create')
 
 @section('style_before')
     <!-- Plugins css start-->
@@ -93,8 +93,8 @@
 
 
 @section('breadcrumb-items')
-    <li class="breadcrumb-item"><a href="{{ route('events.index') }}">{{ __('Events') }}</a></li>
-    <li class="breadcrumb-item">{{ __('Create event') }}</li>
+    <li class="breadcrumb-item"><a href="{{ route('events.index') }}">{{ __('Appointments') }}</a></li>
+    <li class="breadcrumb-item">{{ __('Create Appointment') }}</li>
 @endsection
 
 @section('breadcrumb-title')
