@@ -40,7 +40,8 @@ class DocumentController extends Controller
         $source = $model::where('id', '=', $request->external_id)->first();
         $source->documents()->create(
             [
-                'excerpt' => $request->excerpt,
+                'title' => $request->get('title'),
+                'excerpt' => $request->get('excerpt'),
                 'user_id' => auth()->user()->id,
                 'created_by' => Auth::id(),
                 'updated_by' => Auth::id(),

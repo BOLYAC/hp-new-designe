@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use App\Models\Models\Project;
 use App\Traits\Multitenantable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -46,9 +46,12 @@ class Invoice extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function project()
+    /**
+     * @return BelongsTo
+     */
+    public function project(): BelongsTo
     {
-        return $this->belongsTo(Project::class);
+        return $this->belongsTo(Project::class)->withDefault();
     }
 
     public function task()

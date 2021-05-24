@@ -65,7 +65,7 @@
                                     <tr>
                                         <td>{{ ++$key }}</td>
                                         <td>{{ $invoice->client->full_name ?? '' }}</td>
-                                        <td>{{ $invoice->project ?? '' }} </td>
+                                        <td>{{ $invoice->project->company_name ?? $invoice->project->project_name ?? $invoice->project_name ?? '' }} </td>
                                         <td>
                                                     <span class="badge badge-success">
                                                     {{ $invoice->user->name?? '' }}

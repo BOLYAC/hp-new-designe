@@ -44,7 +44,7 @@
                                        value="{{ old('name', $user->name) }}">
                             </div>
                             <div class="form-group">
-                                <label for="email">{{__('Name')}}</label>
+                                <label for="email">{{__('Email')}}</label>
                                 <input class="form-control" type="email" name="email" id="email"
                                        value="{{ old('email', $user->email) }}">
                             </div>
@@ -61,6 +61,11 @@
                                 <label for="password">{{ __('Phone 2') }}</label>
                                 <input class="form-control" type="text" name="phone_2" id="phone_2"
                                        value="{{ $user->phone_2 ?? '' }}">
+                            </div>
+                            <div class="form-group input-group-sm">
+                                <label for="commission_rate">{{ __('Commission rate') }}</label>
+                                <input class="form-control" type="text" name="commission_rate" id="commission_rate"
+                                       value="{{ $user->commission_rate }}">
                             </div>
                             <div class="form-group">
                                 <label for="roles">{{ __('Role') }}</label>

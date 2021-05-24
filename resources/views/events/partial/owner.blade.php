@@ -37,7 +37,7 @@
             <label for="lead_budget">{{ __('Budget') }}</label>
             <select name="lead_budget[]" id="lead_budget" class="js-budgets-all form-control form-control-sm" multiple>
             </select>
-            @if(!is_null($event->budget))
+            @if(is_null($event->budget))
                 <div class="col-form-label">
                     <span>{{ __('Old:') }} <b>{{ $event->budget }}</b></span></div>
             @endif

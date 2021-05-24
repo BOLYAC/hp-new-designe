@@ -25,16 +25,15 @@ Route::group(
     function () {
         Route::get('/', 'HomeController@index')->name('home');
         Route::get('clients/all-new', 'HomeController@userNew')->name('dashboard.data');
+        Route::get('agencies/all-new', 'HomeController@agenciesAll')->name('dashboard.agencies.data');
         Route::resource('clients', 'ClientsController');
         Route::resource('notes', 'NotesController');
         Route::resource('users', 'UsersController');
         Route::resource('roles', 'RolesController');
         Route::resource('projects', 'ProjectsController');
-        Route::resource('leads', 'LeadsController');
         Route::resource('tasks', 'TasksController');
         Route::resource('events', 'EventsController');
         Route::resource('sources', 'SourcesController');
-        Route::resource('invoices', 'OrderController');
         Route::resource('documents', 'DocumentController');
         Route::resource('payments', 'PaymentController');
 
@@ -52,9 +51,14 @@ Route::group(
         Route::resource('teams', 'TeamController');
 
         // Invoices
-        Route::post('/invoices/commission-stat', 'OrderController@commissionStat')->name('change.commission_stat');
+        Route::group(['prefix' => 'invoices'], function () {
+            Route::post('/commission-stat', 'OrderController@commissionStat')->name('change.commission_stat');
+            Route::get('/payments-data/{invoice}', 'PaymentController@paymentsDataTable')->name('invoice.paymentsDataTable');
+            Route::post('/status-change', 'OrderController@changeStatus')->name('invoice.status.change');
+            Route::get('/print/{invoice}', 'OrderController@printInvoice')->name('invoices.print');
+        });
+
         Route::resource('invoices', 'OrderController');
-        Route::get('/payments-data/{invoice}', 'PaymentController@paymentsDataTable')->name('invoice.paymentsDataTable');
 
         // Report For events
         Route::get('/show-report/{val}', 'EventsController@showReport')->name('view.report');
@@ -88,8 +92,12 @@ Route::group(
         Route::get('/projects/getProject/{id}', 'ProjectsController@getProject')->name('project.api');
         Route::get('/project/show/{id}', 'ProjectsController@getSingleProject')->name('project.api.show');
         // Agencies
-        Route::get('agencies/{id}', 'AgencyController@getAgencySellsOffice')->name('agencies.sells-office-edit');
         Route::resource('agencies', 'AgencyController');
+        Route::get('agencies/{id}', 'AgencyController@getAgencySellsOffice')->name('agencies.sells-office-edit');
+
+        // Leads
+        Route::get('/leads/data', 'LeadsController@anyData')->name('leads.data');
+        Route::resource('leads', 'LeadsController');
 
 
         // Settings

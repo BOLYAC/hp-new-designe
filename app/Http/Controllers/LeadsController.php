@@ -4,18 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use App\Models\Invoice;
-use App\Models\²;
 use App\Models\Lead;
+use App\Models\StageLog;
 use App\Models\User;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Ramsey\Uuid\Uuid;
+use Yajra\DataTables\Facades\DataTables;
 
 class LeadsController extends Controller
 {
@@ -25,10 +23,112 @@ class LeadsController extends Controller
      * @param Request $request
      * @return Application|Factory|View
      */
-    public function index(Request $request)
+    public function index()
     {
-        $leads = Lead::all();
-        return view('leads.index', compact('leads'));
+        $users = User::all();
+        return view('leads.index', compact('users'));
+    }
+
+    /**
+     * Make json response for datatable
+     * @param Request $request
+     * @return mixed
+     * @throws \Exception
+     */
+    public function anyData(Request $request)
+    {
+        $leads = Lead::with(['client', 'user']);
+
+        if ($request->get('stage')) {
+            $leads->where('stage_id', '=', $request->get('stage'));
+        }
+        if ($request->get('user')) {
+            $leads->where('user_id', '=', $request->get('user'));
+        }
+
+        $leads->OrderByDesc('created_at');
+
+
+        return Datatables::of($leads)
+            ->setRowId('id')
+            ->editColumn('full_name', function ($leads) {
+                return '<a href="leads/' . $leads->id . '/edit">' . $leads->lead_name ?? $leads->client->full_name ?? '' . '</a>';
+            })
+            ->editColumn('stage', function ($leads) {
+                $i = $leads->stage_id;
+                switch ($i) {
+                    case 1:
+                        return '<span class="badge badge-light-primary f-w-600">' . __('In contact') . '</span>';
+                        break;
+                    case 2:
+                        return '<span class="badge badge-light-primary f-w-600">' . __('Appointment Set') . '</span>';
+                        break;
+                    case 3:
+                        return '<span class="badge badge-light-primary f-w-600">' . __('Follow up') . '</span>';
+                        break;
+                    case 4:
+                        return '<span class="badge badge-light-primary f-w-600">' . __('Reservation') . '</span>';
+                        break;
+                    case 5:
+                        return '<span class="badge badge-light-primary f-w-600">' . __('Contract signed') . '</span>';
+                        break;
+                    case 6:
+                        return '<span class="badge badge-light-primary f-w-600">' . __('Down payment') . '</span>';
+                        break;
+                    case 7:
+                        return '<span class="badge badge-light-primary f-w-600">' . __('Developer invoice') . '</span>';
+                        break;
+                    case 8:
+                        return '<span class="badge badge-light-success f-w-600">' . __('Won Deal') . '</span>';
+                        break;
+                    case 9:
+                        return '<span class="badge badge-light-danger f-w-600">' . __('Lost') . '</span>';
+                        break;
+                }
+            })
+            ->editColumn(
+                'user',
+                function ($leads) {
+                    return '<span class="badge badge-success">' . optional($leads->user)->name . '</span>';
+                }
+            )
+            ->editColumn(
+                'sells',
+                function ($leads) {
+                    $cou = '';
+                    $sellRep = collect($leads->sells_names)->toArray();
+                    foreach ($sellRep as $name) {
+                        $cou .= '<span class="badge badge-dark">' . $name . '</span>';
+                    }
+                    return $cou;
+                })
+            ->addColumn(
+                'stat', function ($leads) {
+                if ($leads->invoice_id <> 0) {
+                    return '<span class="badge badge-success">' . __('Deal Won') . '</span >';
+                } else {
+                    if (auth()->user()->hasPermissionTo('transfer-deal-to-invoice')) {
+                        return '<form action="' . route('lead.convert.order', $leads->id) . '"
+                                  onSubmit="return confirm(\'Are you sure?\');"
+                                  method="post">
+                                <input type="hidden" name="_token" value="' . csrf_token() . '" />
+                                <button type="submit"
+                                        class="btn btn-success btn-xs">'
+                            . __('To the invoice') .
+                            ' <i class="icon-arrow-right"></i>
+                                </button>
+                            </form>';
+                    }
+                }
+
+            })->addColumn('action', '<a href="{{ route(\'leads.show\', $id) }}"
+                                               class="m-r-15 text-muted f-18"><i
+                                                    class="icofont icofont-eye-alt"></i></a>
+                                            <a href="#!"
+                                               class="m-r-15 text-muted f-18 delete"><i
+                                                    class="icofont icofont-trash"></i></a>')
+            ->rawColumns(['full_name', 'user', 'stage', 'sells', 'stat', 'action'])
+            ->make(true);
     }
 
     /**
@@ -84,8 +184,9 @@ class LeadsController extends Controller
      */
     public function show(Lead $lead)
     {
-      $users = User::all();
-      return view('leads.show', compact('lead', 'users'));
+        $users = User::all();
+        $stage_logs = StageLog::all();
+        return view('leads.show', compact('lead', 'users', 'stage_logs'));
     }
 
     /**
@@ -121,13 +222,18 @@ class LeadsController extends Controller
     {
         $lead->delete();
 
-        return redirect()->route('leads.index')->with('success', 'Deal deleted successfully.');
+        return redirect()->route('leads.index')->with('toast_danger', 'Deal deleted successfully.');
     }
 
     public function convertToOrder(Lead $lead)
     {
+        if (is_null($lead->sellers) || empty($lead->sellers)) {
+            return redirect()->back()->with('toast_danger', 'You must select Sales!');
+        }
+
         $client = Client::findOrFail($lead->client_id);
 
+        $sale = User::where('id', '=', $lead->sellers[0])->first();
         $data['client_name'] = $client->full_name;
         $data['client_id'] = $client->id;
         $data['sells_name'] = $lead->sells_names;
@@ -135,12 +241,14 @@ class LeadsController extends Controller
         $data['owner_name'] = Auth::user()->name;
         $data['lead_name'] = $lead->owner_name;
         $data['lead_owner_id'] = $lead->user_id;
-        $data['status'] = 3;
+        $data['status'] = 2;
         $data['user_id'] = \auth()->id();
         $data['created_by'] = Auth::id();
         $data['updated_by'] = Auth::id();
         $data['external_id'] = Uuid::uuid4()->toString();
         $data['lead_id'] = $lead->id;
+        $data['user_commission_rate'] = \auth()->user()->commission_rate;
+        $data['sale_commission_rate'] = $sale->commission_rate;
 
         $invoice = Invoice::create($data);
         $lead->stage_id = 8;
@@ -157,6 +265,47 @@ class LeadsController extends Controller
         $lead->update([
             'stage_id' => $request->get('stage_id')
         ]);
+
+
+        $i = $request->get('stage_id');
+        switch ($i) {
+            case 1:
+                $stage = 'In contact';
+                break;
+            case 2:
+                $stage = 'Appointment Set';
+                break;
+            case 3:
+                $stage = 'Follow up';
+                break;
+            case 4:
+                $stage = 'Reservation';
+                break;
+            case 5:
+                $stage = 'Contract signed';
+                break;
+            case 6:
+                $stage = 'Down payment';
+                break;
+            case 7:
+                $stage = 'Developer invoice';
+                break;
+            case 8:
+                $stage = 'Won Deal';
+                break;
+            case 9:
+                $stage = 'Lost';
+                break;
+        }
+
+
+        $lead->StageLog()->create([
+            'stage_name' => $stage,
+            'update_by' => \auth()->id(),
+            'user_name' => \auth()->user()->name,
+            'stage_id' => $request->get('stage_id')
+        ]);
+
         try {
             return json_encode($lead, JSON_THROW_ON_ERROR);
         } catch (JsonException $e) {

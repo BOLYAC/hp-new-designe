@@ -1,6 +1,6 @@
 @if($mode === 'create')
     <div class="card">
-        <div class="card-header d-flex justify-content-between">
+        <div class="card-header b-t-primary b-b-primary p-2 d-flex justify-content-between">
             <h6 class="mb-0 f-w-600">{{ __('Add task') }}</h6>
             <button wire:click="updateMode('show')" class="btn btn-outline-primary btn-sm"><i
                     class="icon-arrow-left"></i> {{ __('Return to tasks list') }}
@@ -75,7 +75,7 @@
 @endif
 @if($mode === 'show')
     <div class="card">
-        <div class="card-header b-t-primary d-flex justify-content-between">
+        <div class="card-header b-t-primary b-b-primary p-2 d-flex justify-content-between">
             <h6 class="mb-0 f-w-600">{{ __('Tasks') }}</h6>
             @can('task-create')
                 <button wire:click="updateMode('create')" class="btn btn-outline-primary btn-sm">

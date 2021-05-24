@@ -7,8 +7,10 @@ use App\Models\Note;
 use App\Models\Task;
 use Exception;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\View\View;
 use Yajra\DataTables\Facades\DataTables;
 
 class AgencyController extends Controller
@@ -91,7 +93,7 @@ class AgencyController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|Response
+     * @return Application|Factory|Response|View
      */
     public function create()
     {

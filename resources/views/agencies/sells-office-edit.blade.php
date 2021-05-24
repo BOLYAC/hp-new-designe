@@ -1,5 +1,5 @@
 @extends('layouts.vertical.master')
-@section('title', 'Agency edit')
+@section('title', '| Agency edit')
 
 @section('style_before')
     <!-- Plugins css start-->
@@ -185,6 +185,12 @@
                                                         <input class="form-control sm" type="text" name="tax_number"
                                                                id="tax_number"
                                                                value="{{ old('tax_number' , $agency->tax_number) }}">
+                                                    </div>
+                                                    <div class="form-group input-group-sm col-md">
+                                                        <label for="tax_branch">{{ __('Tax branch') }}</label>
+                                                        <input class="form-control sm" type="text" name="tax_branch"
+                                                               id="tax_number"
+                                                               value="{{ old('tax_branch' , $agency->tax_branch) }}">
                                                     </div>
                                                 </div>
                                                 <div class="row">

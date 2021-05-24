@@ -25,7 +25,9 @@ class Event extends Model implements Auditable
     'event_date' => 'datetime:Y-m-d',
     'lang' => 'array',
     'sellers' => 'array',
-    'sells_name' => 'array'
+    'sells_name' => 'array',
+    'budget' => 'array',
+    'lead_lang' => 'array'
   ];
 
   public function user()

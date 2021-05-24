@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Agency;
 use App\Jobs\AssignedClientEmailJob;
 use App\Models\Client;
 use App\Models\Country;
@@ -35,32 +36,23 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $clients = Client::whereType(true)->count();
-        $sources = Source::all();
-        $users = User::all();
         $allClients = Client::count();
         $todayTasks = Task::with(['agency', 'client'])->archive(false)->whereDate('date', Carbon::today())->get();
         $olderTask = Task::with(['agency', 'client'])->archive(true)->whereDate('date', '<', Carbon::today())->count();
         $tomorrowTasks = Task::with(['agency', 'client'])->archive(false)->whereDate('date', Carbon::tomorrow())->get();
         $pendingTasks = Task::with(['agency', 'client'])->archive(false)->whereDate('date', '<', Carbon::today())->get();
         $completedTasks = Task::with(['agency', 'client'])->archive(true)->get();
-        if (auth()->user()->hasRole('User')) {
-            $events = Event::whereHas('user', function ($query) {
-                $query->whereDate('event_date', Carbon::today())
-                    ->where('user_id', Auth::id());
-            })->count();
-        } else {
-            $events = Event::whereDate('event_date', Carbon::today())->count();
-        }
+        $events = Event::whereDate('event_date', Carbon::today())->count();
 
-
-        return view('dashboard.index', compact('todayTasks', 'pendingTasks', 'olderTask', 'events', 'clients', 'completedTasks', 'allClients', 'tomorrowTasks', 'sources', 'users'));
+        return view('dashboard.index',
+            compact('todayTasks', 'pendingTasks', 'olderTask', 'events', 'completedTasks', 'tomorrowTasks', 'allClients')
+        );
     }
 
     public function userNew()
     {
         $clients = Client::select(['id', 'full_name', 'country', 'nationality', 'status', 'priority', 'type', 'created_at', 'updated_at'])
-            ->where('type', true);
+            ->where('status', 1);
         return Datatables::of($clients)
             ->setRowId('id')
             ->editColumn('created_at', function ($clients) {
@@ -157,6 +149,33 @@ class HomeController extends Controller
                     return optional($clients->appointment_date)->format('d-m-Y') ?? '';
                 })
             ->rawColumns(['full_name', 'status', 'priority', 'country', 'nationality'])
+            ->make(true);
+    }
+
+
+    public function agenciesAll()
+    {
+        $agencies = Agency::with(['clients'])->select(['id', 'name', 'company_type', 'phone', 'created_at'])->get();
+        return DataTables::of($agencies)
+            ->editColumn('company_type', function ($agency) {
+                return $agency->company_type === 1 ? __('Company') : __('Freelance');
+            })
+            ->editColumn('name', function ($agency) {
+                if (auth()->user()->hasPermissionTo('department-agencies-sell')) {
+                    return '<div class="product-name"><a href="agencies/' . $agency->id . '">' . $agency->name . '</a></div>';
+                } else {
+                    return '<div class="product-name"><a href="agencies/' . $agency->id . '/edit">' . $agency->name . '</a></div>';
+
+                }
+            })
+            ->addColumn('created_at',
+                function ($agency) {
+                    return optional($agency->created_at)->format('d-m-Y') ?? '';
+                })
+            ->editColumn('phone', function ($agency) {
+                return $agency->phone;
+            })
+            ->rawColumns(['name'])
             ->make(true);
     }
 

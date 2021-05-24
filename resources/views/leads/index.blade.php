@@ -7,10 +7,6 @@
     <link rel="stylesheet" href="{{ asset('assets/css/datatable-extension.css') }}">
 @endsection
 
-@section('style')
-
-@endsection
-
 @section('script')
 
     <script src="{{asset('assets/js/datatables/jquery.dataTables.min.js')}}"></script>
@@ -25,7 +21,38 @@
 
     <script>
         $(document).ready(function () {
-            let table = $('#res-config').DataTable();
+            let table = $('#res-config').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: '{{ route('leads.data') }}',
+                    data: function (d) {
+                        d.stage = $('select[name=status_filter]').val();
+                        d.user = $('select[name=user_filter]').val();
+                    }
+                },
+                columns: [
+                    {data: 'full_name', name: 'full_name'},
+                    {data: 'stage', name: 'stage'},
+                    {data: 'user', name: 'user'},
+                    {data: 'sells', name: 'sells'},
+                    {data: 'stat', name: 'stat'},
+                    {data: 'action', name: 'action'},
+                ],
+                order: [],
+                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]]
+            });
+            // Assigne user
+            $('#refresh').click(function () {
+                $('select[name=status_filter]').val('');
+                $('select[name=user_filter]').val('');
+                table.DataTable().destroy();
+            });
+            // Search form
+            $('#search-form').on('submit', function (e) {
+                e.preventDefault();
+                table.draw();
+            });
             table.on('click', '.delete', function () {
                 $tr = $(this).closest('tr');
                 if ($($tr).hasClass('child')) {
@@ -44,14 +71,67 @@
 @section('breadcrumb-items')
     <li class="breadcrumb-item">{{ __('Deals') }}</li>
 @endsection
-
-@section('breadcrumb-title')
-
-@endsection
 @section('content')
     <div class="container-fluid">
         <div class="row">
-            <div class="col-12 mx-auto">
+            <div class="col-sm-2">
+                <div class="card p-1">
+                    <div class="card-header b-l-primary p-2">
+                        <h6 class="m-0">{{ __('Filter deal by:') }}</h6>
+                    </div>
+                    <form id="search-form">
+                        <div class="card-body p-2">
+                            <div class="form-group mb-2">
+                                <select class="form-control form-control-sm digits" id="status_filter"
+                                        name="status_filter">
+                                    <option value="">{{ __('Select stage') }}</option>
+                                    <option value="1">{{ __('In contact') }}</option>
+                                    <option value="2">{{ __('Appointment Set') }}</option>
+                                    <option value="3">{{ __('Follow up') }}</option>
+                                    <option value="4">{{ __('Reservation') }}</option>
+                                    <option value="5">{{ __('contract signed') }}</option>
+                                    <option value="6">{{ __('Down payment') }}</option>
+                                    <option value="7">{{ __('Developer invoice') }}</option>
+                                    <option value="8">{{ __('Won Deal') }}</option>
+                                    <option value="9">{{ __('Lost') }}</option>
+                                </select>
+                            </div>
+                            @if(auth()->user()->hasRole('Admin'))
+                                <div class="form-group mb-2">
+                                    <option value="">{{ __('Assigned') }}</option>
+                                    <select name="user_filter" id="user_filter"
+                                            class="custom-select custom-select-sm">
+                                        <option value="">{{ __('Assigned') }}</option>
+                                        @foreach($users as $row)
+                                            <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            @elseif(auth()->user()->hasRole('Manager'))
+                                @if(auth()->user()->ownedTeams()->count() > 0)
+                                    <div class="form-group mb-2">
+                                        <select name="user_filter" id="user_filter"
+                                                class="custom-select custom-select-sm">
+                                            <option value="">{{ __('Assigned') }}</option>
+                                            @foreach(auth()->user()->currentTeam->allUsers() as $user)
+                                                <option
+                                                    value="{{ $user->id }}">{{ $user->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endif
+                            @endif
+                        </div>
+                        <div class="card-footer p-2">
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <button class="btn btn-primary" type="submit">{{ __('Filter') }}</button>
+                                <button class="btn btn-light" type="button" id="refresh">{{ __('Clear') }}</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-sm-10">
                 @include('partials.flash-message')
                 <div class="card">
                     <div class="card-header p-3 b-t-primary">
@@ -67,109 +147,14 @@
                                    style="width:100%">
                                 <thead>
                                 <tr>
-                                    <th width="4%">N°</th>
                                     <th data-priority="1">{{ __('Client') }}</th>
                                     <th data-priority="4">{{ __('Stage') }}</th>
                                     <th>{{ __('Assigned') }}</th>
-                                    <th>
-                                        {{ __('Sell representative') }}
-                                    </th>
+                                    <th>{{ __('Sell representative') }}</th>
                                     <th></th>
-                                    <th data-priority="2">
-                                        {{ __('Action') }}
-                                    </th>
+                                    <th data-priority="2">{{ __('Action') }}</th>
                                 </tr>
                                 </thead>
-                                <tbody>
-                                @foreach($leads as $key => $lead)
-                                    <tr>
-                                        <td>{{ $lead->id }}</td>
-                                        <td>
-                                            @if($lead->client)
-                                                {{ $lead->client->full_name ?? '' }}
-                                            @else
-                                                {{ $lead->lead_name ?? '' }}
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @switch($lead->stage_id)
-                                                @case(1)
-                                                <span
-                                                    class="badge badge-light-primary">{{ __('In contact') }}</span>
-                                                @break;
-                                                @case(2)
-                                                <span
-                                                    class="badge badge-light-primary">{{ __('Appointment Set') }}</span>
-                                                @break;
-                                                @case(3)
-                                                <span
-                                                    class="badge badge-light-primary">{{ __('Follow up') }}</span>
-                                                @break;
-                                                @case(4)
-                                                <span
-                                                    class="badge badge-light-primary">{{ __('Reservation') }}</span>
-                                                @break;
-                                                @case(5)
-                                                <span
-                                                    class="badge badge-light-primary">{{ __('contract signed') }}</span>
-                                                @break;
-                                                @case(6)
-                                                <span
-                                                    class="badge badge-light-primary">{{ __('Down payment') }}</span>
-                                                @break;
-                                                @case(7)
-                                                <span
-                                                    class="badge badge-light-primary">{{ __('Developer invoice') }}</span>
-                                                @break;
-                                                @case(8)
-                                                <span
-                                                    class="badge badge-light-success">{{ __('Won Deal') }}</span>
-                                                @break;
-                                                @case(9)
-                                                <span class="badge badge-light-danger">{{ __('Lost') }}</span>
-                                                @break;
-                                            @endswitch
-                                        </td>
-                                        <td>
-                                          <span class="f-w-600">
-                                            {{ $lead->user->name }}
-                                          </span>
-                                        </td>
-                                        <td>
-                                            @php $sellRep = collect($lead->sells_names)->toArray() @endphp
-                                            @foreach( $sellRep as $name)
-                                                <span class="badge badge-secondary">{{ $name }}</span>
-                                            @endforeach
-                                        </td>
-                                        <td>
-                                            @if($lead->invoice_id <> 0)
-                                                <span class="badge badge-success">{{ __('Deal Won') }}</span>
-                                            @else
-                                                @can('transfer-deal-to-invoice')
-                                                    <form action="{{ route('lead.convert.order', $lead) }}"
-                                                          onSubmit="return confirm('Are you sure?');"
-                                                          method="post">
-                                                        @csrf
-                                                        <button type="submit"
-                                                                class="btn btn-success btn-outline-success btn-sm"
-                                                                href="">{{ __('Convert to invoice') }} <i
-                                                                class="fa fa-mail-forward"></i>
-                                                        </button>
-                                                    </form>
-                                                @endcan
-                                            @endif
-                                        </td>
-                                        <td class="action-icon">
-                                            <a href="{{ route('leads.show', $lead) }}"
-                                               class="m-r-15 text-muted f-18"><i
-                                                    class="icofont icofont-eye-alt"></i></a>
-                                            <a href="#!"
-                                               class="m-r-15 text-muted f-18 delete"><i
-                                                    class="icofont icofont-trash"></i></a>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                                </tbody>
                             </table>
                         </div>
                     </div>

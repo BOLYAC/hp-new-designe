@@ -5,6 +5,7 @@
     <!-- Summernote.css-->
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/summernote.css') }}">
 @endsection
+
 @section('script')
     <!-- Plugins JS start-->
     <script src="{{ asset('assets/js/editor/summernote/summernote.js') }}"></script>

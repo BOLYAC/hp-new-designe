@@ -8,13 +8,9 @@
 @endsection
 
 @section('script')
-
     <!-- Plugins JS start-->
     <script src="{{ asset('assets/js/select2/select2.full.min.js') }}"></script>
-
     <script src="{{ asset('assets/js/select2/select2-custom.js') }}"></script>
-
-
 @endsection
 
 
@@ -56,6 +52,10 @@
                             <div class="form-group input-group-sm">
                                 <label for="password">{{ __('Phone 2') }}</label>
                                 <input class="form-control" type="text" name="phone_2" id="phone_2">
+                            </div>
+                            <div class="form-group input-group-sm">
+                                <label for="commission_rate">{{ __('Commission rate') }}</label>
+                                <input class="form-control" type="text" name="commission_rate" id="commission_rate">
                             </div>
                             <div class="form-group input-group-sm">
                                 <label for="roles">{{__('Role')}}</label>

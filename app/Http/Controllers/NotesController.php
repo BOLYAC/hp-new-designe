@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Client;
 use App\Models\Note;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class NotesController extends Controller
 {
@@ -15,7 +17,18 @@ class NotesController extends Controller
      */
     public function index()
     {
-        //
+
+//        DB::table('clients')->update(['department_id' => 1]);
+//        DB::table('events')->update(['department_id' => 1]);
+//        DB::table('comments')->update(['department_id' => 1]);
+//        DB::table('invoices')->update(['department_id' => 1]);
+//        DB::table('leads')->update(['department_id' => 1]);
+//        DB::table('notes')->update(['department_id' => 1]);
+//        DB::table('payments')->update(['department_id' => 1]);
+//        DB::table('tasks')->update(['department_id' => 1]);
+//        DB::table('agencies')->update(['department_id' => 1]);
+//        DB::table('users')->update(['department_id' => 1]);
+//        DB::table('teams')->update(['department_id' => 1]);
     }
 
     /**

@@ -1,6 +1,6 @@
 @if($mode === 'create')
     <div class="card">
-        <div class="card-header d-flex justify-content-between">
+        <div class="card-header b-t-primary b-b-primary p-2 d-flex justify-content-between">
             <h6 class="mb-0 f-w-600">{{ __('Notes') }}</h6>
             @can('note-create')
                 <button wire:click="updateMode('show')" class="btn btn-primary btn-sm"><i
@@ -54,7 +54,7 @@
                     <div class="tab-pane fade active show" id="pills-created" role="tabpanel"
                          aria-labelledby="pills-created-tab">
                         <div class="card mb-0">
-                            <div class="card-header d-flex justify-content-between">
+                            <div class="card-header p-2 b-t-primary b-b-primary d-flex justify-content-between">
                                 <h6 class="mb-0 f-w-600"><i class="file-text"></i> {{ __('Notes') }}</h6>
                                 @can('note-create')
                                     <button wire:click="updateMode('create')" class="btn btn-outline-primary btn-sm">{{ __('Add

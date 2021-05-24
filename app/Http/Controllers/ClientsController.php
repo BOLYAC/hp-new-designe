@@ -270,13 +270,13 @@ class ClientsController extends Controller
                 $i = $clients->priority;
                 switch ($i) {
                     case 1:
-                        return '<label class="txt-success">' . __('Low') . '</label>';
+                        return '<label class="txt-success f-w-600">' . __('Low') . '</label>';
                         break;
                     case 2:
-                        return '<label class="txt-warning">' . __('Medium') . '</label>';
+                        return '<label class="txt-warning f-w-600">' . __('Medium') . '</label>';
                         break;
                     case 3:
-                        return '<label class="txt-danger">' . __('High') . '</label>';
+                        return '<label class="txt-danger f-w-600">' . __('High') . '</label>';
                         break;
                 }
             })

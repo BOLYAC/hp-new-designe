@@ -22,7 +22,15 @@
                             alt=""><span class="media-body"><span class="f-12 f-w-600">{{ auth()->user()->name }}</span><span
                                 class="d-block">{{ auth()->user()->roles->first()->name }}</span></span></span>
                     <ul class="profile-dropdown onhover-show-div">
-                        <li><i data-feather="log-in"></i>{{ __('Logout') }}</li>
+                        <li>
+                            <a class="link-effect text-dual-primary-dark" href="{{ route('logout') }}"
+                               onclick="event.preventDefault();document.getElementById('logout-form').submit();">
+                                <i data-feather="log-in"></i>{{ __('Logout') }}
+                            </a>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                @csrf
+                            </form>
+                            </li>
                     </ul>
                 </li>
             </ul>

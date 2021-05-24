@@ -27,7 +27,6 @@ class PaymentController extends Controller
 
     public function store(Request $request)
     {
-
         $payment = Payment::create([
             'external_id' => Uuid::uuid4()->toString(),
             'amount' => $request->amount,

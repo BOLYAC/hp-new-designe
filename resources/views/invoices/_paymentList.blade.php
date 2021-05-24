@@ -3,11 +3,11 @@
         <div class="order-history dt-ext table-responsive">
             <table class="table table-striped display table-bordered nowrap"
                    width="100%" cellspacing="0" id="payments-table">
-                <h3>{{ __('Payments') }}</h3>
+                <h3>{{ __('Commission') }}</h3>
                 <thead>
                 <tr>
-                    <th>{{ __('Payment date') }}</th>
-                    <th>{{ __('Payment source') }}</th>
+                    <th>{{ __('Date add') }}</th>
+                    <th>{{ __('Type') }}</th>
                     <th>{{ __('Amount') }}</th>
                     <th>{{ __('Description') }}</th>
                     <th></th>

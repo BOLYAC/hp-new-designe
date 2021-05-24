@@ -22,7 +22,16 @@
                             alt=""><span class="media-body"><span class="f-12 f-w-600"><?php echo e(auth()->user()->name); ?></span><span
                                 class="d-block"><?php echo e(auth()->user()->roles->first()->name); ?></span></span></span>
                     <ul class="profile-dropdown onhover-show-div">
-                        <li><i data-feather="log-in"></i><?php echo e(__('Logout')); ?></li>
+                        <li>
+                            <a class="link-effect text-dual-primary-dark" href="<?php echo e(route('logout')); ?>"
+                               onclick="event.preventDefault();document.getElementById('logout-form').submit();">
+                                <i data-feather="log-in"></i><?php echo e(__('Logout')); ?>
+
+                            </a>
+                            <form id="logout-form" action="<?php echo e(route('logout')); ?>" method="POST" style="display: none;">
+                                <?php echo csrf_field(); ?>
+                            </form>
+                            </li>
                     </ul>
                 </li>
             </ul>

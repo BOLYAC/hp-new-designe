@@ -383,6 +383,23 @@
                         </div>
                     </div>
                 @endcan
+                <div class="card card-with-border">
+                    <div class="card-header">
+                        <h5 class="d-inline-block">{{ __('Stage activity') }}</h5>
+                    </div>
+                    <div class="card-body activity-social">
+                        <ul>
+                            @foreach($stage_logs as $log)
+                                <li class="border-recent-success">
+                                    <small>{{ $log->created_at->format('Y-m-d H:i') }}</small>
+                                    <p class="mb-0">{{ __('Stage change to') }}: <span
+                                            class="f-w-800 text-primary">{{ $log->stage_name }}</span></p>
+                                    <P>by <a href="#">{{ $log->user_name }}</a></P>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
 

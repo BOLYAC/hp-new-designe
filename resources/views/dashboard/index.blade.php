@@ -66,6 +66,35 @@
                     }
                 ],
             });
+            $('#agency-table').DataTable({
+                destroy: true,
+                stateSave: false,
+                order: [[0, 'asc']],
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                ajax: {
+                    url: '{!! route('dashboard.agencies.data') !!}'
+                },
+                columns: [
+                    {
+                        data: 'created_at',
+                        name: 'created_at',
+                    },
+                    {
+                        data: 'company_type',
+                        name: 'company_type',
+                    },
+                    {
+                        data: 'name',
+                        name: 'name'
+                    },
+                    {
+                        data: 'phone',
+                        name: 'phone'
+                    },
+                ],
+            });
             $('#today-table').DataTable();
             $('#tomorrow-table').DataTable();
             $('#pending-table').DataTable();
@@ -128,6 +157,10 @@
                                                 href="#top-lead" role="tab" aria-controls="top-lead"
                                                 aria-selected="true">{{ __('New lead') }}</a>
                         </li>
+                        <li class="nav-item"><a class="nav-link" id="top-agency-tab" data-toggle="tab"
+                                                href="#top-agency" role="tab" aria-controls="top-agency"
+                                                aria-selected="true">{{ __('Agencies') }}</a>
+                        </li>
                         <li class="nav-item"><a class="nav-link" id="today-top-tab" data-toggle="tab"
                                                 href="#top-today" role="tab" aria-controls="top-today"
                                                 aria-selected="false">{{ __('Today tasks') }}</a></li>
@@ -160,6 +193,21 @@
                                 </table>
                             </div>
                         </div>
+                        <div class="tab-pane fade show" id="top-agency" role="tabpanel"
+                             aria-labelledby="top-agency-tab">
+                            <div class="order-history dt-ext table-responsive">
+                                <table class="display" id="agency-table">
+                                    <thead>
+                                    <tr>
+                                        <th data-priority="1">{{ __('Create at') }}</th>
+                                        <th>{{ __('Agency type') }}</th>
+                                        <th>{{ __('Name') }}</th>
+                                        <th>{{ __('Phone') }}</th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
                         <div class="tab-pane fade" id="top-today" role="tabpanel" aria-labelledby="profile-top-tab">
                             <div class="dt-ext table-responsive">
                                 <table class="display" id="today-table">
@@ -175,7 +223,18 @@
                                     <tbody>
                                     @foreach($todayTasks as $todayTask)
                                         <tr class="unread">
-                                            <td><a href="#!" class="email-name">{{ $todayTask->title ?? '' }}</a>
+                                            <td>
+                                                @if($todayTask->soure_type === 'App\Agency')
+                                                    <a href="{{ route('agencies.edit', ['agency' => $todayTask->agency->id]) }}"
+                                                       class="email-name">
+                                                        {{ $todayTask->title ?? '' }}
+                                                    </a>
+                                                @else
+                                                    <a href="{{ route('clients.edit', ['client' => $todayTask->client->id]) }}"
+                                                       class="email-name">
+                                                        {{ $todayTask->title ?? '' }}
+                                                    </a>
+                                                @endif
                                             </td>
                                             <td>
                                                 {{ optional($todayTask->client)->full_name }}
@@ -226,7 +285,18 @@
                                     <tbody>
                                     @foreach($tomorrowTasks as $tomorrowTask)
                                         <tr class="unread">
-                                            <td><a href="#!" class="email-name">{{ $tomorrowTask->title ?? ' '}}</a>
+                                            <td>
+                                                @if($tomorrowTask->soure_type === 'App\Agency')
+                                                    <a href="{{ route('agencies.edit', ['agency' => $tomorrowTask->agency->id]) }}"
+                                                       class="email-name">
+                                                        {{ $tomorrowTask->title ?? '' }}
+                                                    </a>
+                                                @else
+                                                    <a href="{{ route('clients.edit', ['client' => $tomorrowTask->client->id]) }}"
+                                                       class="email-name">
+                                                        {{ $tomorrowTask->title ?? '' }}
+                                                    </a>
+                                                @endif
                                             </td>
                                             <td>
                                                 {{ optional($tomorrowTask->client)->full_name }}
@@ -276,10 +346,23 @@
                                     <tbody>
                                     @foreach($pendingTasks as $pendingTask)
                                         <tr>
-                                            <td><a href="#!" class="email-name">{{ $pendingTask->title ?? '' }}</a>
+                                            <td>
+                                                @if($pendingTask->soure_type == 'App\Agency')
+                                                    <a href="{{ route('agencies.edit', ['agency' => $pendingTask->agency->id]) }}"
+                                                       class="email-name">
+                                                        {{ $pendingTask->title ?? '' }}
+                                                    </a>
+                                                @else
+                                                    @if(!is_null($pendingTask->client_id))
+                                                        <a href="{{ route('clients.edit', ['client' => $pendingTask->client_id]) }}"
+                                                           class="email-name">
+                                                            {{ $pendingTask->title ?? '' }}
+                                                        </a>
+                                                    @endif
+                                                @endif
+                                                {{ $pendingTask->soure_type }}
                                             </td>
                                             <td>
-
                                                 {{ optional($pendingTask->client)->full_name }}
                                                 {{ optional($pendingTask->agency)->title }}
                                             </td>
@@ -334,9 +417,18 @@
                                                 <div class="round-product"><i
                                                         class="icofont icofont-check"></i></div>
                                             </td>
-                                            <td><a href="#!" class="email-name">
-                                                    {{ $completedTask->title ?? '' }}
-                                                </a>
+                                            <td>
+                                                @if($completedTask->soure_type === 'App\Agency')
+                                                    <a href="{{ route('agencies.edit', ['agency' => $completedTask->agency->id]) }}"
+                                                       class="email-name">
+                                                        {{ $completedTask->title ?? '' }}
+                                                    </a>
+                                                @else
+                                                    <a href="{{ route('clients.edit', ['client' => $completedTask->client->id]) }}"
+                                                       class="email-name">
+                                                        {{ $completedTask->title ?? '' }}
+                                                    </a>
+                                                @endif
                                             </td>
                                             <td>
                                                 {{ optional($completedTask->client)->full_name }}

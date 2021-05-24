@@ -1,55 +1,43 @@
 <!-- info card start -->
 <div class="card">
-    <div class="card-header d-flex justify-content-between">
-        <h5 class="mb-0 f-w-600">{{ __('Documents') }}</h5>
-        @can('task-create')
-            <button data-toggle="modal"
-                    data-target="#exampleModalCenter"
-                    class="btn btn-primary">{{ __('Add Documents') }} <i class="icon-plus"></i>
-            </button>
-        @endcan
+    <div class="card-header b-b-primary p-2 d-flex justify-content-between">
+        <h6 class="text-muted">{{ __('Documents') }}</h6>
+        <button data-toggle="modal"
+                data-target="#exampleModalCenter"
+                class="btn btn-primary">{{ __('Add') }} <i class="icon-plus"></i>
+        </button>
     </div>
-    <div class="card-block">
-        @if($clientDocuments->count() > 0)
-            <div class="table-responsive">
-                <div class="dt-responsive table-responsive">
-                    <table id="res-config" class="table table-bordered nowrap">
-                        <thead>
+    <div class="card-body p-0">
+        <div class="table-responsive groups-table agent-performance-table">
+            <table class="table">
+                <tbody>
+                @if($clientDocuments->count() > 0)
+                    @foreach($clientDocuments as $file)
                         <tr>
-                            <th width="20%">{{ __('File') }}</th>
-                            <th width="60%">{{ __('Title') }}</th>
-                            <th width="10%">{{ __('Action') }}</th>
+                            <td>
+                                <div class="d-inline-block align-middle"><a
+                                        href="{{ asset('storage/' . $file->full) }}" data-lightbox="{{ $file->id }}"
+                                        data-title="{{ $file->title }}"><img
+                                            class="img-radius img-40 align-top m-r-15 rounded-circle"
+                                            src="{{ asset('storage/' . $file->full) }}" alt=""></a>
+                                    <div class="d-inline-block"><span
+                                            class="f-w-600 f-12 font-dark">{{ $file->title }}</span><span
+                                            class="d-block f-12 font-primary">{{ $file->excerpt }}</span></div>
+                                </div>
+                            </td>
+                            <td>
+                                @can('task-delete')
+                                    <button class="btn badge-light-primary btn-xs delete"
+                                            type="button">{{ __('Delete') }}
+                                    </button>
+                                @endcan
+                            </td>
                         </tr>
-                        </thead>
-                        <tbody>
-                        @foreach($clientDocuments as $file)
-                            <tr data-id="{{ $file->id }}">
-                                <td class="img-pro text-center">
-                                    <a href="{{ asset('storage/' . $file->full) }}" data-lightbox="{{ $file->id }}"
-                                       data-title="{{ $file->title }}">
-                                        <img src="{{ asset('storage/' . $file->full) }}" alt=""
-                                             class="img-fluid img-thumbnail img-fluid d-inline-block img-70">
-                                    </a>
-                                </td>
-                                <td class="pro-name">
-                                    <h6>{{ $file->title }}</h6>
-                                    <span
-                                        class="text-muted f-12">{{ $file->excerpt }}</span>
-                                </td>
-                                <td class="action-icon text-center">
-                                    <!--<a href="" class="m-r-15 text-muted f-18"><i class="icofont icofont-ui-edit"></i></a>-->
-                                    @can('task-delete')
-                                        <a href="#" class="text-muted f-18 delete"><i
-                                                class="icofont icofont-delete-alt"></i></a>
-                                    @endcan
-                                </td>
-                            </tr>
-                        @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        @endif
+                    @endforeach
+                @endif
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 <!-- info card end -->

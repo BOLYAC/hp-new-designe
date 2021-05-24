@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Invoice;
-use App\Models\Models\Project;
+use App\Models\Project;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -17,7 +17,7 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $invoices = Invoice::with(['user', 'client'])->get();
+        $invoices = Invoice::with(['user', 'client', 'project'])->get();
         return view('invoices.index', compact('invoices'));
     }
 
@@ -51,7 +51,8 @@ class OrderController extends Controller
      */
     public function show(Invoice $invoice)
     {
-        $amount = $invoice->price - $invoice->installment - $invoice->payments()->sum('amount');
+        //$amount = $invoice->price - $invoice->installment - $invoice->payments()->sum('amount');
+        $amount = $invoice->commission_total - $invoice->payments()->sum('amount');
         return view('invoices.show', compact('invoice', 'amount'));
     }
 
@@ -82,18 +83,14 @@ class OrderController extends Controller
         ]);
 
         $data = $request->except('_token', 'files');
-        $m = $request->get('price') - $request->get('installment') - $invoice->payments()->sum('amount');
-
-        if ($m === 0) {
-            $data['status'] = 3;
-        } else {
-            $data['status'] = 2;
-        }
+        //$m = $request->get('price') - $request->get('installment') - $invoice->payments()->sum('amount');
 
         $invoice->update($data);
-        $amount = $invoice->price - $invoice->installment - $invoice->payments()->sum('amount');
+        //$amount = $invoice->price - $invoice->installment - $invoice->payments()->sum('amount');
+
+        $amount = $invoice->commission_total - $invoice->payments()->sum('amount');
         return view('invoices.show', compact('invoice', 'amount'))
-            ->with('success', 'Invoice updated successfully');
+            ->with('toast_success', 'Invoice updated successfully');
     }
 
     /**
@@ -124,4 +121,41 @@ class OrderController extends Controller
 
     }
 
+    public function changeStatus(Request $request)
+    {
+        $lead = Invoice::findOrFail($request->get('invoice_id'));
+
+        $lead->update([
+            'status' => $request->get('status')
+        ]);
+
+        $i = $request->get('status');
+        switch ($i) {
+            case 1:
+                $stage = 'Paid';
+                break;
+            case 2:
+                $stage = 'Partially paid';
+                break;
+        }
+
+
+        /*$lead->StatusLog()->create([
+            'stage_name' => $stage,
+            'update_by' => \auth()->id(),
+            'user_name' => \auth()->user()->name,
+            'stage_id' => $request->get('stage_id')
+        ]);*/
+
+        try {
+            return json_encode($lead, JSON_THROW_ON_ERROR);
+        } catch (JsonException $e) {
+            return back()->withError($e->getMessage())->withInput();
+        }
+    }
+
+    public function printInvoice(Invoice $invoice)
+    {
+        return view('invoices.print', compact('invoice'));
+    }
 }

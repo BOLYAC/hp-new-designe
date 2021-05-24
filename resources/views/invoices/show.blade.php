@@ -76,13 +76,36 @@
                 // the checkbox is now no longer checked
             }
         });
+
+        $("#status").on('change', function (e) {
+            e.preventDefault();
+            let level = $(this).val();
+            let invoice_id = '{{ $invoice->id }}';
+            if (level) {
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ route('invoice.status.change') }}',
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                        status: level,
+                        invoice_id: invoice_id
+                    },
+                    success: function (r) {
+                        notify('Stage changed', 'success');
+                    }
+                    , error: function (error) {
+                        notify('Ops!! Something wrong', 'danger');
+                    }
+                });
+            }
+        });
     </script>
 @endsection
 
 @section('breadcrumb-items')
-    <li class="breadcrumb-item"><a href="{{ route('invoices.index') }}"></a>{{ __('Sales list') }}</li>
+    <li class="breadcrumb-item"><a href="{{ route('invoices.index') }}">{{ __('Sales list') }}</a></li>
     <li class="breadcrumb-item">{{ __('Sales page') }}</li>
-    <li class="breadcrumb-item">{{ __('Lead name') }}: <small class="ml-5">{{ $invoice->client_name }}</small></li>
+    <li class="breadcrumb-item">{{ __('Lead name') }}: <p class="f-w-600">{{ $invoice->client_name }}</p></li>
 @endsection
 @section('content')
 
@@ -94,7 +117,9 @@
                 <!-- Flying Word card start -->
                 <div class="card">
                     <div class="card-header b-t-primary b-b-primary p-2 d-flex justify-content-between">
-                        <h5>Project: {{ $invoice->project }}</h5>
+                        <h5 class="mr-auto">{{ __('Project') }}: {{ $invoice->project->company_name ?? '' }}</h5>
+                        <a href="{{ route('invoices.print', $invoice) }}"
+                           class="btn btn-sm btn-success mr-2">{{ __('Print') }}</a>
                         @can('invoice-edit')
                             <a class="btn btn-sm btn-primary"
                                href="{{ route('invoices.edit', $invoice) }}">{{ __('Edit') }}</a>
@@ -196,15 +221,30 @@
                                             </div>
                                         </div>
                                     </li>
-
                                     <li><strong>{{ __('Status:') }}</strong></li>
-                                    <li>{{ $invoice->status == 2 ? 'Partially paid' : 'Paid' }}</li>
+                                    <li>
+                                        <select name="status" id="status" class="form-control form-control-sm">
+                                            <option value="">{{ __('Select status') }}</option>
+                                            <option value="1">{{ __('paid') }}</option>
+                                            <option value="2">{{ __('Partially paid') }}</option>
+                                        </select>
+                                    </li>
                                 </ul>
                             </div>
                             <div class="col-6">
                                 <ul class="f-right text-right">
-                                    <li><strong>{{ __('Amount due:') }}</strong></li>
-                                    <li>{{ number_format($amount, 2) ?? '0.00' }} {{ $invoice->currency }}</li>
+                                    <li><strong>{{ __('Commission:') }}</strong></li>
+                                    @switch($invoice->currency)
+                                        @case('TRY')
+                                        <li>{{ number_format($amount) ?? '0.00' }} {{ $invoice->currency }}</li>
+                                        @break
+                                        @case('EUR')
+                                        <li>{{ number_format($amount, 2) ?? '0.00' }} {{ $invoice->currency }}</li>
+                                        @break
+                                        @case('USD')
+                                        <li>{{ number_format($amount, 2) ?? '0.00' }} {{ $invoice->currency }}</li>
+                                        @break
+                                    @endswitch
                                 </ul>
                             </div>
                         </div>
@@ -222,13 +262,29 @@
                             {{ __('Owner:') }}
                             <span class="badge badge-success">{{ $invoice->owner_name }}</span>
                         </div>
+                        <div>
+                            {{ __('Commission rate:') }}
+                            <span class="f-w-600">{{ $invoice->user_commission_rate ?? ''}}</span>
+                        </div>
+                        <div>
+                            {{ __('Commission total:') }}
+                            <span class="f-w-600">{{ $invoice->user_commission_total ?? '' }}</span>
+                        </div>
                         <br>
                         <div>
                             {{ __('Seller(s):') }}
                             @php $sellRep = collect($invoice->sells_name)->toArray() @endphp
                             @foreach( $sellRep as $name)
-                                <span class="label label-inverse">{{ $name }}</span>
+                                <span class="badge badge-primary">{{ $name }}</span>
                             @endforeach
+                        </div>
+                        <div>
+                            {{ __('Commission rate:') }}
+                            <span class="f-w-600">{{ $invoice->sale_commission_rate ?? ''}}</span>
+                        </div>
+                        <div>
+                            {{ __('Commission total:') }}
+                            <span class="f-w-600">{{ $invoice->sale_commission_total ?? '' }}</span>
                         </div>
                     </div>
                     <div class="card-body">
@@ -261,17 +317,20 @@
                                     <li><strong>{{ __('Phone:') }}</strong></li>
                                     <li>{{ $invoice->project->phone_1 ?? '' }}</li>
                                     <br>
-                                    <li><strong>{{ __('Passport or ID:') }}</strong></li>
-                                    <li>{!! $invoice->project->address ?? ''!!}</li>
+                                    <li><strong>{{ __('Tax ID:') }}</strong></li>
+                                    <li>{!! $invoice->project->tax_number ?? ''!!}</li>
                                     <br>
-                                    <li><strong>{{ __('Text office:') }}</strong></li>
-                                    <li>{{ $invoice->project->text_office ?? '' }}</li>
+                                    <li><strong>{{ __('Tax branch:') }}</strong></li>
+                                    <li>{{ $invoice->project->text_branch ?? '' }}</li>
                                     <br>
-                                    <li><strong>{{ __('Text address:') }}</strong></li>
+                                    <li><strong>{{ __('Address:') }}</strong></li>
                                     <li>{{ $invoice->project->text_address ?? '' }}</li>
                                     <br>
                                     <li><strong>{{ __('Commission rate:') }}</strong></li>
                                     <li>{{ $invoice->commission_rate ?? '' }} %</li>
+                                    <br>
+                                    <li><strong>{{ __('Commission total:') }}</strong></li>
+                                    <li>{{ $invoice->commission_total ?? '' }} {{ $invoice->currency }}</li>
                                 </ul>
                             </div>
                         </div>
@@ -295,7 +354,7 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">{{ __('Add Payment') }}</h5>
+                    <h5 class="modal-title">{{ __('Add commission') }}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>

@@ -36,6 +36,7 @@
     <script src="{{ asset('assets/js/editor/summernote/summernote.js') }}"></script>
     <script src="{{ asset('assets/js/editor/summernote/summernote.custom.js') }}"></script>
     <script>
+        $(function () {
         let budgetData = [
             {
                 id: 1,
@@ -86,9 +87,7 @@
         $('.js-budgets-all').select2({
             data: budgetData,
             theme: 'classic',
-        })
-
-        $(function () {
+        })      
             $(".js-budgets-all").select2({
                 theme: 'classic'
             }).val({!! json_encode($event->lead_budget) !!}).trigger('change.select2');

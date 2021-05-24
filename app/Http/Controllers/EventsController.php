@@ -90,6 +90,8 @@ class EventsController extends Controller
             $data['sells_name'] = $u;
         }
 
+
+
         $event = Event::create($data);
 
         $link = route('events.edit', $event);
@@ -126,6 +128,7 @@ class EventsController extends Controller
     public function show(Event $event)
     {
         $users = User::all();
+        //dd($event);
         return \view('events.show', compact('event', 'users'));
     }
 
@@ -179,11 +182,14 @@ class EventsController extends Controller
 
         $event->update($data);
         $event->SharedEvents()->detach();
+        if ($request->get('feedback')) {
         $lead->comments()->create([
             'external_id' => Uuid::uuid4()->toString(),
             'description' => $request->get('feedback'),
             'user_id' => $request->user_id ?? Auth::id()
-        ]);
+        ]);    
+        }
+        
         if ($request->has('share_with')) {
             $event->SharedEvents()->attach($users, ['added_by' => Auth::id(), 'user_name' => Auth::user()->name]);
         }

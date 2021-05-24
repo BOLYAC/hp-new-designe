@@ -1,21 +1,21 @@
 <?php
 
-namespace App\Models\Models;
+namespace App\Models;
 
-use App\Models\Invoice;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Project extends Model
+class StageLog extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $guarded = [];
 
-    public function invoices(): HasMany
+    protected $table = 'stage_logs';
+
+    public function leads()
     {
-        return $this->hasMany(Invoice::class);
+        return $this->hasMany(Lead::class);
     }
 }

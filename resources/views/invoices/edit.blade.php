@@ -51,6 +51,22 @@
             $('#commission_total').val(total)
         }
 
+        function valueChangedUser() {
+            let rate = $('#user_commission_rate').val();
+            //let total = $('#commission_total').val();
+            let price = $('#commission_total').val()
+            let total = percentage(rate, price)
+            $('#user_commission_total').val(total)
+        }
+
+        function valueChangedSale() {
+            let rate = $('#sale_commission_rate').val();
+            //let total = $('#commission_total').val();
+            let price = $('#commission_total').val()
+            let total = percentage(rate, price)
+            $('#sale_commission_total').val(total)
+        }
+
         $('input[name="month"], input[name="price"], input[name="installment"]').on('change keyup', function () {
             let month = $('#month').val();
             let price = $('#price').val();
@@ -59,6 +75,8 @@
             let granTotal = Math.round((total + Number.EPSILON) * 100) / 100
             $('#monthly_payment').val(granTotal)
             valueChanged()
+            valueChangedUser()
+            valueChangedSale()
         });
 
         $('input[name="commission_rate"]').on('change keyup', function () {
@@ -76,11 +94,39 @@
             $('#commission_rate').val(rate)
         });
 
-        $(document).ready(function () {
+        $('input[name="user_commission_rate"]').on('change keyup', function () {
+            let rate = $('#user_commission_rate').val();
+            //let total = $('#commission_total').val();
+            let price = $('#commission_total').val()
+            let total = percentage(rate, price)
+            $('#user_commission_total').val(total)
+        });
 
+        $('input[name="user_commission_total"]').on('change keyup', function () {
+            let total = $('#user_commission_total').val();
+            let price = $('#commission_total').val()
+            let rate = Math.round(((total / price) * 100)) + "%";
+            $('#user_commission_rate').val(rate)
+        });
+
+        $('input[name="sale_commission_rate"]').on('change keyup', function () {
+            let rate = $('#sale_commission_rate').val();
+            //let total = $('#commission_total').val();
+            let price = $('#commission_total').val()
+            let total = percentage(rate, price)
+            $('#sale_commission_total').val(total)
+        });
+
+        $('input[name="sale_commission_total"]').on('change keyup', function () {
+            let total = $('#sale_commission_total').val();
+            let price = $('#commission_total').val()
+            let rate = Math.round(((total / price) * 100)) + "%";
+            $('#sale_commission_rate').val(rate)
+        });
+
+        $(document).ready(function () {
             // Department Change
             $('#project_id').change(function () {
-
                 // Department id
                 var id = $(this).val();
                 // Empty the dropdown
@@ -96,9 +142,7 @@
                     }
                 });
             });
-
         });
-
     </script>
 
 @endsection
@@ -288,20 +332,23 @@
                     <div class="card-body">
                         <div>
                             {{ __('Deal owner:') }}
-                            <span class="label label-success">{{ $invoice->owner_name }}</span>
+                            <span class="badge badge-success">{{ $invoice->owner_name }}</span>
                         </div>
                         <br>
                         <div>
                             {{ __('Seller(s):') }}
                             @php $sellRep = collect($invoice->sells_name)->toArray() @endphp
                             @foreach( $sellRep as $name)
-                                <span class="label label-inverse">{{ $name }}</span>
+                                <span class="badge badge-primary">{{ $name }}</span>
                             @endforeach
                         </div>
                     </div>
                 </div>
                 <!-- Recent Searches card end -->
                 <div class="card job-right-header">
+                    <div class="body-header b-b-primary">
+                        <h5 class="text-muted">{{ __('Project commission') }}</h5>
+                    </div>
                     <div class="card-body">
                         <div class="form-group">
                             <label for="total">{{ __('Payment per month') }}</label>
@@ -328,6 +375,56 @@
                                 <input type="text" class="form-control"
                                        name="commission_total" id="commission_total"
                                        value="{{ old('commission_total', $invoice->commission_total) }}">
+                                <div class="input-group-append"><span class="input-group-text currIco"
+                                                                      id="basic-addon3"></span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="body-header b-b-primary">
+                        <h5 class="text-muted">{{ __('Owner commission') }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="user_commission_rate">{{ __('Commission rate') }}</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control"
+                                       name="user_commission_rate" id="user_commission_rate"
+                                       value="{{ old('user_commission_rate', $invoice->user_commission_rate) }}">
+                                <div class="input-group-append"><span class="input-group-text"
+                                                                      id="basic-addon3">%</span></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="user_commission_total">{{__ ('Total commission')}}</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control"
+                                       name="user_commission_total" id="user_commission_total"
+                                       value="{{ old('user_commission_total', $invoice->user_commission_total) }}">
+                                <div class="input-group-append"><span class="input-group-text currIco"
+                                                                      id="basic-addon3"></span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="body-header b-b-primary">
+                        <h5 class="text-muted">{{ __('Sale commission') }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="sale_commission_rate">{{ __('Commission rate') }}</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control"
+                                       name="sale_commission_rate" id="sale_commission_rate"
+                                       value="{{ old('sale_commission_rate', $invoice->sale_commission_rate) }}">
+                                <div class="input-group-append"><span class="input-group-text"
+                                                                      id="basic-addon3">%</span></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="sale_commission_total">{{__ ('Total commission')}}</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control"
+                                       name="sale_commission_total" id="sale_commission_total"
+                                       value="{{ old('sale_commission_total', $invoice->sale_commission_total) }}">
                                 <div class="input-group-append"><span class="input-group-text currIco"
                                                                       id="basic-addon3"></span></div>
                             </div>

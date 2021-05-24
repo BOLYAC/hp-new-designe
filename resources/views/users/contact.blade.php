@@ -1,21 +1,8 @@
 @extends('layouts.vertical.master')
 @section('title', '| Contact')
-
-@section('style_before')
-@endsection
-
-@section('script')
-    <!-- Plugins JS start-->
-    <script src="{{ asset('assets/js/select2/select2.full.min.js') }}"></script>
-    <script src="{{ asset('assets/js/select2/select2-custom.js') }}"></script>
-@endsection
-
-
 @section('breadcrumb-items')
     <li class="breadcrumb-item">{{ __('Contact') }}</li>
 @endsection
-
-
 @section('content')
 
     <div class="container-fluid">
@@ -27,19 +14,18 @@
                                                       src=""
                                                       alt="">
                         </div>
-                        <div class="card-profile"><img class="rounded-circle"
+                        <div class="card-profile"><img class="rounded-circle height-90"
                                                        src="{{ asset('storage/' . $user->image_path) }}"
                                                        alt=""></div>
-                        <ul class="card-social">
-                            <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                            <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
-                            <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                            <li><a href="#"><i class="fa fa-instagram"></i></a></li>
-                        </ul>
                         <div class="text-center profile-details">
-                            <h4>{{ $user->name }}</h4>
-                            <h6>{{ $user->roles->first()->name }}</h6>
+                            <h4>{{ $user->name ?? '' }}</h4>
+                            <h6>{{ $user->roles->first()->name ?? '' }}</h6>
                         </div>
+                        <ul class="card-social">
+                            <li><a href="tel:{{ $user->phone_1 ?? '' }}"><i class="fa fa-phone"></i></a></li>
+                            <li><a href="tel:{{ $user->phone_2 ?? '' }}"><i class="fa fa-phone"></i></a></li>
+                            <li><a href="mailto:{{ $user->email ?? '' }}"><i class="fa fa-envelope"></i></a></li>
+                        </ul>
                     </div>
                 </div>
             @endforeach

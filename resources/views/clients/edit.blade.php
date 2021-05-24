@@ -395,476 +395,447 @@
         @include('partials.flash-message')
         <div class="row">
             <div class="col-md-9 col-lg-10">
-                <div class="card b-t-primary">
+                <div class="card card-with-border b-t-primary">
                     <div class="card-body">
-                        <ul class="nav nav-tabs border-tab" id="top-tab" role="tablist">
-                            <li class="nav-item"><a class="nav-link active" id="top-personal-tab" data-toggle="tab"
-                                                    href="#top-personal" role="tab" aria-controls="top-personal"
-                                                    aria-selected="true">{{ __('Personal info') }}</a>
-                            </li>
-                            <li class="nav-item"><a class="nav-link" id="top-note-tab" data-toggle="tab"
-                                                    href="#top-note" role="tab" aria-controls="top-note"
-                                                    aria-selected="false">{{ __('Notes & tasks') }}</a></li>
-                            <li class="nav-item"><a class="nav-link" id="top-documents-tab" data-toggle="tab"
-                                                    href="#top-documents" role="tab" aria-controls="top-documents"
-                                                    aria-selected="false">{{ __('Documents') }}</a></li>
-                        </ul>
-                        <div class="tab-content" id="top-tabContent">
-                            <div class="tab-pane fade show active" id="top-personal" role="tabpanel"
-                                 aria-labelledby="top-personal-tab">
-                                <form action="{{ route('clients.update', $client) }}" method="POST" role="form">
-                                    @csrf
-                                    @method('PUT')
-                                    <div class="form-group">
-                                        <label for="">Id</label>
-                                        <input type="text" class="form-control form-control-sm"
-                                               value="{{ $client->public_id }}" readonly>
-                                    </div>
+                        <form action="{{ route('clients.update', $client) }}" method="POST" role="form">
+                            @csrf
+                            @method('PUT')
+                            <div class="form-group">
+                                <label for="">Id</label>
+                                <input type="text" class="form-control form-control-sm"
+                                       value="{{ $client->public_id }}" readonly>
+                            </div>
+                            <div class="row">
+                                <div class="col-md">
                                     <div class="row">
-                                        <div class="col-md">
-                                            <div class="row">
-                                                <div class="form-group col-md-12 col-lg-6">
-                                                    <label for="first_name">{{ __('First
+                                        <div class="form-group col-md-12 col-lg-6">
+                                            <label for="first_name">{{ __('First
                                                         name') }}</label>
-                                                    <input type="text" name="first_name" id="first_name"
-                                                           class="form-control form-control-sm @error('first_name') form-control-danger @enderror"
-                                                           value="{{ old('first_name', $client->first_name) }}">
-                                                    @error('first_name')
-                                                    <span class="invalid-feedback" role="alert">
+                                            <input type="text" name="first_name" id="first_name"
+                                                   class="form-control form-control-sm @error('first_name') form-control-danger @enderror"
+                                                   value="{{ old('first_name', $client->first_name) }}">
+                                            @error('first_name')
+                                            <span class="invalid-feedback" role="alert">
                                                         <strong class="text-danger">{{ $message }}</strong>
                                                     </span>
-                                                    @enderror
-                                                </div>
-                                                <div class="form-group col-md-12 col-lg-6">
-                                                    <label for="last_name">{{ __('Last name') }}</label>
-                                                    <input type="text" name="last_name" id="last_name"
-                                                           class="form-control form-control-sm @error('last_name') form-control-danger @enderror"
-                                                           value="{{ old('last_name', $client->last_name) }}">
-                                                    @error('last_name')
-                                                    <span class="invalid-feedback" role="alert">
+                                            @enderror
+                                        </div>
+                                        <div class="form-group col-md-12 col-lg-6">
+                                            <label for="last_name">{{ __('Last name') }}</label>
+                                            <input type="text" name="last_name" id="last_name"
+                                                   class="form-control form-control-sm @error('last_name') form-control-danger @enderror"
+                                                   value="{{ old('last_name', $client->last_name) }}">
+                                            @error('last_name')
+                                            <span class="invalid-feedback" role="alert">
                                   <strong class="text-danger">{{ $message }}</strong>
                                 </span>
-                                                    @enderror
-                                                </div>
-                                            </div>
-                                            @if($client)
-                                                <div class="form-group">
-                                                    <label for="full_name">{{ __('Full name') }}</label>
-                                                    <input type="text" name="full_name" id="full_name"
-                                                           class="form-control form-control-sm"
-                                                           value="{{ old('full_name', $client->full_name) }}">
-                                                </div>
-                                            @endif
-                                            <div class="row">
-                                                <div class="col-md-12 col-lg-6">
-                                                    <div class="form-group">
-                                                        <div class="row">
-                                                            <div class="col">
-                                                                <label
-                                                                    for="client_number_2">{{ __('Phone number') }}</label>
-                                                            </div>
-                                                            <div class="col-2">
-                                                                <a href="https://wa.me/{{$client->client_number}}?text={{ __('Hello, how can we help you?') }}"
-                                                                   target="_blank"
-                                                                   class="btn btn-xs btn-outline-success float-right"><i
-                                                                        class="fa fa-whatsapp"></i></a>
-                                                            </div>
-                                                        </div>
-                                                        <input type="text" name="client_number"
-                                                               id="client_number"
-                                                               class="form-control form-control-sm @error('client_number') form-control-danger @enderror"
-                                                               value="{{ old('client_number', $client->client_number) }}"
-                                                               @if($client->client_number) @can('cant-update-field') readonly @endcan
-                                                            @endif
-                                                        >
-                                                        @error('client_number')
-                                                        <span class="invalid-feedback" role="alert">
-                                    <strong class="text-danger">{{ $message }}</strong>
-                                  </span>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12 col-lg-6">
-                                                    <div class="form-group">
-                                                        <div class="row">
-                                                            <div class="col">
-                                                                <label
-                                                                    for="client_number_2">{{ __('Phone number 2') }}</label>
-                                                            </div>
-                                                            <div class="col-2">
-                                                                <a href="https://wa.me/{{$client->client_number_2}}?text={{ __('Hello, how can we help you?') }}"
-                                                                   target="_blank"
-                                                                   class="btn btn-xs btn-outline-success float-right"><i
-                                                                        class="fa fa-whatsapp"></i></a>
-                                                            </div>
-                                                        </div>
-                                                        <input type="text" name="client_number_2"
-                                                               id="client_number_2"
-                                                               class="form-control form-control-sm @error('client_number_2') form-control-danger @enderror"
-                                                               value="{{ old('client_number_2', $client->client_number_2) }}"
-                                                               @if($client->client_number_2) @can('cant-update-field') readonly @endcan
-                                                            @endif
-                                                        >
-                                                        @error('client_number_2')
-                                                        <span class="invalid-feedback" role="alert">
-                                    <strong class="text-danger">{{ $message }}</strong>
-                                  </span>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="form-group col-md-12 col-lg-6">
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <label for="client_email">{{ __('E-mail') }}</label>
-                                                        </div>
-                                                        <div class="col">
-                                                            <a href="mailto:{{ $client->client_email }}"
-                                                               class="btn btn-xs btn-outline-primary float-right"><i
-                                                                    class="icon-email"></i></a>
-                                                        </div>
-                                                    </div>
-                                                    <input type="email" name="client_email"
-                                                           id="client_email"
-                                                           class="form-control form-control-sm @error('client_email') form-control-danger @enderror"
-                                                           value="{{ old('client_email', $client->client_email) }}">
-                                                    @error('client_email')
-                                                    <span class="invalid-feedback" role="alert">
-                                                        <strong class="text-danger">{{ $message }}</strong>
-                                                    </span>
-                                                    @enderror
-                                                </div>
-                                                <div class="form-group col-md-12 col-lg-6">
-                                                    <label for="client_email_2">{{ __('E-mail 2') }}</label>
-                                                    <a href="mailto:{{ $client->client_email_2 }}"
-                                                       class="btn btn-xs btn-outline-primary float-right btn-mini"><i
-                                                            class="icon-email"></i></a>
-                                                    <input type="email" name="client_email_2"
-                                                           id="client_email_2"
-                                                           class="form-control form-control-sm @error('client_email_2') form-control-danger @enderror"
-                                                           value="{{ old('client_email_2', $client->client_email_2) }}">
-                                                    @error('client_email_2')
-                                                    <span class="invalid-feedback" role="alert">
-                                    <strong class="text-danger">{{ $message }}</strong>
-                                  </span>
-                                                    @enderror
-                                                </div>
-                                            </div>
-                                            <div class="form-group input-group-sm">
-                                                <label for="country">{{ __('Country') }}</label>
-                                                <select class="js-country-all form-control form-control-sm"
-                                                        multiple="multiple" name="country[]" id="country">
-                                                    <option></option>
-                                                    @php $clientCountry = collect($client->country)->toArray() @endphp
-                                                    @foreach($clientCountry as $lang)
-                                                        <option value="{{ $lang }}" selected>
-                                                            {{ $lang }}</option>
-                                                    @endforeach
-                                                </select>
-                                                @if(is_null($client->country))
-                                                    <div class="col-form-label">
-                                                        Old: {{ $client->getRawOriginal('country') ?? '' }}</div>
-                                                @endif
-                                            </div>
-                                            <div class="form-group input-group-sm">
-                                                <label for="nationality">{{ __('Nationality') }}</label>
-                                                <select
-                                                    class="js-nationality-all form-control form-control-sm"
-                                                    multiple="multiple" name="nationality[]"
-                                                    id="nationality">
-                                                    <option></option>
-                                                    @php $clientNationality = collect($client->nationality)->toArray() @endphp
-                                                    @foreach($clientNationality as $nat)
-                                                        <option value="{{ $nat }}" selected>
-                                                            {{ $nat }}</option>
-                                                    @endforeach
-                                                </select>
-                                                @if(is_null($client->country))
-                                                    <div class="col-form-label">
-                                                        Old: {{ $client->getRawOriginal('nationality') ?? '' }}</div>
-                                                @endif
-                                            </div>
-                                            <div class="form-group input-group-sm">
-                                                <label for="lang">{{ __('Languages') }}</label>
-                                                <select class="js-language-all form-control form-control-sm"
-                                                        multiple="multiple" name="lang[]" id="lang">
-                                                    <option></option>
-                                                    @php $clientLang = collect($client->lang)->toArray() @endphp
-                                                    @foreach( $clientLang as $lang)
-                                                        <option vlaue="{{ $lang }}"
-                                                                selected> {{ $lang }} </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
+                                            @enderror
                                         </div>
-                                        <div class="col-md">
-                                            <div class="row">
-                                                <div class="form-group col-md-12 col-lg-6">
-                                                    <label for="status">{{ __('Status') }}</label>
-                                                    <select name="status" id="status"
-                                                            class="form-control form-control-sm">
-                                                        <option selected disabled> {{ __('-- Client status --') }}
-                                                        </option>
-                                                        <option
-                                                            value="1" {{ old('status', $client->status) == 1 ? 'selected' : '' }}>
-                                                            {{ __('New Lead') }}
-                                                        </option>
-                                                        <option
-                                                            value="8" {{ old('status', $client->status) == 8 ? 'selected' : '' }}>
-                                                            {{ __('No Answer') }}
-                                                        </option>
-                                                        <option
-                                                            value="12" {{ old('status', $client->status) == 12 ? 'selected' : '' }}>
-                                                            {{ __('In progress') }}
-                                                        </option>
-                                                        <option
-                                                            value="3" {{ old('status', $client->status) == 3 ? 'selected' : '' }}>
-                                                            {{ __('Potential appointment') }}
-                                                        </option>
-                                                        <option
-                                                            value="4" {{ old('status', $client->status) == 4 ? 'selected' : '' }}>
-                                                            {{ __('Appointment set') }}
-                                                        </option>
-                                                        <option
-                                                            value="10" {{ old('status', $client->status) == 10 ? 'selected' : '' }}>
-                                                            {{ __('Appointment follow up') }}
-                                                        </option>
-                                                        <option
-                                                            value="5" {{ old('status', $client->status) == 5 ? 'selected' : '' }}>
-                                                            {{ __('Sold') }}
-                                                        </option>
-                                                        <option
-                                                            value="13" {{ old('status', $client->status) == 13 ? 'selected' : '' }}>
-                                                            {{ __('Unreachable') }}
-                                                        </option>
-                                                        <option
-                                                            value="7" {{ old('status', $client->status) == 7 ? 'selected' : '' }}>
-                                                            {{ __('Not interested') }}
-                                                        </option>
-                                                        <option
-                                                            value="11" {{ old('status', $client->status) == 11 ? 'selected' : '' }}>
-                                                            {{ __('Low budget') }}
-                                                        </option>
-                                                        <option
-                                                            value="9" {{ old('status', $client->status) == 9 ? 'selected' : '' }}>
-                                                            {{ __('Wrong Number') }}
-                                                        </option>
-                                                        <option
-                                                            value="14" {{ old('status', $client->status) == 14 ? 'selected' : '' }}>
-                                                            {{ __('Unqualified') }}
-                                                        </option>
-                                                    </select>
+                                    </div>
+                                    @if($client)
+                                        <div class="form-group">
+                                            <label for="full_name">{{ __('Full name') }}</label>
+                                            <input type="text" name="full_name" id="full_name"
+                                                   class="form-control form-control-sm"
+                                                   value="{{ old('full_name', $client->full_name) }}">
+                                        </div>
+                                    @endif
+                                    <div class="row">
+                                        <div class="col-md-12 col-lg-6">
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <label
+                                                            for="client_number_2">{{ __('Phone number') }}</label>
+                                                    </div>
+                                                    <div class="col-2">
+                                                        <a href="https://wa.me/{{$client->client_number}}?text={{ __('Hello, how can we help you?') }}"
+                                                           target="_blank"
+                                                           class="btn btn-xs btn-outline-success float-right"><i
+                                                                class="fa fa-whatsapp"></i></a>
+                                                    </div>
                                                 </div>
-                                                <div class="form-group col-md-12 col-lg-6">
-                                                    <label for="priority">{{ __('Priority') }}</label>
-                                                    <select name="priority" id="priority"
-                                                            class="form-control form-control-sm">
-                                                        <option selected disabled> {{ __('-- Priority --') }}
-                                                        </option>
-                                                        <option
-                                                            value="1" {{ $client->priority == '1' ? 'selected' : '' }}>
-                                                            {{ __('Low') }}
-                                                        </option>
-                                                        <option
-                                                            value="2" {{ $client->priority == '2' ? 'selected' : '' }}>
-                                                            {{ __('Medium') }}
-                                                        </option>
-                                                        <option
-                                                            value="3" {{ $client->priority == '3' ? 'selected' : '' }}>
-                                                            {{ __('High') }}
-                                                        </option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label for="budget_request">{{ __('Budget') }}</label>
-                                                <select name="budget_request[]" id="budget_request"
-                                                        class="js-budgets-all form-control form-control-sm"
-                                                        multiple>
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="rooms_request">{{ __('Request') }}</label>
-                                                <select class="js-rooms-all form-control form-control-sm"
-                                                        name="rooms_request[]" id="rooms_request" multiple>
-                                                </select>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label for="requirements_request">{{ __('Requirement') }}</label>
-                                                <select name="requirements_request[]" id="requirements_request"
-                                                        class="js-requirements-all form-control form-control-sm"
-                                                        multiple>
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="source">{{ __('Source') }}</label>
-                                                <select name="source_id" id="source"
-                                                        class="form-control form-control-sm @error('source_id') form-control-danger @enderror">
-                                                    <option selected disabled> {{ __('-- Select source --') }}
-                                                    </option>
-                                                    @foreach($sources as $source)
-                                                        <option value="{{ $source->id }}"
-                                                            {{ $client->source_id == $source->id ? 'selected' : '' }}>
-                                                            {{ $source->name }}</option>
-                                                    @endforeach
-                                                </select>
-                                                @error('source_id')
+                                                <input type="text" name="client_number"
+                                                       id="client_number"
+                                                       class="form-control form-control-sm @error('client_number') form-control-danger @enderror"
+                                                       value="{{ old('client_number', $client->client_number) }}"
+                                                       @if($client->client_number) @can('cant-update-field') readonly @endcan
+                                                    @endif
+                                                >
+                                                @error('client_number')
                                                 <span class="invalid-feedback" role="alert">
-                                                    <strong class="text-danger">{{ $message }}</strong>
-                                                </span>
+                                    <strong class="text-danger">{{ $message }}</strong>
+                                  </span>
                                                 @enderror
                                             </div>
-                                            <div class="row">
-                                                <div class="form-group col-md-12 col-lg-6">
-                                                    <label for="">{{ __('Campaign name') }}</label>
-                                                    <input type="text" class="form-control form-control-sm"
-                                                           value="{{ $client->campaigne_name }}">
+                                        </div>
+                                        <div class="col-md-12 col-lg-6">
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <label
+                                                            for="client_number_2">{{ __('Phone number 2') }}</label>
+                                                    </div>
+                                                    <div class="col-2">
+                                                        <a href="https://wa.me/{{$client->client_number_2}}?text={{ __('Hello, how can we help you?') }}"
+                                                           target="_blank"
+                                                           class="btn btn-xs btn-outline-success float-right"><i
+                                                                class="fa fa-whatsapp"></i></a>
+                                                    </div>
                                                 </div>
-
-                                                <div class="form-group col-md-12 col-lg-6">
-                                                    <label for="source">{{ __('Agency') }}</label>
-                                                    <select name="agency_id" id="agency"
-                                                            class="form-control form-control-sm @error('agency_id') form-control-danger @enderror">
-                                                        <option value="" selected
-                                                                disabled> {{ __('-- Select agency --') }}
-                                                        </option>
-                                                        @foreach($agencies as $agency)
-                                                            <option value="{{ $agency->id }}"
-                                                                {{ $client->agency_id == $agency->id ? 'selected' : '' }}>
-                                                                {{ $agency->name }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                    @error('agency_id')
-                                                    <span class="invalid-feedback" role="alert">
-                                                        <strong class="text-danger">{{ $message }}</strong>
-                                                    </span>
-                                                    @enderror
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="form-group col-md">
-                                                    <label for="appointment_date">{{ __('Date of coming') }}</label>
-                                                    <input name="appointment_date" id="appointment_date"
-                                                           class="form-control form-control-sm"
-                                                           value="{{ old('appointment_date', optional($client->appointment_date)->format('Y-m-d') ) }}"
-                                                           type="date"/>
-                                                </div>
-                                                <div class="form-group col-md">
-                                                    <label for="duration_stay">{{ __('Duration of Stay')}}</label>
-                                                    <select name="duration_stay" id="duration_stay"
-                                                            class="form-control form-control-sm">
-                                                        <option value="" selected>{{ __('-- Select duration of Stay --') }}</option>
-                                                        <option
-                                                            value="1" {{ old('duration_stay', $client->duration_stay) == 1 ? 'selected' : '' }}>
-                                                            {{ __('1 Day') }}
-                                                        </option>
-                                                        <option
-                                                            value="2" {{ old('duration_stay', $client->duration_stay) == 2 ? 'selected' : '' }}>
-                                                            {{ __('2 Days') }}
-                                                        </option>
-                                                        <option
-                                                            value="3" {{ old('duration_stay', $client->duration_stay) == 3 ? 'selected' : '' }}>
-                                                            {{ __('3 Days') }}
-                                                        </option>
-                                                        <option
-                                                            value="4" {{ old('duration_stay', $client->duration_stay) == 4 ? 'selected' : '' }}>
-                                                            {{ __('4 Days') }}
-                                                        </option>
-                                                        <option
-                                                            value="5" {{ old('duration_stay', $client->duration_stay) == 5 ? 'selected' : '' }}>
-                                                            {{ __('5 Days') }}
-                                                        </option>
-                                                        <option
-                                                            value="6" {{ old('duration_stay', $client->duration_stay) == 6 ? 'selected' : '' }}>
-                                                            {{ __('6 Days') }}
-                                                        </option>
-                                                        <option
-                                                            value="7" {{ old('duration_stay', $client->duration_stay) == 7 ? 'selected' : '' }}>
-                                                            {{ __('7 Days') }}
-                                                        </option>
-                                                        <option
-                                                            value="8" {{ old('duration_stay', $client->duration_stay) == 8 ? 'selected' : '' }}>
-                                                            {{ __('8 Days') }}
-                                                        </option>
-                                                        <option
-                                                            value="9" {{ old('duration_stay', $client->duration_stay) == 9 ? 'selected' : '' }}>
-                                                            {{ __('9 Days') }}
-                                                        </option>
-                                                        <option
-                                                            value="10" {{ old('duration_stay', $client->duration_stay) == 10 ? 'selected' : '' }}>
-                                                            {{ __('10 Days') }}
-                                                        </option>
-                                                        <option
-                                                            value="11" {{ old('duration_stay', $client->duration_stay) == 11 ? 'selected' : '' }}>
-                                                            {{ __('11 Days') }}
-                                                        </option>
-                                                        <option
-                                                            value="12" {{ old('duration_stay', $client->duration_stay) == 12 ? 'selected' : '' }}>
-                                                            {{ __('12 Days') }}
-                                                        </option>
-                                                        <option
-                                                            value="13" {{ old('duration_stay', $client->duration_stay) == 13 ? 'selected' : '' }}>
-                                                            {{ __('13 Days') }}
-                                                        </option>
-                                                        <option
-                                                            value="14" {{ old('duration_stay', $client->duration_stay) == 14 ? 'selected' : '' }}>
-                                                            {{ __('14 Days') }}
-                                                        </option>
-                                                        <option
-                                                            value="15" {{ old('duration_stay', $client->duration_stay) == 15 ? 'selected' : '' }}>
-                                                            {{ __('16 Days') }}
-                                                        </option>
-                                                        <option
-                                                            value="30" {{ old('duration_stay', $client->duration_stay) == 30 ? 'selected' : '' }}>
-                                                            {{ __('1 Month') }}
-                                                        </option>
-                                                        <option
-                                                            value="60" {{ old('duration_stay', $client->duration_stay) == 60 ? 'selected' : '' }}>
-                                                            {{ __('2 Months') }}
-                                                        </option>
-                                                        <option
-                                                            value="90" {{ old('duration_stay', $client->duration_stay) == 90 ? 'selected' : '' }}>
-                                                            {{ __('3 Months') }}
-                                                        </option>
-                                                        <option
-                                                            value="99" {{ old('duration_stay', $client->duration_stay) == 99 ? 'selected' : '' }}>
-                                                            {{ __('Unspecified') }}
-                                                        </option>
-                                                    </select>
-                                                </div>
+                                                <input type="text" name="client_number_2"
+                                                       id="client_number_2"
+                                                       class="form-control form-control-sm @error('client_number_2') form-control-danger @enderror"
+                                                       value="{{ old('client_number_2', $client->client_number_2) }}"
+                                                       @if($client->client_number_2) @can('cant-update-field') readonly @endcan
+                                                    @endif
+                                                >
+                                                @error('client_number_2')
+                                                <span class="invalid-feedback" role="alert">
+                                    <strong class="text-danger">{{ $message }}</strong>
+                                  </span>
+                                                @enderror
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="row">
+                                        <div class="form-group col-md-12 col-lg-6">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <label for="client_email">{{ __('E-mail') }}</label>
+                                                </div>
+                                                <div class="col">
+                                                    <a href="mailto:{{ $client->client_email }}"
+                                                       class="btn btn-xs btn-outline-primary float-right"><i
+                                                            class="icon-email"></i></a>
+                                                </div>
+                                            </div>
+                                            <input type="email" name="client_email"
+                                                   id="client_email"
+                                                   class="form-control form-control-sm @error('client_email') form-control-danger @enderror"
+                                                   value="{{ old('client_email', $client->client_email) }}">
+                                            @error('client_email')
+                                            <span class="invalid-feedback" role="alert">
+                                                        <strong class="text-danger">{{ $message }}</strong>
+                                                    </span>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group col-md-12 col-lg-6">
+                                            <label for="client_email_2">{{ __('E-mail 2') }}</label>
+                                            <a href="mailto:{{ $client->client_email_2 }}"
+                                               class="btn btn-xs btn-outline-primary float-right btn-mini"><i
+                                                    class="icon-email"></i></a>
+                                            <input type="email" name="client_email_2"
+                                                   id="client_email_2"
+                                                   class="form-control form-control-sm @error('client_email_2') form-control-danger @enderror"
+                                                   value="{{ old('client_email_2', $client->client_email_2) }}">
+                                            @error('client_email_2')
+                                            <span class="invalid-feedback" role="alert">
+                                    <strong class="text-danger">{{ $message }}</strong>
+                                  </span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="form-group input-group-sm">
+                                        <label for="country">{{ __('Country') }}</label>
+                                        <select class="js-country-all form-control form-control-sm"
+                                                multiple="multiple" name="country[]" id="country">
+                                            <option></option>
+                                            @php $clientCountry = collect($client->country)->toArray() @endphp
+                                            @foreach($clientCountry as $lang)
+                                                <option value="{{ $lang }}" selected>
+                                                    {{ $lang }}</option>
+                                            @endforeach
+                                        </select>
+                                        @if(is_null($client->country))
+                                            <div class="col-form-label">
+                                                Old: {{ $client->getRawOriginal('country') ?? '' }}</div>
+                                        @endif
+                                    </div>
+                                    <div class="form-group input-group-sm">
+                                        <label for="nationality">{{ __('Nationality') }}</label>
+                                        <select
+                                            class="js-nationality-all form-control form-control-sm"
+                                            multiple="multiple" name="nationality[]"
+                                            id="nationality">
+                                            <option></option>
+                                            @php $clientNationality = collect($client->nationality)->toArray() @endphp
+                                            @foreach($clientNationality as $nat)
+                                                <option value="{{ $nat }}" selected>
+                                                    {{ $nat }}</option>
+                                            @endforeach
+                                        </select>
+                                        @if(is_null($client->country))
+                                            <div class="col-form-label">
+                                                Old: {{ $client->getRawOriginal('nationality') ?? '' }}</div>
+                                        @endif
+                                    </div>
+                                    <div class="form-group input-group-sm">
+                                        <label for="lang">{{ __('Languages') }}</label>
+                                        <select class="js-language-all form-control form-control-sm"
+                                                multiple="multiple" name="lang[]" id="lang">
+                                            <option></option>
+                                            @php $clientLang = collect($client->lang)->toArray() @endphp
+                                            @foreach( $clientLang as $lang)
+                                                <option vlaue="{{ $lang }}"
+                                                        selected> {{ $lang }} </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md">
+                                    <div class="row">
+                                        <div class="form-group col-md-12 col-lg-6">
+                                            <label for="status">{{ __('Status') }}</label>
+                                            <select name="status" id="status"
+                                                    class="form-control form-control-sm">
+                                                <option selected disabled> {{ __('-- Client status --') }}
+                                                </option>
+                                                <option
+                                                    value="1" {{ old('status', $client->status) == 1 ? 'selected' : '' }}>
+                                                    {{ __('New Lead') }}
+                                                </option>
+                                                <option
+                                                    value="8" {{ old('status', $client->status) == 8 ? 'selected' : '' }}>
+                                                    {{ __('No Answer') }}
+                                                </option>
+                                                <option
+                                                    value="12" {{ old('status', $client->status) == 12 ? 'selected' : '' }}>
+                                                    {{ __('In progress') }}
+                                                </option>
+                                                <option
+                                                    value="3" {{ old('status', $client->status) == 3 ? 'selected' : '' }}>
+                                                    {{ __('Potential appointment') }}
+                                                </option>
+                                                <option
+                                                    value="4" {{ old('status', $client->status) == 4 ? 'selected' : '' }}>
+                                                    {{ __('Appointment set') }}
+                                                </option>
+                                                <option
+                                                    value="10" {{ old('status', $client->status) == 10 ? 'selected' : '' }}>
+                                                    {{ __('Appointment follow up') }}
+                                                </option>
+                                                <option
+                                                    value="5" {{ old('status', $client->status) == 5 ? 'selected' : '' }}>
+                                                    {{ __('Sold') }}
+                                                </option>
+                                                <option
+                                                    value="13" {{ old('status', $client->status) == 13 ? 'selected' : '' }}>
+                                                    {{ __('Unreachable') }}
+                                                </option>
+                                                <option
+                                                    value="7" {{ old('status', $client->status) == 7 ? 'selected' : '' }}>
+                                                    {{ __('Not interested') }}
+                                                </option>
+                                                <option
+                                                    value="11" {{ old('status', $client->status) == 11 ? 'selected' : '' }}>
+                                                    {{ __('Low budget') }}
+                                                </option>
+                                                <option
+                                                    value="9" {{ old('status', $client->status) == 9 ? 'selected' : '' }}>
+                                                    {{ __('Wrong Number') }}
+                                                </option>
+                                                <option
+                                                    value="14" {{ old('status', $client->status) == 14 ? 'selected' : '' }}>
+                                                    {{ __('Unqualified') }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-md-12 col-lg-6">
+                                            <label for="priority">{{ __('Priority') }}</label>
+                                            <select name="priority" id="priority"
+                                                    class="form-control form-control-sm">
+                                                <option selected disabled> {{ __('-- Priority --') }}
+                                                </option>
+                                                <option
+                                                    value="1" {{ $client->priority == '1' ? 'selected' : '' }}>
+                                                    {{ __('Low') }}
+                                                </option>
+                                                <option
+                                                    value="2" {{ $client->priority == '2' ? 'selected' : '' }}>
+                                                    {{ __('Medium') }}
+                                                </option>
+                                                <option
+                                                    value="3" {{ $client->priority == '3' ? 'selected' : '' }}>
+                                                    {{ __('High') }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+
                                     <div class="form-group">
-                                        <label for="description">{{ __('Note:') }}</label>
-                                        <textarea name="description"
-                                                  class="summernote"
-                                                  id="description">{{ old('description', $client->description) }}</textarea>
+                                        <label for="budget_request">{{ __('Budget') }}</label>
+                                        <select name="budget_request[]" id="budget_request"
+                                                class="js-budgets-all form-control form-control-sm"
+                                                multiple>
+                                        </select>
                                     </div>
-                                    <!-- end of table col-lg-6 -->
-                                    <div>
-                                        <button type="submit" class="btn btn-primary waves-effect waves-light">
-                                            {{ __('Save') }} <i class="ti-save"></i></button>
-                                        <a href="{{ redirect()->route('clients.index') }}" id="edit-cancel"
-                                           class="btn btn-danger waves-effect">{{ __('Cancel') }}</a>
+                                    <div class="form-group">
+                                        <label for="rooms_request">{{ __('Request') }}</label>
+                                        <select class="js-rooms-all form-control form-control-sm"
+                                                name="rooms_request[]" id="rooms_request" multiple>
+                                        </select>
                                     </div>
-                                </form>
+
+                                    <div class="form-group">
+                                        <label for="requirements_request">{{ __('Requirement') }}</label>
+                                        <select name="requirements_request[]" id="requirements_request"
+                                                class="js-requirements-all form-control form-control-sm"
+                                                multiple>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="source">{{ __('Source') }}</label>
+                                        <select name="source_id" id="source"
+                                                class="form-control form-control-sm @error('source_id') form-control-danger @enderror">
+                                            <option selected disabled> {{ __('-- Select source --') }}
+                                            </option>
+                                            @foreach($sources as $source)
+                                                <option value="{{ $source->id }}"
+                                                    {{ $client->source_id == $source->id ? 'selected' : '' }}>
+                                                    {{ $source->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('source_id')
+                                        <span class="invalid-feedback" role="alert">
+                                                    <strong class="text-danger">{{ $message }}</strong>
+                                                </span>
+                                        @enderror
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group col-md-12 col-lg-6">
+                                            <label for="">{{ __('Campaign name') }}</label>
+                                            <input type="text" class="form-control form-control-sm"
+                                                   value="{{ $client->campaigne_name }}">
+                                        </div>
+
+                                        <div class="form-group col-md-12 col-lg-6">
+                                            <label for="source">{{ __('Agency') }}</label>
+                                            <select name="agency_id" id="agency"
+                                                    class="form-control form-control-sm @error('agency_id') form-control-danger @enderror">
+                                                <option value="" selected
+                                                        disabled> {{ __('-- Select agency --') }}
+                                                </option>
+                                                @foreach($agencies as $agency)
+                                                    <option value="{{ $agency->id }}"
+                                                        {{ $client->agency_id == $agency->id ? 'selected' : '' }}>
+                                                        {{ $agency->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            @error('agency_id')
+                                            <span class="invalid-feedback" role="alert">
+                                                        <strong class="text-danger">{{ $message }}</strong>
+                                                    </span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group col-md">
+                                            <label for="appointment_date">{{ __('Date of coming') }}</label>
+                                            <input name="appointment_date" id="appointment_date"
+                                                   class="form-control form-control-sm"
+                                                   value="{{ old('appointment_date', optional($client->appointment_date)->format('Y-m-d') ) }}"
+                                                   type="date"/>
+                                        </div>
+                                        <div class="form-group col-md">
+                                            <label for="duration_stay">{{ __('Duration of Stay')}}</label>
+                                            <select name="duration_stay" id="duration_stay"
+                                                    class="form-control form-control-sm">
+                                                <option value=""
+                                                        selected>{{ __('-- Select duration of Stay --') }}</option>
+                                                <option
+                                                    value="1" {{ old('duration_stay', $client->duration_stay) == 1 ? 'selected' : '' }}>
+                                                    {{ __('1 Day') }}
+                                                </option>
+                                                <option
+                                                    value="2" {{ old('duration_stay', $client->duration_stay) == 2 ? 'selected' : '' }}>
+                                                    {{ __('2 Days') }}
+                                                </option>
+                                                <option
+                                                    value="3" {{ old('duration_stay', $client->duration_stay) == 3 ? 'selected' : '' }}>
+                                                    {{ __('3 Days') }}
+                                                </option>
+                                                <option
+                                                    value="4" {{ old('duration_stay', $client->duration_stay) == 4 ? 'selected' : '' }}>
+                                                    {{ __('4 Days') }}
+                                                </option>
+                                                <option
+                                                    value="5" {{ old('duration_stay', $client->duration_stay) == 5 ? 'selected' : '' }}>
+                                                    {{ __('5 Days') }}
+                                                </option>
+                                                <option
+                                                    value="6" {{ old('duration_stay', $client->duration_stay) == 6 ? 'selected' : '' }}>
+                                                    {{ __('6 Days') }}
+                                                </option>
+                                                <option
+                                                    value="7" {{ old('duration_stay', $client->duration_stay) == 7 ? 'selected' : '' }}>
+                                                    {{ __('7 Days') }}
+                                                </option>
+                                                <option
+                                                    value="8" {{ old('duration_stay', $client->duration_stay) == 8 ? 'selected' : '' }}>
+                                                    {{ __('8 Days') }}
+                                                </option>
+                                                <option
+                                                    value="9" {{ old('duration_stay', $client->duration_stay) == 9 ? 'selected' : '' }}>
+                                                    {{ __('9 Days') }}
+                                                </option>
+                                                <option
+                                                    value="10" {{ old('duration_stay', $client->duration_stay) == 10 ? 'selected' : '' }}>
+                                                    {{ __('10 Days') }}
+                                                </option>
+                                                <option
+                                                    value="11" {{ old('duration_stay', $client->duration_stay) == 11 ? 'selected' : '' }}>
+                                                    {{ __('11 Days') }}
+                                                </option>
+                                                <option
+                                                    value="12" {{ old('duration_stay', $client->duration_stay) == 12 ? 'selected' : '' }}>
+                                                    {{ __('12 Days') }}
+                                                </option>
+                                                <option
+                                                    value="13" {{ old('duration_stay', $client->duration_stay) == 13 ? 'selected' : '' }}>
+                                                    {{ __('13 Days') }}
+                                                </option>
+                                                <option
+                                                    value="14" {{ old('duration_stay', $client->duration_stay) == 14 ? 'selected' : '' }}>
+                                                    {{ __('14 Days') }}
+                                                </option>
+                                                <option
+                                                    value="15" {{ old('duration_stay', $client->duration_stay) == 15 ? 'selected' : '' }}>
+                                                    {{ __('16 Days') }}
+                                                </option>
+                                                <option
+                                                    value="30" {{ old('duration_stay', $client->duration_stay) == 30 ? 'selected' : '' }}>
+                                                    {{ __('1 Month') }}
+                                                </option>
+                                                <option
+                                                    value="60" {{ old('duration_stay', $client->duration_stay) == 60 ? 'selected' : '' }}>
+                                                    {{ __('2 Months') }}
+                                                </option>
+                                                <option
+                                                    value="90" {{ old('duration_stay', $client->duration_stay) == 90 ? 'selected' : '' }}>
+                                                    {{ __('3 Months') }}
+                                                </option>
+                                                <option
+                                                    value="99" {{ old('duration_stay', $client->duration_stay) == 99 ? 'selected' : '' }}>
+                                                    {{ __('Unspecified') }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="tab-pane fade" id="top-note" role="tabpanel"
-                                 aria-labelledby="top-note-tab">
-                                @include('clients.task-note')
+                            <!-- end of table col-lg-6 -->
+                            <div class="text-right">
+                                <button type="submit" class="btn btn-sm btn-primary">
+                                    {{ __('Save') }} <i class="icon-save"></i></button>
+                                <a href="{{ redirect()->route('clients.index') }}" id="edit-cancel"
+                                   class="btn btn-sm btn-danger">{{ __('Cancel') }}</a>
                             </div>
-                            <div class="tab-pane fade" id="top-documents" role="tabpanel"
-                                 aria-labelledby="top-documents-tab">
-                                @include('clients.documents.index')
-                            </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
+                @include('clients.task-note')
             </div>
             <div class="col-md-3 col-lg-2">
                 <div class="card">
@@ -924,6 +895,7 @@
                         </div>
                     </div>
                 @endcan
+                @include('clients.documents.index')
                 <div class="card">
                     <div class="card-header b-b-info">
                         <h5 class="text-muted">{{ __('History') }}</h5>
@@ -944,7 +916,6 @@
             </div>
         </div>
         <!-- Page body end -->
-    </div>
     </div>
     <!-- Create modal end -->
     <!-- Delete file modal start -->
