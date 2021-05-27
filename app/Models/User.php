@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Membership;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -16,7 +17,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 class User extends Authenticatable implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
-    use Notifiable, HasRoles;
+    use Notifiable, HasRoles, HasFactory;
 
     /**
      * The attributes that are mass assignable.

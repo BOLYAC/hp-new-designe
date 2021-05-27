@@ -49,9 +49,13 @@ class UsersController extends Controller
      */
     public function index(Request $request)
     {
-        $users = User::orderBy('id', 'DESC')->paginate(10);
-        return view('users.index', compact('users'))
-            ->with('i', ($request->input('page', 1) - 1) * 5);
+        $teams = auth()->user()->ownedTeams->pluck('id');
+        if (auth()->user()->hasPermissionTo('team-manager')) {
+            $users = User::whereIn('current_team_id', $teams)->get();
+        } else {
+            $users = User::orderBy('id', 'DESC')->get();
+        }
+        return view('users.index', compact('users'));
     }
 
     /**

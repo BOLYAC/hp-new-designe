@@ -50,9 +50,9 @@ Loader ends-->
                     <div class="fxt-header">
                         <a href="" class="fxt-logo"><img
                                 style="width: 130px;height: 80px;"
-                                src="https://hashimproperty.com/wp-content/uploads/2020/07/HASHIM_PROPERTY.png"
+                                src="{{ asset('assets/images/HASHIM_PROPERTY.png') }}"
                                 alt="Logo"></a>
-                        <p>Hashim Property CRM</p>
+                        <p>Hashim Group CRM</p>
                     </div>
                     <div class="fxt-form">
                         <form method="POST" action="{{ route('login') }}">

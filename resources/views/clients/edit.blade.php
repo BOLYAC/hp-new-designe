@@ -505,7 +505,7 @@
                                                     <label for="client_email">{{ __('E-mail') }}</label>
                                                 </div>
                                                 <div class="col">
-                                                    <a href="mailto:{{ $client->client_email }}"
+                                                    <a href="{{ route('clients.compose.email', ['email' => $client->client_email_2, 'client' => $client]) }}"
                                                        class="btn btn-xs btn-outline-primary float-right"><i
                                                             class="icon-email"></i></a>
                                                 </div>
@@ -522,7 +522,7 @@
                                         </div>
                                         <div class="form-group col-md-12 col-lg-6">
                                             <label for="client_email_2">{{ __('E-mail 2') }}</label>
-                                            <a href="mailto:{{ $client->client_email_2 }}"
+                                            <a href="{{ route('clients.compose.email', ['email' => $client->client_email_2, 'client' => $client]) }}"
                                                class="btn btn-xs btn-outline-primary float-right btn-mini"><i
                                                     class="icon-email"></i></a>
                                             <input type="email" name="client_email_2"

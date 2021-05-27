@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use App\Models\Note;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -29,6 +30,8 @@ class NotesController extends Controller
 //        DB::table('agencies')->update(['department_id' => 1]);
 //        DB::table('users')->update(['department_id' => 1]);
 //        DB::table('teams')->update(['department_id' => 1]);
+
+        return $users = User::factory()->count(10)->make();
     }
 
     /**

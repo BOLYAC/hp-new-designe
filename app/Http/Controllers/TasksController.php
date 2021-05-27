@@ -48,7 +48,7 @@ class TasksController extends Controller
      */
     public function anyData(Request $request)
     {
-        $tasks = Task::with(['client', 'user'])->select(['id', 'date', 'client_id', 'title', 'user_id', 'archive']);
+        $tasks = Task::with(['client', 'user', 'agency'])->select(['id', 'date', 'client_id', 'agency_id', 'title', 'user_id', 'archive', 'source_type']);
 
         switch ($request->get('name')) {
             case 'today-tasks':
@@ -76,7 +76,15 @@ class TasksController extends Controller
                 return $tasks->title ?? '';
             })
             ->editColumn('client_id', function ($tasks) {
-                return ($tasks->client->id <> 0 ? '<a href="clients/' . $tasks->client->id . '/edit">' : 'Its not your client') . $tasks->client->full_name ?? '' . '</a>';
+                if ($tasks->source_type === 'App\Agency') {
+                    if (auth()->user()->hasPermissionTo('department-agencies-sell')) {
+                        return '<a href="/sales/agencies/' . $tasks->agency->id . '">' . $tasks->agency->name ?? '' . '</a>';
+                    } else {
+                        return '<a href="agencies/' . $tasks->agency->id . '/edit">' . $tasks->agency->name ?? '' . '</a>';
+                    }
+                } else {
+                    return '<a href="clients/' . $tasks->client_id . '/edit">' . $tasks->client->full_name ?? '' . '</a>';
+                }
             })
             ->addColumn('country', function ($tasks) {
                 if (is_null($tasks->client->country)) {

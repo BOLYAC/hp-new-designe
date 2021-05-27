@@ -683,4 +683,14 @@ class ClientsController extends Controller
 
         return redirect()->back()->with('toast_success', 'File upload  successfully');
     }
+
+    public function composeEmail($email, Client $client)
+    {
+        return \view('inbox.compose', compact('email', 'client'));
+    }
+
+    public function sendEmail(Request $request)
+    {
+        $request->dd();
+    }
 }

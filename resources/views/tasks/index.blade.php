@@ -4,9 +4,13 @@
     <!-- Notification.css -->
     <link rel="stylesheet" href="{{ asset('assets/css/datatables.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/datatable-extension.css') }}">
+    <!-- Select 2 css -->
+    <link rel="stylesheet" href="{{ asset('assets/css/select2.css') }}"/>
 @endsection
 
 @section('script')
+    <!-- Plugins JS start-->
+    <script src="{{ asset('assets/js/select2/select2.full.min.js') }}"></script>
     <script src="{{ asset('assets/js/notify/bootstrap-notify.min.js') }}"></script>
     <script src="{{ asset('assets/js/datatables/jquery.dataTables.min.js')}}"></script>
     <script src="{{ asset('assets/js/datatables/datatable-extension/dataTables.buttons.min.js')}}"></script>
@@ -367,7 +371,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <select class="form-control js-client-all" name="client_id">
+                            <select class="js-client-all form-control form-control-sm" name="client_id">
                                 <option selected="selected">{{ __('Search for the client') }}</option>
                             </select>
                         </div>

@@ -324,7 +324,7 @@
                                                 class="js-budgets-all form-control form-control-sm"
                                                 multiple>
                                         </select>
-                                        @if(!is_null($event->budget))
+                                        @if(is_null($event->budget))
                                             <div class="col-form-label">
                                                 <span>{{ __('Old:') }} <b>{{ $event->budget }}</b></span></div>
                                         @endif

@@ -3,11 +3,6 @@
 use Illuminate\Support\Facades\Route;
 
 Auth::routes();
-
-/**
- * Clients
- */
-//Route::get('clients/list', 'ClientsController@list')->name('clients.list');
 Route::group(['prefix' => 'clients', 'middleware' => 'auth'], function () {
     Route::get('data', 'ClientsController@anyData')->name('clients.data');
     Route::get('importExportView', 'ClientsController@importExportView')->name('importExport');
@@ -19,6 +14,8 @@ Route::group(['prefix' => 'clients', 'middleware' => 'auth'], function () {
     Route::post('task/archive', 'TasksController@archive')->name('archive');
     Route::post('task/archived', 'TasksController@archived')->name('archived');
     Route::post('fetch', 'ClientsController@fetch')->name('autocomplete.fetch');
+    Route::get('/compose/email/{email?}/{client?}', 'ClientsController@composeEmail')->name('clients.compose.email');
+    Route::post('/send/email', 'ClientsController@sendEmail')->name('clients.send.email');
 });
 Route::group(
     ['middleware' => ['auth']],
@@ -92,8 +89,8 @@ Route::group(
         Route::get('/projects/getProject/{id}', 'ProjectsController@getProject')->name('project.api');
         Route::get('/project/show/{id}', 'ProjectsController@getSingleProject')->name('project.api.show');
         // Agencies
+        Route::get('/sales/agencies/{id}', 'AgencyController@getAgencySellsOffice')->name('agencies.sells-office-edit');
         Route::resource('agencies', 'AgencyController');
-        Route::get('agencies/{id}', 'AgencyController@getAgencySellsOffice')->name('agencies.sells-office-edit');
 
         // Leads
         Route::get('/leads/data', 'LeadsController@anyData')->name('leads.data');

@@ -24,7 +24,18 @@ class Task extends Model implements Auditable
     protected $touches = ['client'];
 
     protected $fillable = [
-        'title', 'date', 'user_id', 'client_id', 'archive', 'team_id', 'task_entry', 'contact_type', 'contact_name', 'agency_id', 'body'
+        'title',
+        'date',
+        'user_id',
+        'client_id',
+        'archive',
+        'team_id',
+        'task_entry',
+        'contact_type',
+        'contact_name',
+        'agency_id',
+        'body',
+        'department_id',
     ];
 
     /**

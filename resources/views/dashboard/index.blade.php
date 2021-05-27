@@ -224,7 +224,7 @@
                                     @foreach($todayTasks as $todayTask)
                                         <tr class="unread">
                                             <td>
-                                                @if($todayTask->soure_type === 'App\Agency')
+                                                @if($todayTask->source_type === 'App\Agency')
                                                     <a href="{{ route('agencies.edit', ['agency' => $todayTask->agency->id]) }}"
                                                        class="email-name">
                                                         {{ $todayTask->title ?? '' }}
@@ -286,7 +286,7 @@
                                     @foreach($tomorrowTasks as $tomorrowTask)
                                         <tr class="unread">
                                             <td>
-                                                @if($tomorrowTask->soure_type === 'App\Agency')
+                                                @if($tomorrowTask->source_type === 'App\Agency')
                                                     <a href="{{ route('agencies.edit', ['agency' => $tomorrowTask->agency->id]) }}"
                                                        class="email-name">
                                                         {{ $tomorrowTask->title ?? '' }}
@@ -347,7 +347,7 @@
                                     @foreach($pendingTasks as $pendingTask)
                                         <tr>
                                             <td>
-                                                @if($pendingTask->soure_type == 'App\Agency')
+                                                @if($pendingTask->source_type == 'App\Agency')
                                                     <a href="{{ route('agencies.edit', ['agency' => $pendingTask->agency->id]) }}"
                                                        class="email-name">
                                                         {{ $pendingTask->title ?? '' }}
@@ -418,7 +418,7 @@
                                                         class="icofont icofont-check"></i></div>
                                             </td>
                                             <td>
-                                                @if($completedTask->soure_type === 'App\Agency')
+                                                @if($completedTask->source_type === 'App\Agency')
                                                     <a href="{{ route('agencies.edit', ['agency' => $completedTask->agency->id]) }}"
                                                        class="email-name">
                                                         {{ $completedTask->title ?? '' }}

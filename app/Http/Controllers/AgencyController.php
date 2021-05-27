@@ -45,7 +45,7 @@ class AgencyController extends Controller
                 })
                 ->editColumn('name', function ($agency) {
                     if (auth()->user()->hasPermissionTo('department-agencies-sell')) {
-                        return '<a href="agencies/' . $agency->id . '">' . $agency->name . '</a>';
+                        return '<a href="/sales/agencies/' . $agency->id . '">' . $agency->name . '</a>';
                     } else {
                         return '<a href="agencies/' . $agency->id . '/edit">' . $agency->name . '</a>';
                     }

@@ -99,9 +99,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-footer">
-                    {!! $users->render() !!}
-                </div>
             </div>
         </div>
         <!-- Zero config.table end -->
