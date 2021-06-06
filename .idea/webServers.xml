@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="a85b51d1-cfa7-4444-912c-46768a5f7c3e" name="https://winalco-web.app/" url="http://winalco-web.app">
+        <fileTransfer rootFolder="/hp" host="winalco-web.app" port="21">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
