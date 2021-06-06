@@ -32,7 +32,8 @@ trait DealsTenantable
 
             if (auth()->user()->hasPermissionTo('team-manager')) {
                 static::addGlobalScope('team_id', function (Builder $builder) {
-                    $builder->where('team_id', auth()->user()->currentTeam->id);
+                    $builder->whereIn('team_id', auth()->user()->ownedTeams->pluck('id'))
+                        ->where('department_id', auth()->user()->department_id);;
                 });
             }
         }

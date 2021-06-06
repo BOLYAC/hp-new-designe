@@ -33,7 +33,9 @@
                 console.log(data);
                 $('#name').val(data[1]);
                 $('#description').val(data[2]);
-                $('#status').prop('checked', data[5]);
+                $('#address').val(data[3]);
+                $('#phone').val(data[4]);
+                $('#email').val(data[5]);
                 $('#editForm').attr('action', 'departments/' + data[0]);
                 $('#editModal').modal('show');
             })
@@ -69,16 +71,18 @@
                                 data-target="#sign-in-modal">{{ __('New department') }} <i class="icon-plus"></i>
                         </button>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body p-2">
                         <div class="order-history dt-ext table-responsive">
                             <table id="departments-table"
-                                   class="table table-striped display table-bordered nowrap"
-                                   width="100%" cellspacing="0">
+                                   class="display">
                                 <thead>
                                 <tr>
                                     <th>ID</th>
                                     <th>{{ __('Name') }}</th>
                                     <th>{{ __('Description') }}</th>
+                                    <th>{{ __('Address') }}</th>
+                                    <th>{{ __('Phone') }}</th>
+                                    <th>{{ __('Email') }}</th>
                                     <th></th>
                                 </tr>
                                 </thead>
@@ -88,6 +92,9 @@
                                         <td>{{ $department->id }}</td>
                                         <td>{{ $department->name ?? '' }}</td>
                                         <td>{{ $department->description ?? '' }}</td>
+                                        <td>{{ $department->address ?? '' }}</td>
+                                        <td>{{ $department->phone ?? '' }}</td>
+                                        <td>{{ $department->email ?? '' }}</td>
 
                                         <td>
                                             @can('department-edit')
@@ -131,11 +138,36 @@
                                 {{ __('Title') }}
                             </label>
                             <input class="form-control" type="text" name="name"
-                                   placeholder="department title">
+                                   placeholder="Department Title">
                         </div>
-
                         <div class="form-group">
-                            <textarea class="form-control" name="description" cols="10" rows="3"></textarea>
+                            <label for="description">
+                                {{ __('Description') }}
+                            </label>
+                            <textarea name="description" cols="10" rows="3"
+                                      class="form-control"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="address">
+                                {{ __('Address') }}
+                            </label>
+                            <textarea name="address" cols="10" rows="3" class="form-control"></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md">
+                                <label for="phone">
+                                    {{ __('Phone') }}
+                                </label>
+                                <input class="form-control" type="text" name="phone"
+                                       placeholder="Department Phone">
+                            </div>
+                            <div class="form-group col-md">
+                                <label for="email">
+                                    {{ __('Email') }}
+                                </label>
+                                <input class="form-control" type="email" name="email"
+                                       placeholder="Department Email">
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -166,12 +198,34 @@
                             <label for="title">
                                 {{ __('Name') }}
                             </label>
-                            <input class="form-control" type="text" name="name" id="name"
+                            <input class="form-control form-control-sm" type="text" name="name" id="name"
                                    placeholder="Department name">
                         </div>
                         <div class="form-group">
                             <textarea class="form-control" name="description" id="description" cols="10"
                                       rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="address">
+                                {{ __('Address') }}
+                            </label>
+                            <textarea name="address" id="address" cols="10" rows="3" class="form-control"></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md">
+                                <label for="phone">
+                                    {{ __('Phone') }}
+                                </label>
+                                <input class="form-control form-control-sm" type="text" name="phone" id="phone"
+                                       placeholder="Department Phone">
+                            </div>
+                            <div class="form-group col-md">
+                                <label for="email">
+                                    {{ __('Email') }}
+                                </label>
+                                <input class="form-control form-control-sm" type="email" name="email" id="email"
+                                       placeholder="Department Email">
+                            </div>
                         </div>
 
                     </div>

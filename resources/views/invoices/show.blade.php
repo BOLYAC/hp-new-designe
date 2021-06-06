@@ -200,10 +200,12 @@
                                 <ul>
                                     <li><strong>{{ __('Invoice created:') }}</strong></li>
                                     <li>{{ $invoice->created_at->format('m/d/Y') }}</li>
+                                    <br>
                                     <li><strong>{{ __('Created by:') }}</strong></li>
                                     <li><span
                                             class="badge badge-success">{{ $invoice->owner_name ?? $invoice->user->name }}</span>
                                     </li>
+                                    <br>
                                     <li><strong>{{ __('Commission Received') }}</strong></li>
                                     <li>
                                         <div class="form-group m-checkbox-inline mb-0 custom-radio-ml"
@@ -221,6 +223,7 @@
                                             </div>
                                         </div>
                                     </li>
+                                    <br>
                                     <li><strong>{{ __('Status:') }}</strong></li>
                                     <li>
                                         <select name="status" id="status" class="form-control form-control-sm">
@@ -229,6 +232,7 @@
                                             <option value="2">{{ __('Partially paid') }}</option>
                                         </select>
                                     </li>
+                                    <br>
                                 </ul>
                             </div>
                             <div class="col-6">
@@ -256,6 +260,24 @@
                 <div class="card">
                     <div class="card-header b-b-primary">
                         <h5 class="text-muted">{{ __('Client:') }} {{ $invoice->client->full_name }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <ul>
+                                    <li><strong>{{ __('Nationality:') }}</strong></li>
+                                    <li>{{ $invoice->nationality ?? '' }}</li>
+                                    <br>
+                                    <li><strong>{{ __('Passport or ID:') }}</strong></li>
+                                    <li>{{ $invoice->passport_id }}</li>
+                                    <br>
+                                    <li><strong>{{ __('Address:') }}</strong></li>
+                                    <li>{{ $invoice->address }}</li>
+                                    <br>
+
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div>
@@ -287,33 +309,20 @@
                             <span class="f-w-600">{{ $invoice->sale_commission_total ?? '' }}</span>
                         </div>
                     </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col">
-                                <ul>
-                                    <li><strong>{{ __('Nationality:') }}</strong></li>
-                                    <li>{{ $invoice->nationality ?? '' }}</li>
-                                    <br>
-                                    <li><strong>{{ __('Passport or ID:') }}</strong></li>
-                                    <li>{{ $invoice->passport_id }}</li>
-                                    <br>
-                                    <li><strong>{{ __('Address:') }}</strong></li>
-                                    <li>{{ $invoice->address }}</li>
-                                    <br>
-
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 <div class="card">
                     <div class="card-header b-b-primary">
-                        <h5 class="text-muted">{{ __('Company:') }} {{ $invoice->project->company_name ?? $invoice->project->project_name ?? $invoice->project_name }}</h5>
+                        <h5 class="text-muted">
+                            {{ __('Company commission:') }}
+                        </h5>
                     </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col">
                                 <ul>
+                                    <li><strong>{{ __('Company:') }}</strong></li>
+                                    <li>{{ $invoice->project->company_name ?? $invoice->project->project_name ?? $invoice->project_name }}</li>
+                                    <br>
                                     <li><strong>{{ __('Phone:') }}</strong></li>
                                     <li>{{ $invoice->project->phone_1 ?? '' }}</li>
                                     <br>

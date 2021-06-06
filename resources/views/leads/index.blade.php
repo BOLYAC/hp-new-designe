@@ -29,6 +29,9 @@
                     data: function (d) {
                         d.stage = $('select[name=status_filter]').val();
                         d.user = $('select[name=user_filter]').val();
+                        d.department = $('select[name=department_filter]').val();
+                        d.country = $('select[name=country_filter]').val();
+                        d.team = $('select[name=team_filter]').val();
                     }
                 },
                 columns: [
@@ -46,6 +49,8 @@
             $('#refresh').click(function () {
                 $('select[name=status_filter]').val('');
                 $('select[name=user_filter]').val('');
+                $('select[name=department_filter]').val('');
+                $('select[name=team_filter]').val('');
                 table.DataTable().destroy();
             });
             // Search form
@@ -53,6 +58,7 @@
                 e.preventDefault();
                 table.draw();
             });
+            @can('lead-delete')
             table.on('click', '.delete', function () {
                 $tr = $(this).closest('tr');
                 if ($($tr).hasClass('child')) {
@@ -62,6 +68,7 @@
                 $('#deleteForm').attr('action', 'leads/' + data[0]);
                 $('#deleteModal').modal('show');
             })
+            @endcan
         });
     </script>
 
@@ -96,9 +103,9 @@
                                     <option value="9">{{ __('Lost') }}</option>
                                 </select>
                             </div>
-                            @if(auth()->user()->hasRole('Admin'))
+                            @if(auth()->user()->hasRole('Admin') || auth()->user()->hasPermissionTo('team-manager'))
                                 <div class="form-group mb-2">
-                                    <option value="">{{ __('Assigned') }}</option>
+                                    <label for="user_filter">{{ __('Assigned') }}</label>
                                     <select name="user_filter" id="user_filter"
                                             class="custom-select custom-select-sm">
                                         <option value="">{{ __('Assigned') }}</option>
@@ -107,15 +114,26 @@
                                         @endforeach
                                     </select>
                                 </div>
-                            @elseif(auth()->user()->hasRole('Manager'))
-                                @if(auth()->user()->ownedTeams()->count() > 0)
+                                @if(isset($departments))
                                     <div class="form-group mb-2">
-                                        <select name="user_filter" id="user_filter"
+                                        <label for="department_filter">{{ __('Departments') }}</label>
+                                        <select name="department_filter" id="department_filter"
                                                 class="custom-select custom-select-sm">
-                                            <option value="">{{ __('Assigned') }}</option>
-                                            @foreach(auth()->user()->currentTeam->allUsers() as $user)
-                                                <option
-                                                    value="{{ $user->id }}">{{ $user->name }}</option>
+                                            <option value="">{{ __('Department') }}</option>
+                                            @foreach($departments as $row)
+                                                <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endif
+                                @if(isset($teams))
+                                    <div class="form-group mb-2">
+                                        <label for="team_filter">{{ __('Teams') }}</label>
+                                        <select name="team_filter" id="team_filter"
+                                                class="custom-select custom-select-sm">
+                                            <option value="">{{ __('Team') }}</option>
+                                            @foreach($teams as $row)
+                                                <option value="{{ $row->id }}">{{ $row->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -157,8 +175,6 @@
                                 </thead>
                             </table>
                         </div>
-                    </div>
-                    <div class="card-footer">
                     </div>
                 </div>
             </div>

@@ -34,16 +34,23 @@
         @endverbatim
     </script>
     <script>
-        var template = Handlebars.compile($("#details-template").html());
-        var table = $('#res-config').DataTable({
+        let template = Handlebars.compile($("#details-template").html());
+        let table = $('#res-config').DataTable({
             responsive: true,
             processing: true,
             serverSide: true,
             ajax: {
                 url: '{{ route('agencies.index') }}',
+                data: function (d) {
+                    d.type = $('select[name=type_filter]').val();
+                    d.user = $('select[name=user_filter]').val();
+                    d.department = $('select[name=department_filter]').val();
+                    d.country = $('select[name=country_filter]').val();
+                    d.city = $('input[name=city_filter]').val();
+                }
             },
             "drawCallback": function (settings) {
-                var api = this.api();
+                let api = this.api();
                 // Output the data for the visible rows to the browser's console
             },
             columns: [
@@ -105,6 +112,21 @@
             })
         }
 
+        // Clear form
+        $('#refresh').click(function () {
+            $('select[name=type_filter]').val('');
+            $('select[name=user_filter]').val('');
+            $('select[name=department_filter]').val('');
+            $('select[name=country_filter]').val('');
+            $('input[name=city_filter]').val('');
+            table.DataTable().destroy();
+        });
+        // Search form
+        $('#search-form').on('submit', function (e) {
+            e.preventDefault();
+            table.draw();
+        });
+
         table.on('click', '.delete', function () {
             $tr = $(this).closest('tr');
             if ($($tr).hasClass('child')) {
@@ -125,16 +147,91 @@
 
 @section('content')
     <div class="container-fluid">
+        @include('partials.flash-message')
         <div class="row">
-            <div class="col-sm-12">
-                <!-- Zero config.table start -->
-                @include('partials.flash-message')
+            <div class="col-sm-2">
+                <div class="card p-1">
+                    <div class="card-header b-l-primary p-2">
+                        <h6 class="m-0">{{ __('Filter agency by:') }}</h6>
+                    </div>
+                    <form id="search-form">
+                        <div class="card-body p-2">
+                            <div class="form-group mb-2">
+                                <select class="form-control form-control-sm digits" id="type_filter"
+                                        name="type_filter">
+                                    <option value="">{{ __('Select Type') }}</option>
+                                    <option value="1">{{ __('Freelance') }}</option>
+                                    <option value="2">{{ __('Company') }}</option>
+                                </select>
+                            </div>
+                            @if(auth()->user()->hasRole('Admin'))
+                                <div class="form-group mb-2">
+                                    <label for="department_filter">{{ __('Department') }}</label>
+                                    <select name="department_filter" id="department_filter"
+                                            class="custom-select custom-select-sm">
+                                        <option value="">{{ __('Select Department') }}</option>
+                                        @foreach($departments as $row)
+                                            <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label for="user_filter">{{ __('Assigned') }}</label>
+                                    <select name="user_filter" id="user_filter"
+                                            class="custom-select custom-select-sm">
+                                        <option value="">{{ __('Select Assigned') }}</option>
+                                        @foreach($users as $row)
+                                            <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            @elseif(auth()->user()->hasRole('Manager'))
+                                @if(auth()->user()->ownedTeams()->count() > 0)
+                                    <div class="form-group mb-2">
+                                        <select name="user_filter" id="user_filter"
+                                                class="custom-select custom-select-sm">
+                                            <option value="">{{ __('Select Assigned') }}</option>
+                                            @foreach(auth()->user()->currentTeam->allUsers() as $user)
+                                                <option
+                                                    value="{{ $user->id }}">{{ $user->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endif
+                            @endif
+                            <div class="form-group mb-2">
+                                <label for="country_filter">{{ __('Country') }}</label>
+                                <select name="country_filter" id="country_filter"
+                                        class="custom-select custom-select-sm">
+                                    <option value="">{{ __('Select Country') }}</option>
+                                    @foreach($countries as $country)
+                                        <option
+                                            value="{{ $country->id }}">{{ $country->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="city_filter">{{ __('City') }}</label>
+                                <input name="city_filter" id="city_filter"
+                                       class="custom-select custom-select-sm">
+                            </div>
+                        </div>
+                        <div class="card-footer p-2">
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <button class="btn btn-primary" type="submit">{{ __('Filter') }}</button>
+                                <button class="btn btn-light" type="button" id="refresh">{{ __('Clear') }}</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-sm-10">
                 <div class="card">
-                    <div class="card-header b-b-primary b-t-primary">
+                    <div class="card-header b-b-primary b-t-primary p-2">
                         <a href="{{ route('agencies.create') }}"
                            class="btn btn-sm btn-outline-primary">{{ __('New Agency') }} <i class="icon-plus"></i></a>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body px-2">
                         <div class="table-responsive">
                             <table id="res-config"
                                    class="display"

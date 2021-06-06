@@ -53,15 +53,20 @@ class User extends Authenticatable implements Auditable
         return $this->hasMany(Note::class);
     }
 
+    public function department()
+    {
+        return $this->belongsTo(Department::class)->withDefault();
+    }
+
     public function clients(): HasMany
     {
         return $this->hasMany(Client::class);
     }
 
-    public function department()
+    /*public function department()
     {
         return $this->belongsToMany(Department::class);
-    }
+    }*/
 
     public function SharedLeads(): BelongsToMany
     {

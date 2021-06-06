@@ -26,7 +26,7 @@
         <nav-menus></nav-menus>
         <!-- Page Sidebar Ends-->
         <div class="page-body">
-            <div class="container-fluid">
+            <div class="container-fluid mb-5">
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="card">
@@ -74,11 +74,13 @@
                                                         </div>
                                                         <div class="col-4">
                                                             <h5 class="media-heading">{{ __('Sales type') }}</h5>
-                                                            <p><strong>{{ $invoice->user->name  }}</strong></p>
+                                                            <p>
+                                                                <strong>{{ $invoice->payments()->first()->payment_source ?? 'Cash'  }}</strong>
+                                                            </p>
                                                         </div>
                                                         <div class="col-4">
                                                             <h5 class="media-heading">{{ __('Sales stage') }}</h5>
-                                                            <p><strong>{{ $invoice->user->name  }}</strong></p>
+                                                            <p><strong>{{ __('Invoice will be issued')  }}</strong></p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -124,9 +126,9 @@
                                                         <td>
                                                             <p>
                                                                 <strong>{{ __('Block N°:') }}</strong>{{ $invoice->block_num ?? '' }}
-                                                                <strong>{{ __('No of Rooms:') }}</strong>{{ $invoice->floor_number ?? ''}}
-                                                                <strong>{{ __('Floor No:') }}</strong>{{ $invoice->flat_num ?? ''}}
-                                                                <strong>{{ __('Flat No') }}</strong>{{ $invoice->room_number?? ''}}
+                                                                <strong>{{ __('No of Rooms:') }}</strong>{{ $invoice->room_number ?? ''}}
+                                                                <strong>{{ __('Floor No:') }}</strong>{{ $invoice->floor_number ?? ''}}
+                                                                <strong>{{ __('Flat No') }}</strong>{{ $invoice->flat_num ?? ''}}
                                                                 <strong>{{ __('Gross M²') }}</strong>{{ $invoice->gross_square ?? '' }}
                                                             </p>
                                                         </td>
@@ -134,7 +136,7 @@
                                                             <p>
                                                                 @switch($invoice->currency)
                                                                     @case('TRY')
-                                                                    <strong>{{ number_format($invoice->price, 3) ?? '0.00' }} {{ $invoice->currency }}</strong>
+                                                                    <strong>{{ number_format($invoice->price) ?? '0.00' }} {{ $invoice->currency }}</strong>
                                                                     @break
                                                                     @case('EUR')
                                                                     <strong>{{ number_format($invoice->price, 2) ?? '0.00' }} {{ $invoice->currency }}</strong>
@@ -152,7 +154,7 @@
                                                             <p>
                                                                 @switch($invoice->currency)
                                                                     @case('TRY')
-                                                                    <strong>{{ number_format($invoice->commission_total, 3) ?? '0.00' }} {{ $invoice->currency }}</strong>
+                                                                    <strong>{{ number_format($invoice->commission_total) ?? '0.00' }} {{ $invoice->currency }}</strong>
                                                                     @break
                                                                     @case('EUR')
                                                                     <strong>{{ number_format($invoice->commission_total, 2) ?? '0.00' }} {{ $invoice->currency }}</strong>
@@ -261,12 +263,6 @@
                                             </p>
                                         </div>
                                     </div>
-                                    <div class="col-sm-12 text-center mt-4">
-                                        <button class="btn btn btn-primary mr-2" type="button"
-                                                onclick="myFunction()">{{ __('Print') }}
-                                        </button>
-                                        <button class="btn btn-secondary" type="button">Cancel</button>
-                                    </div>
                                     <!-- End Invoice-->
                                     <!-- End Invoice Holder-->
                                 </div>
@@ -275,10 +271,27 @@
                     </div>
                 </div>
             </div>
+            <footer class="footer mt-5">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12 mx-auto text-center m-0 p-0">
+                            <p>
+                                {{ auth()->user()->department->description ?? 'HASHIM GAYRİMENKUL YATIRIMLARI SAN.VE TİC.A.Ş.'}}</p>
+                        </div>
+                        <div class="col-12 mx-auto text-center m-0 p-0">
+                            <p>
+                                {{ auth()->user()->department->address ?? 'Ömer Avni, İnönü Cd. No:48/15, 34427 Beyoğlu/İstanbul,'}}
+                                {{ auth()->user()->department->phone ?? '+90 212 292 92 92' }}
+                                {{ auth()->user()->department->email ?? 'info@hashimproperty.com' }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </footer>
         </div>
-
     </div>
 </div>
+
 @include('layouts.vertical.script')
 </body>
 </html>

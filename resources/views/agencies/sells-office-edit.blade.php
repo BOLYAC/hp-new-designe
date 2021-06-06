@@ -77,12 +77,12 @@
             window.livewire.on('alert', param => {
                 notify(param['type'], param['message'], param['icon'])
             })
-
-            var maxField = 10; //Input fields increment limitation
-            var addButton = $('.add_button'); //Add button selector
-            var wrapper = $('.field_wrapper'); //Input field wrapper
-            var fieldHTML = '<div class="col-3 pr-1 pl-1"><input type="text" name="projects[]" value=""/><a href="javascript:void(0);" class="ml-1 remove_button"><i class="fa fa-trash"></i></a></div>'; //New input field html
-            var x = 1; //Initial field counter is 1
+            // Add Proect name fields
+            let maxField = 10; //Input fields increment limitation
+            let addButton = $('.add_button'); //Add button selector
+            let wrapper = $('.field_wrapper'); //Input field wrapper
+            let fieldHTML = '<div class="col-3 pr-1 pl-1"><input type="text" name="projects[]" value=""/><a href="javascript:void(0);" class="ml-1 remove_button"><i class="fa fa-trash"></i></a></div>'; //New input field html
+            let x = 1; //Initial field counter is 1
 
             //Once add button is clicked
             $(addButton).click(function () {
@@ -99,6 +99,37 @@
                 e.preventDefault();
                 $(this).parent('div').remove(); //Remove field html
                 x--; //Decrement field counter
+            });
+            // Add sells Representative fields
+            var maxGroup = 3;
+            var i = $('body').find('.field_wrapper_copy').length;
+
+            //add more fields group
+            $(".add_button_rep").click(function () {
+                if ($('body').find('.field_wrapper_copy').length < maxGroup) {
+                    ++i;
+                    let fieldHTML = `<div class="field_wrapper_copy row">
+                        <div class="form-group input-group-sm col-6">
+                        <label>{{ __('Representative') }}</label>
+                        <input type="text" name="representatives[${i}][key]" class="form-control sm" value="">
+                        </div>
+                        <div class="form-group input-group-sm col">
+                        <label>{{ __('Rep phone') }}</label>
+                        <input type="text" name="representatives[${i}][value]" class="form-control sm" value="">
+                        </div>
+                        <div class="col-1 m-auto p-auto">
+                        <a href="javascript:void(0);" class="btn btn-xs btn-warning remove_button_rep"><i class="fa fa-trash"></i></a>
+                        </div></div>`
+                    //$('body').find('.fieldGroup:last').after(fieldHTML);
+                    $('.field_wrapper_rep').append(fieldHTML); //Add field html
+                } else {
+                    alert('Maximum ' + maxGroup + ' groups are allowed.');
+                }
+            });
+
+            //remove fields group
+            $("body").on("click", ".remove_button_rep", function () {
+                $(this).parents(".field_wrapper_copy").remove();
             });
         });
     </script>
@@ -160,9 +191,13 @@
                                                         <select name="company_type" id="company_type"
                                                                 class="form-control form-control-sm">
                                                             <option
-                                                                value="1" {{ old('type', $agency->company_type) == 1 ? 'selected' : '' }}>{{ __('Company') }}</option>
+                                                                value="1" {{ old('type', $agency->company_type) == 1 ? 'selected' : '' }}>
+                                                                {{ __('Company') }}
+                                                            </option>
                                                             <option
-                                                                value="2" {{ old('type', $agency->company_type) == 2 ? 'selected' : '' }}>{{ __('Freelance') }}</option>
+                                                                value="2" {{ old('type', $agency->company_type) == 2 ? 'selected' : '' }}>
+                                                                {{ __('Freelance') }}
+                                                            </option>
                                                         </select>
                                                     </div>
                                                     <div class="form-group input-group-sm col-md">
@@ -208,46 +243,41 @@
                                                     </div>
                                                 </div>
                                                 <div class="row">
-                                                    <div class="form-group input-group-sm col">
-                                                        <label for="in_charge">{{ __('Representative') }}</label>
-                                                        <input class="form-control sm" type="text" name="rep_1"
-                                                               id="rep_1"
-                                                               value="{{ old('rep_1', $agency->rep_1) }}">
-                                                    </div>
-                                                    <div class="form-group input-group-sm col">
-                                                        <label for="tax_number">{{ __('Rep phone') }}</label>
-                                                        <input class="form-control sm" type="text" name="rep_phone_1"
-                                                               id="rep_phone_1"
-                                                               value="{{ old('rep_phone_1' , $agency->rep_phone_1) }}">
+                                                    <div class="col-md-12">
+                                                        <div class="input-group-addon float-right">
+                                                            <a href="javascript:void(0)"
+                                                               class="btn btn-sm btn-success add_button_rep">
+                                                        <span class="fa fa-plus" aria-hidden="true">
+                                                        </span> {{ __('Add representatives') }}</a>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div class="row">
-                                                    <div class="form-group input-group-sm col">
-                                                        <label for="in_charge">{{ __('Representative 2') }}</label>
-                                                        <input class="form-control sm" type="text" name="rep_2"
-                                                               id="rep_2"
-                                                               value="{{ old('rep_2', $agency->rep_2) }}">
-                                                    </div>
-                                                    <div class="form-group input-group-sm col">
-                                                        <label for="tax_number">{{ __('Rep phone 2') }}</label>
-                                                        <input class="form-control sm" type="text" name="rep_phone_2"
-                                                               id="rep_phone_2"
-                                                               value="{{ old('rep_phone_2' , $agency->rep_phone_2) }}">
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="form-group input-group-sm col">
-                                                        <label for="in_charge">{{ __('Representative 3') }}</label>
-                                                        <input class="form-control sm" type="text" name="rep_3"
-                                                               id="rep_3"
-                                                               value="{{ old('rep_3', $agency->rep_3) }}">
-                                                    </div>
-                                                    <div class="form-group input-group-sm col">
-                                                        <label for="tax_number">{{ __('Rep phone 3') }}</label>
-                                                        <input class="form-control sm" type="text" name="rep_phone_3"
-                                                               id="rep_phone_3"
-                                                               value="{{ old('rep_phone_3' , $agency->rep_phone_3) }}">
-                                                    </div>
+                                                <div class="field_wrapper_rep">
+                                                    @if(!is_null($agency->representatives))
+                                                        @for ($i = 0; $i < count($agency->representatives); $i++)
+                                                            <div class="field_wrapper_copy row">
+                                                                <div class="form-group input-group-sm col-6">
+                                                                    <label>{{ __('Representative') }}</label>
+                                                                    <input type="text"
+                                                                           name="representatives[{{$i}}][key]"
+                                                                           class="form-control sm"
+                                                                           value="{{ $agency->representatives[$i]['key'] ?? '' }}">
+                                                                </div>
+                                                                <div class="form-group input-group-sm col">
+                                                                    <label>{{ __('Rep phone') }}</label>
+                                                                    <input type="text"
+                                                                           name="representatives[{{$i}}][value]"
+                                                                           class="form-control sm"
+                                                                           value="{{ $agency->representatives[$i]['value'] ?? '' }}">
+                                                                </div>
+                                                                <div class="col-1 m-auto p-auto">
+                                                                    <a href="javascript:void(0);"
+                                                                       class="btn btn-xs btn-warning remove_button_rep"><i
+                                                                            class="fa fa-trash"></i></a>
+                                                                </div>
+                                                            </div>
+                                                        @endfor
+                                                    @endif
                                                 </div>
                                                 <div class="row">
                                                     <div class="form-group input-group-sm col-md">
@@ -263,6 +293,27 @@
                                                                name="contract_status"
                                                                id="contract_status"
                                                                value="{{ old('contract_status', $agency->contract_status) }}">
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group input-group-sm col">
+                                                        <label for="country">{{ __('Country') }}</label>
+                                                        <select name="country" id="country"
+                                                                class="form-control form-control-sm">
+                                                            <option value="">{{ __('Select country') }}</option>
+                                                            @foreach($countries as $country)
+                                                                <option
+                                                                    value="{{ $country->id }}" {{ $country->id == $agency->country ? 'selected' : '' }}>
+                                                                    {{ $country->name }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group input-group-sm col">
+                                                        <label for="city">{{ __('City') }}</label>
+                                                        <input class="form-control sm" type="text" name="city"
+                                                               id="city"
+                                                               value="{{ old('city', $agency->city) }}">
                                                     </div>
                                                 </div>
                                                 <div class="row">

@@ -31,7 +31,6 @@ class NotesController extends Controller
 //        DB::table('users')->update(['department_id' => 1]);
 //        DB::table('teams')->update(['department_id' => 1]);
 
-        return $users = User::factory()->count(10)->make();
     }
 
     /**

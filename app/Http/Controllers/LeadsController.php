@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Models\Department;
 use App\Models\Invoice;
 use App\Models\Lead;
+use App\Models\Project;
 use App\Models\StageLog;
+use App\Models\Team;
 use App\Models\User;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -25,8 +28,18 @@ class LeadsController extends Controller
      */
     public function index()
     {
-        $users = User::all();
-        return view('leads.index', compact('users'));
+        if (\auth()->user()->hasRole('Admin')) {
+            $users = User::all();
+            $teams = Team::all();
+            $departments = Department::all();
+            return view('leads.index', compact('users', 'departments', 'teams'));
+        } elseif (\auth()->user()->hasPermissionTo('team-manager')) {
+            if (auth()->user()->ownedTeams()->count() > 0) {
+                $users = auth()->user()->currentTeam->allUsers();
+                $teams = auth()->user()->allTeams();
+            }
+            return view('leads.index', compact('users', 'teams'));
+        }
     }
 
     /**
@@ -45,6 +58,12 @@ class LeadsController extends Controller
         if ($request->get('user')) {
             $leads->where('user_id', '=', $request->get('user'));
         }
+        if ($request->get('department')) {
+            $leads->where('department_id', '=', $request->get('department'));
+        }
+        if ($request->get('team')) {
+            $leads->where('team_id', '=', $request->get('team'));
+        }
 
         $leads->OrderByDesc('created_at');
 
@@ -52,7 +71,7 @@ class LeadsController extends Controller
         return Datatables::of($leads)
             ->setRowId('id')
             ->editColumn('full_name', function ($leads) {
-                return '<a href="leads/' . $leads->id . '/edit">' . $leads->lead_name ?? $leads->client->full_name ?? '' . '</a>';
+                return '<a href="leads/' . $leads->id . '">' . $leads->lead_name ?? $leads->client->full_name ?? '' . '</a>';
             })
             ->editColumn('stage', function ($leads) {
                 $i = $leads->stage_id;
@@ -186,7 +205,8 @@ class LeadsController extends Controller
     {
         $users = User::all();
         $stage_logs = StageLog::all();
-        return view('leads.show', compact('lead', 'users', 'stage_logs'));
+        $projects = Project::all();
+        return view('leads.show', compact('lead', 'users', 'stage_logs', 'projects'));
     }
 
     /**
@@ -298,7 +318,6 @@ class LeadsController extends Controller
                 break;
         }
 
-
         $lead->StageLog()->create([
             'stage_name' => $stage,
             'update_by' => \auth()->id(),
@@ -333,6 +352,35 @@ class LeadsController extends Controller
         //AssignedClientEmailJob::dispatch($data);
         try {
             return json_encode($data, JSON_THROW_ON_ERROR);
+        } catch (JsonException $e) {
+            return back()->withError($e->getMessage())->withInput();
+        }
+    }
+
+    public function reservationForm()
+    {
+
+        $data = \request()->except('_token', 'lead_id');
+
+        $lead = Lead::findOrFail(\request()->lead_id);
+
+        if (\request()->hasFile('file_path')) {
+            $imagePath = $data['file_path']->store('clients/' . $lead->client_name . '/', 'public');
+            $data['file_path'] = $imagePath;
+        }
+
+        $data['stage_id'] = 4;
+
+        $lead->update($data);
+
+        try {
+            $lead->StageLog()->create([
+                'stage_name' => 'Reservation',
+                'update_by' => \auth()->id(),
+                'user_name' => \auth()->user()->name,
+                'stage_id' => 4
+            ]);
+            return json_encode($lead, JSON_THROW_ON_ERROR);
         } catch (JsonException $e) {
             return back()->withError($e->getMessage())->withInput();
         }

@@ -22,7 +22,53 @@
     <script>
         $(document).ready(function () {
             // Start Edit record
-            let table = $('#res-config').DataTable();
+            let table = $('#res-config').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: '{{ route('invoices.data') }}',
+                    data: function (d) {
+                        d.stage = $('select[name=status_filter]').val();
+                        d.user = $('select[name=user_filter]').val();
+                        d.department = $('select[name=department_filter]').val();
+                        d.team = $('select[name=team_filter]').val();
+                        d.project = $('select[name=project_filter]').val();
+                    }
+                },
+                columns: [
+                    {data: 'id', name: 'id'},
+                    {data: 'lead_name', name: 'lead_name'},
+                    {data: 'project_id', name: 'project_id'},
+                    {data: 'user', name: 'user'},
+                    {data: 'action', name: 'action'},
+                ],
+                order: [],
+                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]]
+            });
+            // Filtration
+            $('#refresh').click(function () {
+                $('select[name=user_filter]').val('');
+                $('select[name=department_filter]').val('');
+                $('select[name=team_filter]').val('');
+                $('select[name=project_filter]').val('');
+                table.DataTable().destroy();
+            });
+            // Search form
+            $('#search-form').on('submit', function (e) {
+                e.preventDefault();
+                table.draw();
+            });
+            @can('lead-invoice')
+            table.on('click', '.delete', function () {
+                $tr = $(this).closest('tr');
+                if ($($tr).hasClass('child')) {
+                    $tr = $tr.prev('.parent');
+                }
+                let data = table.row($tr).data();
+                $('#deleteForm').attr('action', 'invoices/' + data[0]);
+                $('#deleteModal').modal('show');
+            })
+            @endcan
         });
     </script>
 
@@ -37,7 +83,70 @@
 
     <div class="container-fluid">
         <div class="row">
-            <div class="col-12 mx-auto">
+            <div class="col-sm-2">
+                <div class="card p-1">
+                    <div class="card-header b-l-primary p-2">
+                        <h6 class="m-0">{{ __('Filter deal by:') }}</h6>
+                    </div>
+                    <form id="search-form">
+                        <div class="card-body p-2">
+                            @if(auth()->user()->hasRole('Admin') || auth()->user()->hasPermissionTo('team-manager'))
+                                <div class="form-group mb-2">
+                                    <label for="user_filter">{{ __('Assigned') }}</label>
+                                    <select name="user_filter" id="user_filter"
+                                            class="custom-select custom-select-sm">
+                                        <option value="">{{ __('Assigned') }}</option>
+                                        @foreach($users as $row)
+                                            <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                @if(isset($departments))
+                                    <div class="form-group mb-2">
+                                        <label for="department_filter">{{ __('Departments') }}</label>
+                                        <select name="department_filter" id="department_filter"
+                                                class="custom-select custom-select-sm">
+                                            <option value="">{{ __('Department') }}</option>
+                                            @foreach($departments as $row)
+                                                <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endif
+                                @if(isset($teams))
+                                    <div class="form-group mb-2">
+                                        <label for="team_filter">{{ __('Teams') }}</label>
+                                        <select name="team_filter" id="team_filter"
+                                                class="custom-select custom-select-sm">
+                                            <option value="">{{ __('Team') }}</option>
+                                            @foreach($teams as $row)
+                                                <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endif
+                            @endif
+                            <div class="form-group mb-2">
+                                <label for="project_filter">{{ __('Projects') }}</label>
+                                <select name="project_filter" id="project_filter"
+                                        class="custom-select custom-select-sm">
+                                    <option value="">{{ __('Project') }}</option>
+                                    @foreach($projects as $row)
+                                        <option value="{{ $row->id }}">{{ $row->project_name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="card-footer p-2">
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <button class="btn btn-primary" type="submit">{{ __('Filter') }}</button>
+                                <button class="btn btn-light" type="button" id="refresh">{{ __('Clear') }}</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-sm-10">
                 <!-- Zero config.table start -->
                 @include('partials.flash-message')
                 <div class="card b-t-primary">
@@ -47,58 +156,21 @@
                                 Invoice') }}<i class="icon-plus"></i></a>
                         </div>
                     @endcan
-                    <div class="card-body">
+                    <div class="card-body p-2">
                         <div class="order-history dt-ext table-responsive">
                             <table id="res-config" class="table table-striped display table-bordered nowrap"
                                    width="100%" cellspacing="0">
                                 <thead>
                                 <tr>
-                                    <th>N°</th>
+                                    <th>#</th>
                                     <th>{{ __('Client') }}</th>
                                     <th>{{ __('Project') }}</th>
                                     <th>{{ __('Assigned') }}</th>
                                     <th></th>
                                 </tr>
                                 </thead>
-                                <tbody>
-                                @foreach($invoices as $key => $invoice)
-                                    <tr>
-                                        <td>{{ ++$key }}</td>
-                                        <td>{{ $invoice->client->full_name ?? '' }}</td>
-                                        <td>{{ $invoice->project->company_name ?? $invoice->project->project_name ?? $invoice->project_name ?? '' }} </td>
-                                        <td>
-                                                    <span class="badge badge-success">
-                                                    {{ $invoice->user->name?? '' }}
-                                                    </span>
-                                        </td>
-                                        <td class="flex-container">
-                                            <div class="btn-group pull-right">
-                                                <a class="btn btn-sm btn-outline-primary"
-                                                   href="{{ route('invoices.show', $invoice) }}">{{__('View sales')}}
-                                                    <i class="icon-eye"></i></a>
-                                            </div>
-                                            @can('event-delete')
-                                                <form
-                                                    action="{{ route('invoices.destroy', $invoice) }}"
-                                                    method="post" role="form">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit"
-                                                            class="btn btn-xs btn-warning">
-                                                        {{ __('Delete sales') }}
-                                                        <i class="icon-trash"></i>
-                                                    </button>
-                                                </form>
-                                            @endcan
-                                        </td>
-                                    </tr>
-                                @endforeach
-                                </tbody>
                             </table>
                         </div>
-                    </div>
-                    <div class="card-footer">
-
                     </div>
                 </div>
             </div>

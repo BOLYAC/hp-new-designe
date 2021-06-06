@@ -77,7 +77,10 @@ class DepartmentController extends Controller
         Department::create([
             'external_id' => Uuid::uuid4(),
             'name' => $request->name,
-            'description' => $request->description
+            'description' => $request->description,
+            'address' => $request->address,
+            'email' => $request->email,
+            'phone' => $request->phone
         ]);
         return redirect()->route('departments.index')->with('toast_danger', __("Successfully created new department"));
     }
@@ -115,7 +118,10 @@ class DepartmentController extends Controller
     {
         $department->update([
             'name' => $request->name,
-            'description' => $request->description
+            'description' => $request->description,
+            'address' => $request->address,
+            'email' => $request->email,
+            'phone' => $request->phone
         ]);
         return redirect()->route('departments.index')->with('toast_success', __("Department successfully updated"));
     }

@@ -116,7 +116,7 @@
 @section('content')
     <div class="container-fluid">
         <div class="row">
-            <div class="col-xl-9 xl-100 box-col-12">
+            <div class="col-xl-12 xl-100 box-col-12">
                 <div class="row">
                     <div class="col-12">
                         <div class="project-overview">
@@ -140,7 +140,7 @@
                                 <div class="col-xl-2 col-sm-4 col-6">
                                     <h2 class="f-w-600 counter font-warning">{{ $events }}</h2>
                                     <p class="mb-0"><a
-                                            href="{{ route('events.index', 'today-event') }}">{{ __('Today event(s)') }}</a>
+                                            href="{{ route('events.index', 'today-event') }}">{{ __('Today Appointment(s)') }}</a>
                                     </p>
                                 </div>
                             </div>
@@ -149,7 +149,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-12 col-xl-6 xl-100">
+        <div class="col-xl-12 xl-100">
             <div class="card b-t-primary">
                 <div class="card-body">
                     <ul class="nav nav-tabs border-tab" id="top-tab" role="tablist">

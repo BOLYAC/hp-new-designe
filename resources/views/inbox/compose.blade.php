@@ -2,7 +2,6 @@
 @section('title', '| Email compose')
 
 @section('style_before')
-
 @endsection
 
 @section('script')
@@ -58,7 +57,7 @@
                                                                for="exampleInputEmail1">{{ __('To') }}</label>
                                                         <input class="form-control" id="exampleInputEmail1"
                                                                name="email"
-                                                               type="email">
+                                                               type="email" value="{{ $email }}">
                                                     </div>
                                                     <div class="form-group">
                                                         <label

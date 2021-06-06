@@ -114,6 +114,8 @@
                     d.phone_type = $('select[name=phone_type]').val();
                     d.phone = $('input[name=phone_field]').val();
                     d.user = $('select[name=user_filter]').val();
+                    d.team = $('select[name=team_filter]').val();
+                    d.department = $('select[name=department_filter]').val();
                     d.daysActif = $('#last_active').val();
                     d.lastUpdate = $('#no_tasks').is(':checked');
                     d.daterange = $('input[name=daterange]').val()
@@ -157,6 +159,8 @@
             $('#phone_check').prop('checked', false);
             $('input[name=phone_field]').val('');
             $('select[name=user_filter]').val('');
+            $('select[name=team_filter]').val('');
+            $('select[name=department_filter]').val('');
             $('#last_active').val('');
             $('#no_tasks').prop('checked', false);
             $('input[name=daterange]').val('')
@@ -359,19 +363,40 @@
                                         @endforeach
                                     </select>
                                 </div>
-                            @elseif(auth()->user()->hasRole('Manager'))
-                                @if(auth()->user()->ownedTeams()->count() > 0)
+                                <div class="form-group mb-2">
+                                    <option value="">{{ __('Department') }}</option>
+                                    <select name="department_filter" id="department_filter"
+                                            class="custom-select custom-select-sm">
+                                        <option value="">{{ __('Department') }}</option>
+                                        @foreach($departments as $row)
+                                            <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            @elseif(auth()->user()->hasPermissionTo('team-manager'))
+                                @if(isset($users))
                                     <div class="form-group mb-2">
                                         <select name="user_filter" id="user_filter"
                                                 class="custom-select custom-select-sm">
                                             <option value="">{{ __('Assigned') }}</option>
-                                            @foreach(auth()->user()->currentTeam->allUsers() as $user)
+                                            @foreach($users as $user)
                                                 <option
                                                     value="{{ $user->id }}">{{ $user->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
                                 @endif
+                            @endif
+                            @if(isset($teams))
+                                <div class="form-group mb-2">
+                                    <select name="team_filter" id="team_filter"
+                                            class="custom-select custom-select-sm">
+                                        <option value="">{{ __('Team') }}</option>
+                                        @foreach($teams as $row)
+                                            <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             @endif
                             <div class="form-group mb-2">
                                 <input type="text" class="form-control form-control-sm"

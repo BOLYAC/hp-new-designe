@@ -282,15 +282,14 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label>{{ __('Month') }}</label>
+                                <label>{{ __('Vat %') }}</label>
                                 <div class="input-group">
                                     <input class="form-control" type="text"
-                                           placeholder="{{ __('Month') }}"
-                                           name="month"
-                                           id="month" value="{{ old('month', $invoice->month) }}">
-                                    <div class="input-group-append"><span class="input-group-text currIco"
-                                                                          id="basic-addon3"><i
-                                                class="icon-time"></i></span></div>
+                                           placeholder="{{ __('Vat %') }}"
+                                           name="vat_tax"
+                                           id="vat_tax" value="{{ old('month', $invoice->vat_tax) }}">
+                                    <div class="input-group-append"><span class="input-group-text"
+                                                                          id="basic-addon3">%</span></div>
                                 </div>
                             </div>
                             <div class="form-group">

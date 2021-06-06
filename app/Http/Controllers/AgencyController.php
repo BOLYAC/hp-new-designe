@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Agency;
+use App\Models\Country;
+use App\Models\Department;
 use App\Models\Note;
 use App\Models\Task;
+use App\Models\User;
 use Exception;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -37,7 +40,30 @@ class AgencyController extends Controller
      */
     public function index(Request $request)
     {
-        $agencies = Agency::with(['clients'])->select(['id', 'name', 'company_type', 'phone'])->get();
+        $departments = Department::all();
+        $users = User::all();
+        $countries = Country::all();
+
+        $agencies = Agency::with(['clients'])->select(['id', 'name', 'company_type', 'phone']);
+
+        if ($request->get('type')) {
+            $agencies->where('company_type', '=', $request->get('type'));
+        }
+        if ($request->get('user')) {
+            $agencies->where('user_id', '=', $request->get('user'));
+        }
+        if ($request->get('department')) {
+            $agencies->where('department_id', '=', $request->get('department'));
+        }
+        if ($request->get('country')) {
+            $agencies->where('country', '=', $request->get('country'));
+        }
+        if ($request->get('city')) {
+            $agencies->where('city', 'LIKE', '%' . $request->get('city') . '%');
+        }
+
+        $agencies->OrderByDesc('created_at');
+
         if ($request->ajax()) {
             return DataTables::of($agencies)
                 ->editColumn('company_type', function ($agency) {
@@ -47,7 +73,7 @@ class AgencyController extends Controller
                     if (auth()->user()->hasPermissionTo('department-agencies-sell')) {
                         return '<a href="/sales/agencies/' . $agency->id . '">' . $agency->name . '</a>';
                     } else {
-                        return '<a href="agencies/' . $agency->id . '/edit">' . $agency->name . '</a>';
+                        return '<a href="/agencies/' . $agency->id . '/edit">' . $agency->name . '</a>';
                     }
                 })
                 ->editColumn('phone', function ($agency) {
@@ -86,7 +112,7 @@ class AgencyController extends Controller
                 ->rawColumns(['name', 'action'])
                 ->make(true);
         }
-        return view('agencies.index');
+        return view('agencies.index', compact('users', 'departments', 'countries'));
 
     }
 
@@ -97,6 +123,7 @@ class AgencyController extends Controller
      */
     public function create()
     {
+        $countries = Country::all();
         return view('agencies.create');
     }
 
@@ -137,8 +164,9 @@ class AgencyController extends Controller
      */
     public function edit(Agency $agency)
     {
+        $countries = Country::all();
         $agency->with('clients')->get();
-        return view('agencies.edit', compact('agency'));
+        return view('agencies.edit', compact('agency', 'countries'));
     }
 
     /**
@@ -150,7 +178,8 @@ class AgencyController extends Controller
      */
     public function update(Request $request, Agency $agency): \Illuminate\Http\RedirectResponse
     {
-        $data = $request->except('_token', '_method');
+        $data = $request->except('_token', '_method', 'rep', 'rep_phone');
+
         $data['status'] = $request->has('status') ? 1 : 0;
         $agency->forceFill($data)->save();
 
@@ -182,10 +211,11 @@ class AgencyController extends Controller
     {
 
         $agency = Agency::findOrFail($id);
+        $countries = Country::all();
 
         $agency->with('clients')->get();
 
-        $tasks = Task::whereHasMorph(
+        /*$tasks = Task::whereHasMorph(
             'Taskable',
             ['App\Agency'],
             function ($query) use ($agency) {
@@ -199,8 +229,8 @@ class AgencyController extends Controller
             function ($query) use ($agency) {
                 $query->where('agency_id', $agency->id);
             }
-        )->get()->sortByDesc('date')->sortByDesc('favorite');
+        )->get()->sortByDesc('date')->sortByDesc('favorite');*/
 
-        return view('agencies.sells-office-edit', compact('agency', 'tasks'));
+        return view('agencies.sells-office-edit', compact('agency', 'countries'));
     }
 }

@@ -116,6 +116,23 @@
                                            value="{{ old('contract_status', $agency->contract_status) }}">
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="form-group input-group-sm col">
+                                    <label for="country">{{ __('Country') }}</label>
+                                    <select name="country" id="country" class="form-control form-control-sm">
+                                        <option value="">{{ __('Select country') }}</option>
+                                        @foreach($countries as $country)
+                                            <option value="{{ $country->id }}">{{ $country->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group input-group-sm col">
+                                    <label for="city">{{ __('City') }}</label>
+                                    <input class="form-control sm" type="text" name="city"
+                                           id="city"
+                                           value="{{ old('city', $agency->city) }}">
+                                </div>
+                            </div>
                             <div class="form-group input-group-sm">
                                 <label for="address">{{__('Address')}}</label>
                                 <textarea class="summernote" type="text" name="address"

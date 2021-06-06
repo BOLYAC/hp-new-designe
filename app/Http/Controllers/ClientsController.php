@@ -7,8 +7,10 @@ use App\Imports\ClientsImport;
 use App\Imports\LeadsImport;
 use App\Models\Client;
 
+use App\Models\Department;
 use App\Models\Source;
 use App\Models\Task;
+use App\Models\Team;
 use App\Models\User;
 use Exception;
 use Illuminate\Contracts\Foundation\Application;
@@ -47,12 +49,26 @@ class ClientsController extends Controller
      */
     public function index()
     {
-        $users = User::all();
         $sources = Source::all();
         $agencies = Agency::all();
 
-
-        return view('clients.index', compact('users', 'sources', 'agencies'));
+        if (\auth()->user()->hasRole('Admin')) {
+            $users = User::all();
+            $teams = Team::all();
+            $departments = Department::all();
+            return view('clients.index', compact('users', 'sources', 'agencies', 'departments', 'teams'));
+        } elseif (\auth()->user()->hasPermissionTo('team-manager')) {
+            if (auth()->user()->ownedTeams()->count() > 0) {
+                $teamUsers = auth()->user()->ownedTeams;
+                $teams = auth()->user()->allTeams();
+                foreach ($teamUsers as $u) {
+                    foreach ($u->users as $ut) {
+                        $users[] = $ut;
+                    }
+                }
+            }
+            return view('clients.index', compact('users', 'sources', 'agencies', 'teams'));
+        }
     }
 
     /**
@@ -79,6 +95,12 @@ class ClientsController extends Controller
         }
         if ($request->get('user')) {
             $clients->where('user_id', '=', $request->get('user'));
+        }
+        if ($request->get('team')) {
+            $clients->where('team_id', '=', $request->get('team'));
+        }
+        if ($request->get('department')) {
+            $clients->where('department_id', '=', $request->get('department'));
         }
         if ($request->get('daysActif')) {
             $clients->where('updated_at', '<=', \Carbon\Carbon::today()->subDays($request->get('daysActif')));
@@ -119,36 +141,36 @@ class ClientsController extends Controller
             $d = $request->get('phone_check');
             switch ($d) {
                 case '1':
-                    $clients->Where('client_number', 'LIKE', '%' . $request->get('country') . '%')
-                        ->orWhere('client_number_2', 'LIKE', '%' . $request->get('country') . '%');
+                    $clients->Where('client_number', 'LIKE', '%' . $request->get('phone') . '%')
+                        ->orWhere('client_number_2', 'LIKE', '%' . $request->get('phone') . '%');
                     break;
                 case '2':
-                    $clients->Where('client_number', 'not like', '%' . $request->get('country') . '%')
-                        ->orWhere('client_number_2', 'not like', '%' . $request->get('country') . '%');
+                    $clients->Where('client_number', 'not like', '%' . $request->get('phone') . '%')
+                        ->orWhere('client_number_2', 'not like', '%' . $request->get('phone') . '%');
                     break;
                 case '3':
-                    $clients->Where('client_number', 'LIKE', '%' . $request->get('country') . '%')
-                        ->orWhere('client_number_2', 'LIKE', '%' . $request->get('country') . '%');
+                    $clients->Where('client_number', 'LIKE', '%' . $request->get('phone') . '%')
+                        ->orWhere('client_number_2', 'LIKE', '%' . $request->get('phone') . '%');
                     break;
                 case '4':
-                    $clients->Where('client_number', 'not like', '%' . $request->get('country') . '%')
-                        ->orWhere('client_number_2', 'not like', '%' . $request->get('country') . '%');
+                    $clients->Where('client_number', 'not like', '%' . $request->get('phone') . '%')
+                        ->orWhere('client_number_2', 'not like', '%' . $request->get('phone') . '%');
                     break;
                 case '5':
-                    $clients->Where('client_number', 'like', $request->get('country') . '%')
-                        ->orWhere('client_number_2', 'like', $request->get('country') . '%');
+                    $clients->Where('client_number', 'like', $request->get('phone') . '%')
+                        ->orWhere('client_number_2', 'like', $request->get('phone') . '%');
                     break;
                 case '6':
-                    $clients->Where('client_number', 'like', '%' . $request->get('country'))
-                        ->orWhere('client_number_2', 'like', '%' . $request->get('country'));
+                    $clients->Where('client_number', 'like', '%' . $request->get('phone'))
+                        ->orWhere('client_number_2', 'like', '%' . $request->get('phone'));
                     break;
                 case '7':
-                    $clients->whereNull('client_number')->orWhere('client_number', '=', '')
-                        ->orWhereNull('client_number_2')->orWhere('client_number_2', '=', '');
+                    $clients->whereNull('client_number')->orWhere('client_number', '=', 'phone')
+                        ->orWhereNull('client_number_2')->orWhere('client_number_2', '=', 'phone');
                     break;
                 case '8':
-                    $clients->whereNotNull('client_number')->orWhere('client_number', '<>', '')
-                        ->orwhereNotNull('client_number_2')->orWhere('client_number_2', '<>', '');
+                    $clients->whereNotNull('client_number')->orWhere('client_number', '<>', 'phone')
+                        ->orwhereNotNull('client_number_2')->orWhere('client_number_2', '<>', 'phone');
                     break;
             }
         }
@@ -691,6 +713,10 @@ class ClientsController extends Controller
 
     public function sendEmail(Request $request)
     {
-        $request->dd();
+        $data = [
+            'message' => $request->get('text-box')
+        ];
+
+        \Mail::to($request->get('email'))->send(new \App\Mail\SendClientEmail($data));
     }
 }

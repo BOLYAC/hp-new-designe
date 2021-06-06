@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Department;
 use App\Models\Invoice;
+use App\Models\Lead;
 use App\Models\Project;
+use App\Models\Team;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Yajra\DataTables\Facades\DataTables;
 
 class OrderController extends Controller
 {
@@ -17,8 +22,74 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $invoices = Invoice::with(['user', 'client', 'project'])->get();
-        return view('invoices.index', compact('invoices'));
+        $projects = Project::all();
+        if (\auth()->user()->hasRole('Admin')) {
+            $users = User::all();
+            $teams = Team::all();
+            $departments = Department::all();
+            return view('invoices.index', compact('users', 'departments', 'teams', 'projects'));
+        } elseif (\auth()->user()->hasPermissionTo('team-manager')) {
+            if (auth()->user()->ownedTeams()->count() > 0) {
+                $users = auth()->user()->currentTeam->allUsers();
+                $teams = auth()->user()->allTeams();
+            }
+            return view('invoices.index', compact('users', 'teams', 'projects'));
+        }
+    }
+
+    /**
+     * Make json response for datatable
+     * @param Request $request
+     * @return mixed
+     * @throws \Exception
+     */
+    public function anyData(Request $request)
+    {
+        $invoices = Invoice::with(['client', 'user', 'project']);
+
+        if ($request->get('user')) {
+            $invoices->where('user_id', '=', $request->get('user'));
+        }
+
+        if ($request->get('department')) {
+            $invoices->where('department_id', '=', $request->get('department'));
+        }
+
+        if ($request->get('team')) {
+            $invoices->where('team_id', '=', $request->get('team'));
+        }
+
+        if ($request->get('project')) {
+            $invoices->where('project_id', '=', $request->get('project'));
+        }
+
+        $invoices->OrderByDesc('created_at');
+
+
+        return Datatables::of($invoices)
+            ->setRowId('id')
+            ->editColumn('lead_name', function ($invoices) {
+                return '<a href="/invoices/' . $invoices->external_id . '" class="f-w-600">' . $invoices->client_name ?? $invoices->client->full_name ?? '' . '</a>';
+            })
+            ->addColumn('project_id', function ($invoices) {
+                return '<span class="f-w-600">' . $invoices->project->project_name ?? $invoices->project_name . '</span>';
+            })
+            ->addColumn(
+                'user',
+                function ($invoices) {
+                    return '<span class="badge badge-success">' . optional($invoices->user)->name . '</span>';
+                }
+            )
+            ->addColumn(
+                'action',
+                '<a href="{{ route(\'invoices.show\', $external_id) }}"
+                                               class="m-r-15 text-muted f-18"><i
+                                                    class="icofont icofont-eye-alt"></i></a>
+                                            <a href="#!"
+                                               class="m-r-15 text-muted f-18 delete"><i
+                                                    class="icofont icofont-trash"></i></a>')
+            ->rawColumns(['lead_name', 'project_id', 'user', 'action'])
+            ->make(true);
     }
 
     /**

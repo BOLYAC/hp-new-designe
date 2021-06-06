@@ -64,12 +64,14 @@ class EventsController extends Controller
         $data = $request->except('share_with', 'files');
 
         $users = $request->get('share_with');
-        $adminEmail = User::findOrFail(1);
 
+        $adminEmail = User::findOrFail(1);
         if ($request->has('share_with')) {
             $u = User::whereIn('id', $users)->pluck('name');
-            $uEmails = User::whereIn('id', $users)->pluck('email');
             $data['sellers'] = $users;
+            if (auth()->user()->hasRole('Admin')) {
+                $uEmails = User::whereIn('id', $users)->pluck('email');
+            }
         }
 
         $client = Client::findOrFail($request->get('client_id'));
@@ -89,7 +91,6 @@ class EventsController extends Controller
             $data['sell_rep'] = $users[0];
             $data['sells_name'] = $u;
         }
-
 
 
         $event = Event::create($data);
@@ -125,7 +126,8 @@ class EventsController extends Controller
      * @param Event $event
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|View
      */
-    public function show(Event $event)
+    public
+    function show(Event $event)
     {
         $users = User::all();
         //dd($event);
@@ -138,7 +140,8 @@ class EventsController extends Controller
      * @param Event $event
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|View
      */
-    public function edit(Event $event)
+    public
+    function edit(Event $event)
     {
         $users = User::all();
         if ($event->user_id === \auth()->id()) {
@@ -155,7 +158,8 @@ class EventsController extends Controller
      * @param Event $event
      * @return RedirectResponse
      */
-    public function update(Request $request, Event $event): RedirectResponse
+    public
+    function update(Request $request, Event $event): RedirectResponse
     {
         $lead = Lead::findOrfail($event->lead_id);
 
@@ -183,13 +187,13 @@ class EventsController extends Controller
         $event->update($data);
         $event->SharedEvents()->detach();
         if ($request->get('feedback')) {
-        $lead->comments()->create([
-            'external_id' => Uuid::uuid4()->toString(),
-            'description' => $request->get('feedback'),
-            'user_id' => $request->user_id ?? Auth::id()
-        ]);    
+            $lead->comments()->create([
+                'external_id' => Uuid::uuid4()->toString(),
+                'description' => $request->get('feedback'),
+                'user_id' => $request->user_id ?? Auth::id()
+            ]);
         }
-        
+
         if ($request->has('share_with')) {
             $event->SharedEvents()->attach($users, ['added_by' => Auth::id(), 'user_name' => Auth::user()->name]);
         }
@@ -202,7 +206,8 @@ class EventsController extends Controller
      * @param Event $event
      * @return RedirectResponse
      */
-    public function replicate(Event $event): RedirectResponse
+    public
+    function replicate(Event $event): RedirectResponse
     {
         $newEvent = $event->replicate();
         $newEvent->created_at = \Carbon\Carbon::now();
@@ -220,14 +225,16 @@ class EventsController extends Controller
      * @return RedirectResponse
      * @throws \Exception
      */
-    public function destroy(Event $event): RedirectResponse
+    public
+    function destroy(Event $event): RedirectResponse
     {
         $event->delete();
         return redirect()->route('events.index')
             ->with('toast_success', 'Event deleted successfully');
     }
 
-    public function dataAjax(Request $request): \Illuminate\Http\JsonResponse
+    public
+    function dataAjax(Request $request): \Illuminate\Http\JsonResponse
     {
         $data = [];
 
@@ -246,7 +253,8 @@ class EventsController extends Controller
         return response()->json($data);
     }
 
-    public function showReport($val)
+    public
+    function showReport($val)
     {
         if ($val === 'today') {
             $events = Event::whereDate('event_date', Carbon::today()->toDateString())->get();
@@ -260,7 +268,8 @@ class EventsController extends Controller
         return view('events.report', compact('events', 'val'));
     }
 
-    public function createReport(Request $request, $val = array())
+    public
+    function createReport(Request $request, $val = array())
     {
         if ($val === 'today') {
             $events = Event::whereDate('event_date', Carbon::today()->toDateString())->get();
@@ -285,7 +294,8 @@ class EventsController extends Controller
         return $pdf->stream('test_pdf.pdf');
     }
 
-    public function customReport(Request $request)
+    public
+    function customReport(Request $request)
     {
         if (!empty($request->from_date) && !empty($request->to_date)) {
             $from = $request->from_date;

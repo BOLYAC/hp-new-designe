@@ -29,7 +29,8 @@ class Agency extends Model implements Documentable, Taskable, Noteable
      */
     protected $casts = [
         'status' => 'boolean',
-        'projects' => 'array'
+        'projects' => 'array',
+        'representatives' => 'array',
     ];
 
     public function clients(): HasMany
@@ -95,6 +96,19 @@ class Agency extends Model implements Documentable, Taskable, Noteable
         static::updating(function ($agency) { // On create() method call this
             $agency->updated_by = auth()->id();
         });
+    }
+
+    public function setRepresentativesAttribute($value)
+    {
+        $representatives = [];
+
+        foreach ($value as $array_item) {
+            if (!is_null($array_item['key'])) {
+                $representatives[] = $array_item;
+            }
+        }
+
+        $this->attributes['representatives'] = json_encode($representatives);
     }
 
 }

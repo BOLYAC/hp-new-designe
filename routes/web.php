@@ -35,6 +35,7 @@ Route::group(
         Route::resource('payments', 'PaymentController');
 
 
+        // Deals
         Route::post('/covert-to-order/{lead}', 'LeadsController@convertToOrder')->name('lead.convert.order');
         Route::post('/comments/{type}/{external_id}', 'CommentController@store')->name('comments.create');
         Route::get('calender', 'CalenderController')->name('calender.index');
@@ -45,6 +46,9 @@ Route::group(
         Route::post('lead/stage-change', 'LeadsController@changeStage')->name('stage.change');
         Route::post('lead/change-owner', 'LeadsController@dealChangeOwner')->name('deal.change.owner');
         Route::get('event/search/client', 'EventsController@dataAjax')->name('event.client.filter');
+        Route::post('/lead/reservation-form', 'LeadsController@reservationForm')->name('deal.reservation.form');
+
+        // Teams
         Route::resource('teams', 'TeamController');
 
         // Invoices
@@ -53,6 +57,7 @@ Route::group(
             Route::get('/payments-data/{invoice}', 'PaymentController@paymentsDataTable')->name('invoice.paymentsDataTable');
             Route::post('/status-change', 'OrderController@changeStatus')->name('invoice.status.change');
             Route::get('/print/{invoice}', 'OrderController@printInvoice')->name('invoices.print');
+            Route::get('/data', 'OrderController@anyData')->name('invoices.data');
         });
 
         Route::resource('invoices', 'OrderController');
@@ -88,6 +93,8 @@ Route::group(
         //// Projects
         Route::get('/projects/getProject/{id}', 'ProjectsController@getProject')->name('project.api');
         Route::get('/project/show/{id}', 'ProjectsController@getSingleProject')->name('project.api.show');
+        // Apartments
+        Route::resource('properties', 'PropertyController');
         // Agencies
         Route::get('/sales/agencies/{id}', 'AgencyController@getAgencySellsOffice')->name('agencies.sells-office-edit');
         Route::resource('agencies', 'AgencyController');

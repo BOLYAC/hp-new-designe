@@ -9,12 +9,16 @@
     <link rel="stylesheet" href="{{ asset('assets/css/datatables.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/datatable-extension.css') }}">
 
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
 
     <style>
         .select2-container {
             width: 100% !important;
             padding: 0;
+        }
+
+        .jconfirm.jconfirm-supervan .jconfirm-box div.jconfirm-content {
+            overflow: hidden
         }
     </style>
 
@@ -29,12 +33,11 @@
     <!-- Plugins JS start-->
     <script src="{{ asset('assets/js/notify/bootstrap-notify.min.js') }}"></script>
     <!-- Plugins JS start-->
-
     <!-- Datatables.js -->
     <script src="{{asset('assets/js/datatables/jquery.dataTables.min.js')}}"></script>
     <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.bootstrap4.min.js')}}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
     <script>
-
         let budgetData = [
             {
                 id: 1,
@@ -103,7 +106,6 @@
                     allow_dismiss: true,
                     newest_on_top: true,
                     mouse_over: true,
-                    showProgressbar: true,
                     spacing: 10,
                     timer: 2000,
                     placement: {
@@ -127,7 +129,138 @@
             e.preventDefault();
             let level = $(this).val();
             let lead_id = '{{ $lead->id }}';
-            if (level) {
+            if (level == 4) {
+                $.confirm({
+                    title: '{{ __('Reservation From') }}',
+                    theme: 'supervan',
+                    columnClass: 'col-md-8',
+                    bootstrapClasses: {
+                        container: 'container',
+                        containerFluid: 'container-fluid',
+                        row: 'row',
+                    },
+                    content: '' +
+                        '<form class="reservationForm" enctype="multipart/form-data">' +
+                        '@csrf' +
+                        '<div class="row">' +
+                        '<div class="form-group col-md-12">' +
+                        '<label> {{ __('Project name') }} </label>' +
+                        '<select name="project_id" class="project_id form-control form-control-sm">' +
+                        '@foreach($projects as $project)' +
+                        '<option value="{{ $project->id }}">{{ $project->project_name }}</option>' +
+                        '@endforeach' +
+                        '</select>' +
+                        '</div>' +
+                        '<div class="form-group col-md-6">' +
+                        '<label> {{ __('Province/Country') }} </label>' +
+                        '<input type="text" class="country_province form-control form-control-sm" name="country_province" required/>' +
+                        '</div>' +
+                        '<div class="form-group col-md-6">' +
+                        '<label> {{ __('Flat Num') }} </label>' +
+                        '<input type="text" class="flat_num form-control form-control-sm" name="flat_num" required/>' +
+                        '</div>' +
+                        '<div class="form-group col-md-6">' +
+                        '<label> {{ __('Gross M²') }} </label>' +
+                        '<input type="text" class="gross_square form-control form-control-sm" name="gross_square" required/>' +
+                        '</div>' +
+                        '<div class="form-group col-md-6">' +
+                        '<label> {{ __('Section/Plot') }} </label>' +
+                        '<input type="text" class="section_plot form-control form-control-sm" name="section_plot" required/>' +
+                        '</div>' +
+                        '<div class="form-group col-md-6">' +
+                        '<label> {{ __('Block Num') }} </label>' +
+                        '<input type="text" class="block_num form-control form-control-sm" name="block_num" required/>' +
+                        '</div>' +
+                        '<div class="form-group col-md-6">' +
+                        '<label> {{ __('Floor Num') }} </label>' +
+                        '<input type="text" class="floor_number form-control form-control-sm" name="floor_number" required/>' +
+                        '</div>' +
+                        '<div class="form-group col-md-6">' +
+                        '<label> {{ __('Num of Rooms') }} </label>' +
+                        '<input type="text" class="room_number form-control form-control-sm" name="room_number" required/>' +
+                        '</div>' +
+                        '<div class="form-group col-md-6">' +
+                        '<label> {{ __('Reservation amount') }} </label>' +
+                        '<input type="text" class="reservation_amount form-control form-control-sm" name="reservation_amount" required/>' +
+                        '</div>' +
+                        '<div class="form-group col-md-6">' +
+                        '<label> {{ __('Sale Price') }} </label>' +
+                        '<input type="text" class="sale_price form-control form-control-sm" name="sale_price" required/>' +
+                        '</div>' +
+                        '<div class="form-group col-md-6">' +
+                        '<label> {{ __('File upload') }} </label>' +
+                        '<input type="file" class="file_path form-control form-control-sm" name="file_path" required/>' +
+                        '</div>' +
+                        '</div>' +
+                        '</form>',
+                    buttons: {
+                        formSubmit: {
+                            text: 'Submit',
+                            btnClass: 'btn-blue',
+                            action: function () {
+                                var name = this.$content.find('.project_id').val();
+                                if (!name) {
+                                    $.alert('provide a valid Project name');
+                                    return false;
+                                }
+                                let project_id = this.$content.find('.project_id').val();
+                                let project_name = this.$content.find('.project_id option:selected').val();
+                                let country_province = this.$content.find('.country_province').val();
+                                let flat_num = this.$content.find('.flat_num').text();
+                                let gross_square = this.$content.find('.gross_square').val();
+                                let section_plot = this.$content.find('.section_plot').val();
+                                let block_num = this.$content.find('.block_num').val();
+                                let floor_number = this.$content.find('.floor_number').val();
+                                let room_number = this.$content.find('.room_number').val();
+                                let reservation_amount = this.$content.find('.reservation_amount').val();
+                                let sale_price = this.$content.find('.sale_price').val();
+                                let file_path = this.$content.find('.file_path').val();
+                                let lead_id = '{{ $lead->id }}'
+                                $.ajax({
+                                    url: "{{ route('deal.reservation.form') }}",
+                                    type: "POST",
+                                    data: {
+                                        "_token": "{{ csrf_token() }}",
+                                        lead_id,
+                                        project_id,
+                                        project_name,
+                                        country_province,
+                                        flat_num,
+                                        gross_square,
+                                        section_plot,
+                                        floor_number,
+                                        block_num,
+                                        room_number,
+                                        reservation_amount,
+                                        sale_price,
+                                        file_path
+                                    },
+                                    success: function () {
+                                        notify('Reservation created, Stage change to reservation', 'success');
+                                    },
+                                    error: function () {
+                                        notify('Ops!! Something wrong', 'danger');
+                                    },
+                                });
+
+                            }
+                        },
+                        cancel: function () {
+                            $("#stage_id").val({{ $lead->stage_id }});
+                        },
+                    },
+                    onContentReady: function () {
+                        // bind to events
+                        var jc = this;
+                        this.$content.find('form').on('submit', function (e) {
+                            // if the user submits the form by pressing enter in the field.
+                            e.preventDefault();
+                            jc.$$formSubmit.trigger('click'); // reference the button and click it
+                        });
+                    }
+                });
+            } else {
+
                 $.ajax({
                     type: 'POST',
                     url: '{{ route('stage.change') }}',
@@ -137,6 +270,11 @@
                         lead_id: lead_id
                     },
                     success: function (r) {
+                        if (level >= 7) {
+                            $('#stage_id_shown').removeClass("invisible").addClass("visible")
+                        } else {
+                            $('#stage_id_shown').removeClass("visible").addClass("invisible")
+                        }
                         notify('Stage changed', 'success');
                     }
                     , error: function (error) {
@@ -144,12 +282,12 @@
                     }
                 });
             }
+
         });
         $('#trans-to-sales').on('submit', function (e) {
             e.preventDefault();
             user_id = $('#inCharge').val();
             lead_id = '{{ $lead->id }}';
-
             $.ajax({
                 url: "{{route('deal.change.owner')}}",
                 type: "POST",
@@ -189,7 +327,7 @@
 
 @section('breadcrumb-items')
     <li class="breadcrumb-item"><a href="{{ route('leads.index') }}">{{ __('Deals') }}</a></li>
-    <li class="breadcrumb-item">{{ __('Lead name') }}: {{ $lead->full_name ?? $lead->client->full_name }}</li>
+    <li class="breadcrumb-item">{{ __('Lead name') }}: {{ $lead->client->full_name ?? $lead->full_name }}</li>
 @endsection
 
 @section('content')
@@ -253,7 +391,8 @@
                             @if($lead->invoice_id <> 0)
                             @else
                                 @can('transfer-deal-to-invoice')
-                                    <div>
+                                    <div id="stage_id_shown"
+                                         class="{{ $lead->stage_id >= 7 ? 'visible': 'invisible' }}">
                                         <form action="{{ route('lead.convert.order', $lead) }}"
                                               onSubmit="return confirm('Are you sure?');"
                                               method="post" class="pull-right">
@@ -277,19 +416,10 @@
                             @endif
                         </div>
                     </div>
-                    <div class="card-body">
-                        <h4>{{ __('Description') }}</h4>
-                        <p>
-                            {!! $lead->description !!}
-                        </p>
-                    </div>
-                    <div class="card-footer">
-                        {{ __('Created at:') }}
-                        {{ Carbon\Carbon::parse($lead->created_at)->format('Y-m-d H:i') }}
-                    </div>
                 </div>
                 @include('partials.comments', ['subject' => $lead])
                 @include('partials.events', ['subject' => $lead])
+                @include('leads.partials.reservation')
             </div>
             <div class="col-md-4">
                 <div class="card">
@@ -385,6 +515,24 @@
                 @endcan
                 <div class="card card-with-border">
                     <div class="card-header">
+                        <h5 class="d-inline-block">{{ __('Description') }}</h5>
+                    </div>
+                    <div class="card-body activity-social">
+                        <ul>
+                            <li>
+                                <p>
+                                    {!! $lead->description !!}
+                                </p>
+                            </li>
+                            <li>
+                                {{ __('Created at:') }}
+                                {{ Carbon\Carbon::parse($lead->created_at)->format('Y-m-d H:i') }}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card card-with-border">
+                    <div class="card-header">
                         <h5 class="d-inline-block">{{ __('Stage activity') }}</h5>
                     </div>
                     <div class="card-body activity-social">
@@ -404,10 +552,8 @@
         </div>
 
     </div>
-
-    <!-- Start Appointment Modal -->
-    <div class="modal fade" id="sign-in-modal" tabindex="-1">
-        <div class="modal-dialog  modal-lg" role="document">
+    <div class="modal fade" id="sign-in-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">{{ __('New appointment') }}</h5>
@@ -417,35 +563,43 @@
                 </div>
                 <form action="{{ route('events.store') }}" method="POST">
                     @csrf
-                    <div class="modal-body p-b-0">
+                    <div class="modal-body p-2">
+                        <input type="hidden" name="client_id" value="{{ $lead->client_id}}">
+                        <input type="hidden" name="lead_id" value="{{ $lead->id}}">
+                        <input type="hidden" name="user_id" value="{{ auth()->id()}}">
                         <div class="row">
-                            <div class="form-group input-group-sm col-6">
+                            <div class="form-group input-group-sm col-md-6">
                                 <label for="name">{{ __('Title') }}</label>
-                                <input class="form-control sm" type="text" name="name" id="name">
+                                <input class="form-control form-control-sm"
+                                       type="text"
+                                       name="name"
+                                       id="name">
                             </div>
-                            <div class="form-group input-group-sm col-6">
+                            <div class="form-group input-group-sm col-md-6">
                                 <label for="event_date">{{ __('Date of appointment') }}</label>
-                                <input id="event_date" class="form-control" name="event_date" type="datetime-local"
+                                <input id="event_date"
+                                       class="form-control form-control-sm"
+                                       name="event_date"
+                                       type="datetime-local"
                                        required/>
                             </div>
-                            <input type="hidden" name="client_id" value="{{ $lead->client_id}}">
-                            <input type="hidden" name="lead_id" value="{{ $lead->id}}">
-                            <input type="hidden" name="user_id" value="{{ auth()->id()}}">
-                            <div class="form-group input-group-sm col-12">
-                                <label for="color">{{ __('Colors') }}</label>
-                                <div>
-                                    <input id="color" name="color" type="color" value="#0B8043" list="presetColors">
-                                    <datalist id="presetColors">
-                                        <option>#0B8043</option>
-                                        <option>#D50000</option>
-                                        <option>#F4511E</option>
-                                        <option>#8E24AA</option>
-                                        <option>#3F51B5</option>
-                                        <option>#039BE5</option>
-                                    </datalist>
-                                </div>
+                        </div>
+                        <div class="form-group input-group-sm">
+                            <label for="color">{{ __('Colors') }}</label>
+                            <div>
+                                <input id="color" name="color" type="color" value="#0B8043" list="presetColors">
+                                <datalist id="presetColors">
+                                    <option>#0B8043</option>
+                                    <option>#D50000</option>
+                                    <option>#F4511E</option>
+                                    <option>#8E24AA</option>
+                                    <option>#3F51B5</option>
+                                    <option>#039BE5</option>
+                                </datalist>
                             </div>
-                            <div class="form-group input-group-sm col-2">
+                        </div>
+                        <div class="row">
+                            <div class="form-group input-group-sm col-md-2">
                                 <label for="currency">{{__('Currency')}}</label>
                                 <select class="form-control form-control-sm" id="currency" name="currency">
                                     <option value="try">TRY</option>
@@ -453,7 +607,7 @@
                                     <option value="euro">EURO</option>
                                 </select>
                             </div>
-                            <div class="form-group col-10">
+                            <div class="form-group col-md-10">
                                 <div class="col-form-label pt-0">{{ __('Budget') }}</div>
                                 <select name="budget[]"
                                         class="form-control form-control-sm digits js-budgets-all col"
@@ -468,7 +622,8 @@
                         @can('share-appointment')
                             <div class="mb-2">
                                 <div class="col-form-label">{{ __('Share with') }}</div>
-                                <select class="js-event-sells custom-select" name="share_with[]" multiple>
+                                <select name="share_with[]" class="js-event-sells custom-select custom-select-sm"
+                                        multiple>
                                     @foreach($users as $user)
                                         @if($lead->ShareWithSelles->contains($user))
                                             <option value="{{ $user->id }}"
@@ -482,12 +637,12 @@
                         @endcan
                         <div class="form-group input-group-sm">
                             <label for="description">{{ __('Description') }}</label>
-                            <textarea class="form-control sm" type="text" name="description"
-                                      id="description"></textarea>
+                            <textarea type="text" name="description"
+                                      id="description" class="form-control form-control-sm"></textarea>
                         </div>
                         <div class="form-group input-group-sm">
                             <label for="place">{{ __('Place') }}</label>
-                            <input class="form-control sm" type="text" name="place" id="place">
+                            <input class="form-control form-control-sm" type="text" name="place" id="place">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -502,6 +657,5 @@
         </div>
     </div>
     <!-- End Appointment Modal -->
-
 @endsection
 

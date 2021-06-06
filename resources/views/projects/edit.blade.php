@@ -3,13 +3,26 @@
 @section('style_before')
     <!-- Summernote.css-->
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/summernote.css') }}">
+    <!-- Datatables.css -->
+    <link rel="stylesheet" href="{{ asset('assets/css/datatables.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/datatable-extension.css') }}">
 @endsection
 
 @section('script')
     <!-- Plugins JS start-->
     <script src="{{ asset('assets/js/editor/summernote/summernote.js') }}"></script>
     <script src="{{ asset('assets/js/editor/summernote/summernote.custom.js') }}"></script>
-
+    <!-- Plugins JS start-->
+    <script src="{{ asset('assets/js/notify/bootstrap-notify.min.js') }}"></script>
+    <script src="{{ asset('assets/js/notify/notify-script.js') }}"></script>
+    <script src="{{asset('assets/js/datatables/jquery.dataTables.min.js')}}"></script>
+    <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.bootstrap4.min.js')}}"></script>
+    <script>
+        $(document).ready(function () {
+            // Start Edit record
+            let table = $('#res-config').DataTable();
+        })
+    </script>
 @endsection
 
 @section('breadcrumb-items')
@@ -20,7 +33,7 @@
 @section('content')
     <div class="container-fluid">
         <div class="row">
-            <div class="col-sm-8 mx-auto">
+            <div class="col-sm-6">
                 <!-- Zero config.table start -->
                 @include('partials.flash-message')
                 <div class="card">
@@ -146,6 +159,86 @@
                     </form>
                 </div>
             </div>
+            <div class="col-sm-6">
+                <div class="card">
+                    <div class="card-header p-2">
+                        <button class="btn btn-primary" type="button" data-toggle="modal"
+                                data-original-title="new apartment"
+                                data-target="#newApartment">{{ __('New apartment') }}
+                        </button>
+                    </div>
+                    <div class="card-body b-t-primary">
+                        <div class="table-responsive">
+                            <table id="res-config" class="display">
+                                <thead>
+                                <tr>
+                                    <th>{{ __('Unit Type') }}</th>
+                                    <th>{{ __('Flat Type') }}</th>
+                                    <th>{{ __('Floor') }}</th>
+                                    <th>{{ __('Gross SQM') }}</th>
+                                    <th>{{ __('Net SQM') }}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach($project->properties as $property)
+                                    <tr>
+                                        <td>{{ $property->unit_type ?? '' }}</td>
+                                        <td>{{ $property->flat_type ?? '' }}</td>
+                                        <td>{{ $property->floor ?? '' }}</td>
+                                        <td>{{ $property->gross_sqm ?? '' }}</td>
+                                        <td>{{ $property->net_sqm ?? '' }}</td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+    <!-- Create apartment -->
+    <div class="modal fade" id="newApartment" tabindex="-1" role="dialog" aria-labelledby="new_apartment"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="new_apartment">{{ __('New apartment') }}</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">×</span></button>
+                </div>
+                <form action="{{ route('properties.store') }}" method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        <input type="hidden" name="project_id" value="{{ $project->id }}">
+                        <div class="form-group">
+                            <label for="">{{ __('Unit Type') }}</label>
+                            <input type="text" name="unit_type" class="form-control form-control-sm">
+                        </div>
+                        <div class="form-group">
+                            <label for="">{{ __('Flat Type') }}</label>
+                            <input type="text" name="flat_type" class="form-control form-control-sm">
+                        </div>
+                        <div class="form-group">
+                            <label for="">{{ __('Floor') }}</label>
+                            <input type="text" name="floor" class="form-control form-control-sm">
+                        </div>
+                        <div class="form-group">
+                            <label for="">{{ __('Gross SQM') }}</label>
+                            <input type="text" name="gross_sqm" class="form-control form-control-sm">
+                        </div>
+                        <div class="form-group">
+                            <label for="">{{ __('Net SQM') }}</label>
+                            <input type="text" name="net_sqm" class="form-control form-control-sm">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" type="button" data-dismiss="modal">{{ __('Close') }}</button>
+                        <button class="btn btn-secondary" type="submit">{{ __('Save') }}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- End create apartment -->
 @endsection

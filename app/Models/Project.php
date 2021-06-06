@@ -17,4 +17,9 @@ class Project extends Model
     {
         return $this->hasMany(Invoice::class);
     }
+
+    public function properties(): HasMany
+    {
+        return $this->hasMany(Property::class);
+    }
 }
