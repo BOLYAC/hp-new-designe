@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ca25030432f8dc2e80daaa465d9ba430",
+    "content-hash": "25049810df29543abc11ce440219198f",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -4122,6 +4122,54 @@
                 "source": "https://github.com/sabberworm/PHP-CSS-Parser/tree/8.3.1"
             },
             "time": "2020-06-01T09:10:00+00:00"
+        },
+        {
+            "name": "samiaraboglu/alotech-php-api",
+            "version": "1.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/samiaraboglu/alotech-php-api.git",
+                "reference": "809f0deed84091e7abbf6d07873944c8c68678f8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/samiaraboglu/alotech-php-api/zipball/809f0deed84091e7abbf6d07873944c8c68678f8",
+                "reference": "809f0deed84091e7abbf6d07873944c8c68678f8",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "AloTech\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sami Araboğlu",
+                    "email": "samiaraboglu@gmail.com",
+                    "homepage": "https://github.com/samiaraboglu",
+                    "role": "Developer"
+                }
+            ],
+            "homepage": "https://github.com/samiaraboglu/alotech-php-api",
+            "keywords": [
+                "alotech",
+                "alotech-php-api",
+                "api",
+                "php"
+            ],
+            "support": {
+                "issues": "https://github.com/samiaraboglu/alotech-php-api/issues",
+                "source": "https://github.com/samiaraboglu/alotech-php-api/tree/master"
+            },
+            "time": "2020-04-27T08:18:46+00:00"
         },
         {
             "name": "spatie/db-dumper",

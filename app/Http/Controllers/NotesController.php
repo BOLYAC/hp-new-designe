@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use AloTech\AloTech;
+use AloTech\Authentication;
 use App\Models\Client;
 use App\Models\Note;
 use App\Models\User;
@@ -14,23 +16,19 @@ class NotesController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return array
      */
-    public function index()
+    public function index(): array
     {
+        $token = 'ahRzfm11c3RlcmktaGl6bWV0bGVyaXIfCxISVGVuYW50QXBwbGljYXRpb25zGICA5Ibn17YKDKIBGGhhc2hpbWdyb3VwLmFsby10ZWNoLmNvbQ';
+        $userName = 'abdullatif.elali@hashimproperty.com';
+        $authentication = new Authentication();
+        $authentication->setUsername($token);
+        $authentication->setAppToken($userName);
 
-//        DB::table('clients')->update(['department_id' => 1]);
-//        DB::table('events')->update(['department_id' => 1]);
-//        DB::table('comments')->update(['department_id' => 1]);
-//        DB::table('invoices')->update(['department_id' => 1]);
-//        DB::table('leads')->update(['department_id' => 1]);
-//        DB::table('notes')->update(['department_id' => 1]);
-//        DB::table('payments')->update(['department_id' => 1]);
-//        DB::table('tasks')->update(['department_id' => 1]);
-//        DB::table('agencies')->update(['department_id' => 1]);
-//        DB::table('users')->update(['department_id' => 1]);
-//        DB::table('teams')->update(['department_id' => 1]);
+        $aloTech = new AloTech($authentication);
 
+        return $response = $aloTech->ping();
     }
 
     /**
