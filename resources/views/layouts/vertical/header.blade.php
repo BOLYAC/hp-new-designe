@@ -15,6 +15,8 @@
         </div>
         <div class="nav-right col pull-right right-menu">
             <ul class="nav-menus">
+                <li></li>
+                <li class="theme-setting"><i data-feather="phone-call"></i></li>
                 <li class="onhover-dropdown px-0"><span class="media user-header"><img
                             class="mr-2 rounded-circle img-35"
                             style="width: 35px;height:35px;"

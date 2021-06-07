@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use AloTech\AloTech;
 use AloTech\Authentication;
+use AloTech\Click2;
 use App\Models\Client;
 use App\Models\Note;
 use App\Models\User;
@@ -16,19 +17,30 @@ class NotesController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return array
+     * @return array|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     * @throws \Exception
      */
-    public function index(): array
+    public function index()
     {
-        $token = 'ahRzfm11c3RlcmktaGl6bWV0bGVyaXIfCxISVGVuYW50QXBwbGljYXRpb25zGICA5Ibn17YKDKIBGGhhc2hpbWdyb3VwLmFsby10ZWNoLmNvbQ';
-        $userName = 'abdullatif.elali@hashimproperty.com';
-        $authentication = new Authentication();
-        $authentication->setUsername($token);
-        $authentication->setAppToken($userName);
+//        $token = 'ahRzfm11c3RlcmktaGl6bWV0bGVyaXIfCxISVGVuYW50QXBwbGljYXRpb25zGICA5Ibn17YKDKIBGGhhc2hpbWdyb3VwLmFsby10ZWNoLmNvbQ';
+//        $userName = 'mohammad.kouli@hashimproperty.com';
+//        $authentication = new Authentication();
+//        $authentication->setUsername($userName);
+//        $authentication->setAppToken($token);
+//        $authentication->setEmail($userName);
+//
+//        $aloTech = new AloTech($authentication);
+//        $aloTech->login($userName);
+//
+//        $click2 = new Click2($aloTech);
+//
+//        $res = $click2->call([
+//            'phonenumber' => '5522926875',
+//        ]);
+//
+//        return view('notes.index', compact('res'));
+        return view('notes.index');
 
-        $aloTech = new AloTech($authentication);
-
-        return $response = $aloTech->ping();
     }
 
     /**

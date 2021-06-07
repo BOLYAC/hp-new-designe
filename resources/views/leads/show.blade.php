@@ -145,11 +145,18 @@
                         '<div class="row">' +
                         '<div class="form-group col-md-12">' +
                         '<label> {{ __('Project name') }} </label>' +
-                        '<select name="project_id" class="project_id form-control form-control-sm">' +
+                        '<select id="project" name="project_id" class="project_id form-control form-control-sm">' +
+                        '<option value="">-- {{ __('Select Project') }} --</option>' +
                         '@foreach($projects as $project)' +
                         '<option value="{{ $project->id }}">{{ $project->project_name }}</option>' +
                         '@endforeach' +
                         '</select>' +
+                        '<div class="form-group">' +
+                        '<label for="property">{{ __('Select Property:') }}</label>' +
+                        '<select name="property" class="property form-control form-control-sm">' +
+                        '<option value="">-- {{ __('Select Property') }} --</option>' +
+                        '</select>' +
+                        '</div>' +
                         '</div>' +
                         '<div class="form-group col-md-6">' +
                         '<label> {{ __('Province/Country') }} </label>' +
@@ -250,6 +257,68 @@
                         },
                     },
                     onContentReady: function () {
+                        // Get properties
+                        let unit_type = this.$content.find('.flat_num');
+                        let gross_sqm = this.$content.find('.gross_square');
+                        let flat_type = this.$content.find('.floor_number');
+                        let country_province = this.$content.find('.country_province');
+                        let proj = this.$content.find('.project_id')
+                        let property = this.$content.find('.property')
+                        // List properties
+                        proj.on('change', function (e) {
+                            e.preventDefault();
+                            let projectID = $(this).val();
+                            if (projectID) {
+                                $.ajax({
+                                    url: '/project/single-project/' + projectID,
+                                    type: "GET",
+                                    dataType: "json",
+                                    success: function (data) {
+                                        country_province.empty();
+                                        country_province.val(data);
+                                    }
+                                });
+                                $.ajax({
+                                    url: '/project/get-properties/' + projectID,
+                                    type: "GET",
+                                    dataType: "json",
+                                    success: function (data) {
+                                        property.empty();
+                                        property.append('<option value="">-- {{ __('Select Property') }} --</option>');
+                                        $.each(data, function (key, value) {
+                                            property.append('<option value="' + key + '">' + value + '</option>');
+                                        });
+
+
+                                    }
+                                });
+                            } else {
+                                property.empty();
+                            }
+                        });
+                        // get single project
+                        property.on('change', function (e) {
+                            e.preventDefault();
+                            let propertyID = $(this).val();
+                            if (propertyID) {
+                                $.ajax({
+                                    url: '/properties/single-property/' + propertyID,
+                                    type: "GET",
+                                    dataType: "json",
+                                    success: function (data) {
+
+                                        unit_type.empty();
+                                        gross_sqm.empty();
+                                        flat_type.empty();
+                                        unit_type.val(data[0]['unit_type']);
+                                        gross_sqm.val(data[0]['gross_sqm']);
+                                        flat_type.val(data[0]['flat_type']);
+                                    }
+                                });
+                            } else {
+                                property.empty();
+                            }
+                        });
                         // bind to events
                         var jc = this;
                         this.$content.find('form').on('submit', function (e) {
@@ -342,18 +411,18 @@
                             @if($lead->invoice_id <> 0)
                                 <span class="badge badge-success">{{ __('Deal Won') }}</span>
                             @else
-                                @can('deal-stage')
-                                    <div>
-                                        <select name="stage_id" id="stage_id"
-                                                class="form-control form-control-sm">
-                                            <option
-                                                value="1" {{ old('stage_id', $lead->stage_id) == 1 ? 'selected' : '' }}>
-                                                {{ __('In contact') }}
-                                            </option>
-                                            <option
-                                                value="2" {{ old('stage_id', $lead->stage_id) == 2 ? 'selected' : '' }}>
-                                                {{ __('Appointment Set') }}
-                                            </option>
+                                <div>
+                                    <select name="stage_id" id="stage_id"
+                                            class="form-control form-control-sm">
+                                        <option
+                                            value="1" {{ old('stage_id', $lead->stage_id) == 1 ? 'selected' : '' }}>
+                                            {{ __('In contact') }}
+                                        </option>
+                                        <option
+                                            value="2" {{ old('stage_id', $lead->stage_id) == 2 ? 'selected' : '' }}>
+                                            {{ __('Appointment Set') }}
+                                        </option>
+                                        @can('deal-stage')
                                             <option
                                                 value="3" {{ old('stage_id', $lead->stage_id) == 3 ? 'selected' : '' }}>
                                                 {{ __('Follow up') }}
@@ -378,13 +447,13 @@
                                                 value="8" {{ old('stage_id', $lead->stage_id) == 8 ? 'selected' : '' }}>
                                                 {{ __('Won Deal') }}
                                             </option>
-                                            <option
-                                                value="9" {{ old('stage_id', $lead->stage_id) == 9 ? 'selected' : '' }}>
-                                                {{ __('Lost') }}
-                                            </option>
-                                        </select>
-                                    </div>
-                                @endcan
+                                        @endcan
+                                        <option
+                                            value="9" {{ old('stage_id', $lead->stage_id) == 9 ? 'selected' : '' }}>
+                                            {{ __('Lost') }}
+                                        </option>
+                                    </select>
+                                </div>
                             @endif
                         </div>
                         <div class="col-md-12 col-lg-8">
@@ -399,7 +468,7 @@
                                             @csrf
                                             <button type="submit"
                                                     class="btn btn-success btn-sm"
-                                                    href="">{{ __('Convert to invoice') }} <i class="ti-money"></i>
+                                                    >{{ __('Convert to invoice') }} <i class="ti-money"></i>
                                             </button>
                                         </form>
                                     </div>
@@ -552,7 +621,8 @@
         </div>
 
     </div>
-    <div class="modal fade" id="sign-in-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="sign-in-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">

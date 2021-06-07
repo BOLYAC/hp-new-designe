@@ -270,6 +270,17 @@ class LeadsController extends Controller
         $data['user_commission_rate'] = \auth()->user()->commission_rate;
         $data['sale_commission_rate'] = $sale->commission_rate;
 
+        $data['country_province'] = $lead->country_province;
+        $data['section_plot'] = $lead->section_plot;
+        $data['block_num'] = $lead->block_num;
+        $data['room_number'] = $lead->room_number;
+        $data['floor_number'] = $lead->floor_number;
+        $data['gross_square'] = $lead->gross_square;
+        $data['flat_num'] = $lead->flat_num;
+        $data['price'] = $lead->sale_price;
+        $data['project_id'] = $lead->project_id;
+        $data['property_id'] = $lead->property_id;
+
         $invoice = Invoice::create($data);
         $lead->stage_id = 8;
         $lead->invoice_id = $invoice->id;

@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Project;
 use App\Models\Property;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Ramsey\Uuid\Uuid;
 
 class PropertyController extends Controller
@@ -12,9 +14,9 @@ class PropertyController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function index(): \Illuminate\Http\Response
+    public function index(): Response
     {
         //
     }
@@ -22,9 +24,9 @@ class PropertyController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function create(): \Illuminate\Http\Response
+    public function create(): Response
     {
         //
     }
@@ -32,10 +34,10 @@ class PropertyController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\Response
+     * @param Request $request
+     * @return RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $project = Project::findOrFail($request->project_id);
         $project->properties()->create([
@@ -46,17 +48,17 @@ class PropertyController extends Controller
             'net_sqm' => $request->net_sqm
         ]);
 
-        return \view('projects.edit', compact('project'))
+        return redirect()->route('projects.edit', $project->id)
             ->with('toast_danger', __("Successfully created new apartment"));
     }
 
     /**
      * Display the specified resource.
      *
-     * @param \App\Models\Property $property
-     * @return \Illuminate\Http\Response
+     * @param Property $property
+     * @return Response
      */
-    public function show(Property $property)
+    public function show(Property $property): Response
     {
         //
     }
@@ -64,10 +66,10 @@ class PropertyController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param \App\Models\Property $property
-     * @return \Illuminate\Http\Response
+     * @param Property $property
+     * @return Response
      */
-    public function edit(Property $property)
+    public function edit(Property $property): Response
     {
         //
     }
@@ -75,11 +77,11 @@ class PropertyController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Property $property
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param Property $property
+     * @return Response
      */
-    public function update(Request $request, Property $property)
+    public function update(Request $request, Property $property): Response
     {
         //
     }
@@ -87,11 +89,18 @@ class PropertyController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\Models\Property $property
-     * @return \Illuminate\Http\Response
+     * @param Property $property
+     * @return Response
      */
-    public function destroy(Property $property)
+    public function destroy(Property $property): Response
     {
         //
+    }
+
+    public function getSingleProperty($id)
+    {
+        $properties = Property::where('id', $id)
+            ->get();
+        return json_encode($properties);
     }
 }

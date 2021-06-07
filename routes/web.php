@@ -27,7 +27,6 @@ Route::group(
         Route::resource('notes', 'NotesController');
         Route::resource('users', 'UsersController');
         Route::resource('roles', 'RolesController');
-        Route::resource('projects', 'ProjectsController');
         Route::resource('tasks', 'TasksController');
         Route::resource('events', 'EventsController');
         Route::resource('sources', 'SourcesController');
@@ -92,8 +91,12 @@ Route::group(
         Route::resource('departments', 'DepartmentController');
         //// Projects
         Route::get('/projects/getProject/{id}', 'ProjectsController@getProject')->name('project.api');
-        Route::get('/project/show/{id}', 'ProjectsController@getSingleProject')->name('project.api.show');
+        //Route::get('/project/show/{id}', 'ProjectsController@getSingleProject')->name('project.api.show');
+        Route::get('/project/get-properties/{id}', 'ProjectsController@getProperties')->name('project.properties');
+        Route::get('/project/single-project/{id}', 'ProjectsController@getSingleProject')->name('project.single');
+        Route::resource('projects', 'ProjectsController');
         // Apartments
+        Route::get('/properties/single-property/{id}', 'PropertyController@getSingleProperty')->name('properties.single');
         Route::resource('properties', 'PropertyController');
         // Agencies
         Route::get('/sales/agencies/{id}', 'AgencyController@getAgencySellsOffice')->name('agencies.sells-office-edit');
@@ -102,6 +105,10 @@ Route::group(
         // Leads
         Route::get('/leads/data', 'LeadsController@anyData')->name('leads.data');
         Route::resource('leads', 'LeadsController');
+
+        // Calls
+
+        Route::post('/click-to-call', 'AloTechController@getCall')->name('click2call');
 
 
         // Settings

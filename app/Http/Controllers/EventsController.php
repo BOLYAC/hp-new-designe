@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Agency;
 use App\Mail\SendCreateEventMail;
 use App\Models\Client;
+use App\Models\Department;
 use App\Models\Event;
 use App\Models\Lead;
+use App\Models\Source;
+use App\Models\Team;
 use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Mail;
@@ -15,6 +19,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Ramsey\Uuid\Uuid;
+use Yajra\DataTables\Facades\DataTables;
 
 class EventsController extends Controller
 {
@@ -31,9 +36,101 @@ class EventsController extends Controller
         } else {
             $events = Event::orderBy('event_date', 'desc')->get();
         }
-
-        return view('events.index', compact('events'));
+        if (\auth()->user()->hasRole('Admin')) {
+            $users = User::all();
+            $teams = Team::all();
+            $departments = Department::all();
+            return view('events.index', compact('events', 'departments', 'teams', 'users'));
+        } elseif (\auth()->user()->hasPermissionTo('team-manager')) {
+            if (auth()->user()->ownedTeams()->count() > 0) {
+                $teamUsers = auth()->user()->ownedTeams;
+                $teams = auth()->user()->allTeams();
+                foreach ($teamUsers as $u) {
+                    foreach ($u->users as $ut) {
+                        $users[] = $ut;
+                    }
+                }
+            }
+            return view('events.index', compact('events', 'users', 'teams'));
+        }
     }
+
+    /**
+     * Make json response for datatable
+     * @param Request $request
+     * @return mixed
+     * @throws \Exception
+     */
+    public function anyData(Request $request)
+    {
+        $events = Event::with(['client', 'user']);
+
+        if ($request->get('user')) {
+            $events->where('user_id', '=', $request->get('user'));
+        }
+        if ($request->get('department')) {
+            $events->where('department_id', '=', $request->get('department'));
+        }
+        if ($request->get('team')) {
+            $events->where('team_id', '=', $request->get('team'));
+        }
+
+        $events->OrderByDesc('created_at');
+
+
+        return Datatables::of($events)
+            ->setRowId('id')
+            ->editColumn('name', function ($events) {
+                return '<a href="' . route('events.show', $events) . '">' . ($event->name ?? '') . '</a>';
+            })
+            ->editColumn('full_name', function ($events) {
+                return '<a href="leads/' . $events->id . '">' . $events->lead_name ?? $events->client->full_name ?? '' . '</a>';
+            })
+            ->editColumn(
+                'user',
+                function ($leads) {
+                    return '<span class="badge badge-success">' . optional($leads->user)->name . '</span>';
+                }
+            )
+            ->editColumn(
+                'sells',
+                function ($leads) {
+                    $cou = '';
+                    $sellRep = collect($leads->sells_names)->toArray();
+                    foreach ($sellRep as $name) {
+                        $cou .= '<span class="badge badge-dark">' . $name . '</span>';
+                    }
+                    return $cou;
+                })
+            ->addColumn(
+                'stat', function ($leads) {
+                if ($leads->invoice_id <> 0) {
+                    return '<span class="badge badge-success">' . __('Deal Won') . '</span >';
+                } else {
+                    if (auth()->user()->hasPermissionTo('transfer-deal-to-invoice')) {
+                        return '<form action="' . route('lead.convert.order', $leads->id) . '"
+                                  onSubmit="return confirm(\'Are you sure?\');"
+                                  method="post">
+                                <input type="hidden" name="_token" value="' . csrf_token() . '" />
+                                <button type="submit"
+                                        class="btn btn-success btn-xs">'
+                            . __('To the invoice') .
+                            ' <i class="icon-arrow-right"></i>
+                                </button>
+                            </form>';
+                    }
+                }
+
+            })->addColumn('action', '<a href="{{ route(\'leads.show\', $id) }}"
+                                               class="m-r-15 text-muted f-18"><i
+                                                    class="icofont icofont-eye-alt"></i></a>
+                                            <a href="#!"
+                                               class="m-r-15 text-muted f-18 delete"><i
+                                                    class="icofont icofont-trash"></i></a>')
+            ->rawColumns(['full_name', 'user', 'stage', 'sells', 'stat', 'action'])
+            ->make(true);
+    }
+
 
     /**
      * Show the form for creating a new resource.

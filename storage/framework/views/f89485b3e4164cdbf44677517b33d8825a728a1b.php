@@ -26,8 +26,6 @@
     <!-- Page Body Start-->
     <div class="page-body-wrapper horizontal-menu">
         <nav-menus></nav-menus>
-
-
         <?php echo $__env->make('layouts.vertical.sidebar', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>f
         <!-- Page Sidebar Ends-->
         <div class="page-body">
@@ -52,6 +50,57 @@
         </div>
         <!-- footer start-->
         <?php echo $__env->make('layouts.vertical.footer', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+    </div>
+    <div class="customizer-contain">
+        <div class="customizer-links">
+            <div class="row">
+                <div class="col call-chat-body">
+                    <div class="card shadow-0 border">
+                        <div class="card-body p-0">
+                            <div class="chat-box">
+                                <!-- Chat right side start-->
+                                <div class="chat-right-aside" style="max-width:100%!important;">
+                                    <!-- chat start-->
+                                    <div class="chat">
+                                        <!-- chat-header start-->
+                                        <div class="chat-header clearfix">
+                                            <div class="about">
+
+                                            </div>
+                                            <ul class="list-inline float-left float-sm-right chat-menu-icons">
+                                                <li class="list-inline-item"><a id="click2call" href="#"><i
+                                                            class="icon-headphone-alt"></i></a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="chat-history">
+                                            <div class="text-center pr-0 call-content">
+                                                <div>
+                                                    <div class="total-time">
+                                                        <h2 class="digits">36 : 56</h2>
+                                                    </div>
+                                                    <div class="call-icons">
+                                                    </div>
+                                                    <button class="btn btn-danger-gradien btn-block btn-lg">END CALL
+                                                    </button>
+                                                    <div class="receiver-img"><img
+                                                            src="../assets/images/other-images/receiver-img.jpg"
+                                                            alt=""></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-7 pl-0 caller-img">
+                                                <img class="img-fluid"
+                                                     src="../assets/images/other-images/caller.jpg"
+                                                     alt=""></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <?php echo \Livewire\Livewire::scripts(); ?>

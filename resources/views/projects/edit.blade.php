@@ -168,7 +168,7 @@
                         </button>
                     </div>
                     <div class="card-body b-t-primary">
-                        <div class="table-responsive">
+                        <div class="dt-ext table-responsive">
                             <table id="res-config" class="display">
                                 <thead>
                                 <tr>

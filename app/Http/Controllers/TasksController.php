@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Department;
 use App\Models\Task;
+use App\Models\Team;
 use App\Models\User;
 use Exception;
 use Illuminate\Contracts\Foundation\Application;
@@ -36,8 +38,18 @@ class TasksController extends Controller
      */
     public function index()
     {
-        $users = User::all();
-        return view('tasks.index', compact('users'));
+        if (\auth()->user()->hasRole('Admin')) {
+            $users = User::all();
+            $teams = Team::all();
+            $departments = Department::all();
+            return view('tasks.index', compact('users', 'departments', 'teams'));
+        } elseif (\auth()->user()->hasPermissionTo('team-manager')) {
+            if (auth()->user()->ownedTeams()->count() > 0) {
+                $users = auth()->user()->currentTeam->allUsers();
+                $teams = auth()->user()->allTeams();
+            }
+            return view('tasks.index', compact('users', 'teams'));
+        }
     }
 
     /**
@@ -50,7 +62,25 @@ class TasksController extends Controller
     {
         $tasks = Task::with(['client', 'user', 'agency'])->select(['id', 'date', 'client_id', 'agency_id', 'title', 'user_id', 'archive', 'source_type']);
 
-        switch ($request->get('name')) {
+        if ($request->get('user')) {
+            $tasks->where('user_id', '=', $request->get('user'));
+        }
+        if ($request->get('department')) {
+            $tasks->where('department_id', '=', $request->get('department'));
+        }
+        if ($request->get('team')) {
+            $tasks->where('team_id', '=', $request->get('team'));
+        }
+        if ($request->get('stat') == 1) {
+            $tasks->archive(true);
+        }
+        if ($request->get('stat') == 2) {
+            $tasks->archive(false);
+        }
+
+        $tasks->OrderByDesc('created_at');
+
+        switch ($request->get('val')) {
             case 'today-tasks':
                 $tasks->whereDate('date', Carbon::today());
                 break;

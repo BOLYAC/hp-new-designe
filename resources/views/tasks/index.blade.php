@@ -58,133 +58,99 @@
                     });
             }
 
-            function fetch_data(val) {
-                let table = $('#datatable').DataTable({
-                    destroy: true,
-                    order: [[0, 'asc']],
-                    processing: true,
-                    serverSide: true,
-                    ajax: {
-                        url: '{!! route('tasks.data') !!}',
-                        data: {
-                            name: val,
-                        }
-                    },
-                    @can('can-generate-report')
-                    dom: 'lfrtBip',
-                    buttons: [
-                        {
-                            extend: 'excel',
-                            orientation: 'landscape',
-                            pageSize: 'LEGAL',
-                            title: '',
-                        },
-                        {
-                            extend: 'pdf',
-                            orientation: 'landscape',
-                            pageSize: 'LEGAL',
-                            title: '',
-                        },
-                        {
-                            extend: 'print',
-                            orientation: 'landscape',
-                            pageSize: 'LEGAL',
-                            title: '',
-                        }
-                    ],
-                    @endcan
-                    columns: [
-                        {
-                            data: 'id',
-                            name: 'id',
-                        },
-                        {
-                            data: 'date',
-                            name: 'date'
-                        },
-                        {
-                            data: 'title',
-                            name: 'title'
-                        },
-                        {
-                            data: 'client_id',
-                            name: 'client_id',
-                        },
-                        {
-                            data: 'country',
-                            name: 'country',
-                        },
-                        {
-                            data: 'nationality',
-                            name: 'nationality',
-                        },
-                        {
-                            data: 'user_id',
-                            name: 'user_id',
-                            orderable: false,
-                            searchable: false,
-                        },
-                        {
-                            data: 'archive',
-                            name: 'archive',
-                            orderable: false,
-                            searchable: false,
-                        },
-                        {
-                            data: 'action',
-                            name: 'action',
-                            orderable: false,
-                            searchable: false,
-                        },
-                    ],
-
-                });
-                @can('change-task')
-                table.on('click', '.assign', function () {
-                    let $tr = $(this).closest('tr');
-                    if ($($tr).hasClass('child')) {
-                        $tr = $tr.prev('.parent');
-                    }
-                    let data = table.row($tr).id()
-                    console.log(data)
-                    $('#task_assigned_id').val(data);
-                    $('#assignModal').modal('show');
-                });
-                @endcan
-                // Submit Assignment
-                $('#assignForm').on('submit', function (e) {
-                    e.preventDefault();
-                    let assigned_user = $('#assigned_user').val();
-                    let task_assigned_id = $('#task_assigned_id').val();
-                    $.ajax({
-                        url: "{{ route('tasks.assigne') }}",
-                        type: "POST",
-                        data: {
-                            "_token": "{{ csrf_token() }}",
-                            user_id: assigned_user,
-                            task_assigned_id: task_assigned_id,
-                        },
-                        success: function (response) {
-                            table.ajax.reload(null, false);
-                            $('.modal').modal('hide');
-                            notify('Task transferred', 'success');
-                        },
-                        error: function (response) {
-                            notify('Something wrong', 'danger');
-                        }
-                    });
-                });
-            }
-
-            $("#radioForm input[type='radio']").change(function () {
-                const val = document.querySelector("input[name=radio]:checked").value;
-                fetch_data(val);
-            })
-            fetch_data();
-            window.setInterval(fetch_data, 1800000);
-
-
             // Select ajax
+            let table = $('#datatable').DataTable({
+                destroy: true,
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: '{!! route('tasks.data') !!}',
+                    data: function (d) {
+                        d.stat = $('select[name=status_filter]').val();
+                        d.user = $('select[name=user_filter]').val();
+                        d.department = $('select[name=department_filter]').val();
+                        d.country = $('select[name=country_filter]').val();
+                        d.team = $('select[name=team_filter]').val();
+                        d.val = document.querySelector("input[name=radio]:checked").value;
+                    }
+                },
+                @can('can-generate-report')
+                dom: 'lfrtBip',
+                buttons: [
+                    {extend: 'excel', orientation: 'landscape', pageSize: 'LEGAL', title: ''},
+                    {extend: 'pdf', orientation: 'landscape', pageSize: 'LEGAL', title: ''},
+                    {extend: 'print', orientation: 'landscape', pageSize: 'LEGAL', title: ''}
+                ],
+                @endcan
+                columns: [
+                    {data: 'id', name: 'id',},
+                    {data: 'date', name: 'date'},
+                    {data: 'title', name: 'title'},
+                    {data: 'client_id', name: 'client_id',},
+                    {data: 'country', name: 'country',},
+                    {data: 'nationality', name: 'nationality',},
+                    {data: 'user_id', name: 'user_id', orderable: false, searchable: false,},
+                    {data: 'archive', name: 'archive', orderable: false, searchable: false,},
+                    {data: 'action', name: 'action', orderable: false, searchable: false,},
+                ],
+                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]]
+
+            });
+            @can('change-task')
+            table.on('click', '.assign', function () {
+                let $tr = $(this).closest('tr');
+                if ($($tr).hasClass('child')) {
+                    $tr = $tr.prev('.parent');
+                }
+                let data = table.row($tr).id()
+                console.log(data)
+                $('#task_assigned_id').val(data);
+                $('#assignModal').modal('show');
+            });
+            @endcan
+            // Submit Assignment
+            $('#assignForm').on('submit', function (e) {
+                e.preventDefault();
+                let assigned_user = $('#assigned_user').val();
+                let task_assigned_id = $('#task_assigned_id').val();
+                $.ajax({
+                    url: "{{ route('tasks.assigne') }}",
+                    type: "POST",
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                        user_id: assigned_user,
+                        task_assigned_id: task_assigned_id,
+                    },
+                    success: function (response) {
+                        table.ajax.reload(null, false);
+                        $('.modal').modal('hide');
+                        notify('Task transferred', 'success');
+                    },
+                    error: function (response) {
+                        notify('Something wrong', 'danger');
+                    }
+                });
+            });
+            // Assigned user
+            $('#refresh').click(function () {
+                $('select[name=status_filter]').val('');
+                $('select[name=user_filter]').val('');
+                $('select[name=department_filter]').val('');
+                $('select[name=team_filter]').val('');
+                $('input[type="radio"]').filter('[value=all]').prop('checked', true);
+                table.DataTable().destroy();
+            });
+            // Search form
+            $('#search-form').on('submit', function (e) {
+                e.preventDefault();
+                table.draw();
+            });
+
+            $("#radioForm input[type='radio']").change(function (e) {
+                //const val = document.querySelector("input[name=radio]:checked").value;
+                e.preventDefault();
+                table.draw();
+            })
 
             $('.js-client-all').each(function () {
                 $(this).select2({
@@ -207,7 +173,9 @@
                     }
                 });
             });
-        });
+
+        })
+        ;
     </script>
 
 @endsection
@@ -220,7 +188,96 @@
 @section('content')
     <div class="container-fluid">
         <div class="row">
-            <div class="col-sm-12">
+            <div class="col-sm-2">
+                <div class="card p-1">
+                    <div class="card-header b-l-primary p-2">
+                        <h6 class="m-0">{{ __('Filter deal by:') }}</h6>
+                    </div>
+                    <form id="search-form">
+                        <div class="card-body p-2">
+                            <div class="form-group mb-2">
+                                <select class="form-control form-control-sm digits" id="status_filter"
+                                        name="status_filter">
+                                    <option value="">{{ __('All status') }}</option>
+                                    <option value="1">{{ __('Done') }}</option>
+                                    <option value="2">{{ __('Pending') }}</option>
+                                </select>
+                            </div>
+                            @if(auth()->user()->hasRole('Admin') || auth()->user()->hasPermissionTo('team-manager'))
+                                <div class="form-group mb-2">
+                                    <label for="user_filter">{{ __('Assigned') }}</label>
+                                    <select name="user_filter" id="user_filter"
+                                            class="custom-select custom-select-sm">
+                                        <option value="">{{ __('Assigned') }}</option>
+                                        @foreach($users as $row)
+                                            <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                @if(isset($departments))
+                                    <div class="form-group mb-2">
+                                        <label for="department_filter">{{ __('Departments') }}</label>
+                                        <select name="department_filter" id="department_filter"
+                                                class="custom-select custom-select-sm">
+                                            <option value="">{{ __('Department') }}</option>
+                                            @foreach($departments as $row)
+                                                <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endif
+                                @if(isset($teams))
+                                    <div class="form-group mb-2">
+                                        <label for="team_filter">{{ __('Teams') }}</label>
+                                        <select name="team_filter" id="team_filter"
+                                                class="custom-select custom-select-sm">
+                                            <option value="">{{ __('Team') }}</option>
+                                            @foreach($teams as $row)
+                                                <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endif
+                            @endif
+                            <div class="col">
+                                <div class="form-group m-t-15 custom-radio-ml">
+                                    <div class="radio radio-primary">
+                                        <input id="radio1" type="radio" name="radio" value="all">
+                                        <label for="radio1">{{ __('All') }}</label>
+                                    </div>
+                                    <div class="radio radio-primary">
+                                        <input id="radio2" type="radio" name="radio" value="today-tasks">
+                                        <label for="radio2">{{ __('Today') }}</label>
+                                    </div>
+                                    <div class="radio radio-primary">
+                                        <input id="radio3" type="radio" name="radio" value="future-tasks">
+                                        <label for="radio3">{{ __('Future') }}</label>
+                                    </div>
+                                    <div class="radio radio-primary">
+                                        <input id="radio4" type="radio" name="radio" value="older-tasks">
+                                        <label for="radio4">{{ __('Older') }}</label>
+                                    </div>
+                                    <div class="radio radio-primary">
+                                        <input id="radio5" type="radio" name="radio" value="pending-tasks">
+                                        <label for="radio5">{{ __('Pending') }}</label>
+                                    </div>
+                                    <div class="radio radio-primary">
+                                        <input id="radio6" type="radio" name="radio" value="completed-tasks">
+                                        <label for="radio6">{{ __('Completed') }}</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer p-2">
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <button class="btn btn-primary" type="submit">{{ __('Filter') }}</button>
+                                <button class="btn btn-light" type="button" id="refresh">{{ __('Clear') }}</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-sm-10">
                 <!-- Zero config.table start -->
                 @include('partials.flash-message')
                 <div class="card">
@@ -232,53 +289,6 @@
                                     <i class="icon-plus"></i></button>
                             </div>
                         @endcan
-                        <div class="form-radio m-2 col text-right">
-                            <form id="radioForm">
-                                <div class="form-group m-checkbox-inline mb-0 custom-radio-ml">
-                                    <div class="radio radio-primary">
-                                        <input type="radio" id="radioinline1" name="radio" checked="checked"
-                                               value="all">
-                                        <label class="mb-0" for="radioinline1"><i class="helper"></i>{{ __('All') }}
-                                        </label>
-                                    </div>
-                                    <div class="radio radio-primary">
-                                        <input type="radio" id="radioinline2" name="radio"
-                                               value="today-tasks">
-                                        <label class="mb-0" for="radioinline2"><i
-                                                class="helper"></i>{{ __('Today tasks') }}
-                                        </label>
-                                    </div>
-                                    <div class="radio radio-primary">
-                                        <input type="radio" id="radioinline3" name="radio"
-                                               value="future-tasks">
-                                        <label class="mb-0" for="radioinline3"><i
-                                                class="helper"></i>{{ __('Future tasks') }}
-                                        </label>
-                                    </div>
-                                    <div class="radio radio-primary">
-                                        <input type="radio" id="radioinline4" name="radio"
-                                               value="older-tasks">
-                                        <label class="mb-0" for="radioinline4"><i
-                                                class="helper"></i>{{ __('Older tasks') }}
-                                        </label>
-                                    </div>
-                                    <div class="radio radio-primary">
-                                        <input type="radio" id="radioinline5" name="radio"
-                                               value="pending-tasks">
-                                        <label class="mb-0" for="radioinline5"><i
-                                                class="helper"></i>{{ __('Pending tasks') }}
-                                        </label>
-                                    </div>
-                                    <div class="radio radio-primary">
-                                        <input type="radio" id="radioinline6" name="radio"
-                                               value="completed-tasks">
-                                        <label class="mb-0" for="radioinline6"><i
-                                                class="helper"></i>{{ __('Completed tasks') }}
-                                        </label>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
                     </div>
                     <div class="card-body">
                         <div class="order-history dt-ext table-responsive">

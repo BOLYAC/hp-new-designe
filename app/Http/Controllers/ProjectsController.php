@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Project;
+use App\Models\Property;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\Request;
@@ -127,7 +128,7 @@ class ProjectsController extends Controller
         //return json_encode($this->projects, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
     }
 
-    public function getSingleProject($id)
+    /*public function getSingleProject($id)
     {
 
         $project = Http::get('https://hashimproperty.com/wp-json/wp/v2/properties/' . $id)
@@ -145,5 +146,17 @@ class ProjectsController extends Controller
         }
 
         return view('projects.show', compact('project', 'image', 'images'));
+    }*/
+
+    public function getProperties($id)
+    {
+        $properties = Property::where('project_id', $id)->pluck('unit_type', 'id');
+        return json_encode($properties);
+    }
+
+    public function getSingleProject($id)
+    {
+        $properties = Project::where('id', $id)->pluck('location');
+        return json_encode($properties);
     }
 }
