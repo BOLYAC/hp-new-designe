@@ -17,6 +17,7 @@
 <script src="{{asset('assets/js/script.js')}}"></script>
 <script src="{{ asset('assets/js/theme-customizer/customizer.js') }}"></script>
 <script src="{{ asset('assets/js/notify/bootstrap-notify.min.js') }}"></script>
+<script src="https://cdn.rawgit.com/robcowie/jquery-stopwatch/master/jquery.stopwatch.js"></script>
 <script>
     $(document).ready(function () {
         function notify(title, type) {
@@ -57,7 +58,27 @@
                     "_token": "{{ csrf_token() }}",
                 },
                 success: function (response) {
+                    $('#demo1').stopwatch().stopwatch('start');
+                    notify('Task transferred', 'success');
+                },
+                error: function (response) {
+                    notify('Something wrong', 'danger');
+                }
+            });
+        });
 
+        $('#endCall').on('click', function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: "{{ route('click2hang') }}",
+                type: "POST",
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                },
+                success: function (response) {
+                    $('#demo1').stopwatch().click(function(){ 
+                        $(this).stopwatch('reset');
+                    });
                     notify('Task transferred', 'success');
                 },
                 error: function (response) {

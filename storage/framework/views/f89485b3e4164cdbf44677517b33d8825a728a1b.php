@@ -74,14 +74,20 @@
                                             </ul>
                                         </div>
                                         <div class="chat-history">
+                                            <?php if(Session::has('alotech')): ?>
+                                            <p class="alert
+                                            <?php echo e(Session::get('alert-class', 'alert-info')); ?>"><?php echo e(Session::get('message')); ?>
+
+                                            </p>
+
                                             <div class="text-center pr-0 call-content">
                                                 <div>
                                                     <div class="total-time">
-                                                        <h2 class="digits">36 : 56</h2>
+                                                        <h2 class="digits" id="demo1">00 : 00</h2>
                                                     </div>
                                                     <div class="call-icons">
                                                     </div>
-                                                    <button class="btn btn-danger-gradien btn-block btn-lg">END CALL
+                                                    <button class="btn btn-danger-gradien btn-block btn-lg" id="endCall">END CALL
                                                     </button>
                                                     <div class="receiver-img"><img
                                                             src="../assets/images/other-images/receiver-img.jpg"
@@ -91,7 +97,20 @@
                                             <div class="col-sm-7 pl-0 caller-img">
                                                 <img class="img-fluid"
                                                      src="../assets/images/other-images/caller.jpg"
-                                                     alt=""></div>
+                                                     alt="">
+                                            </div>
+                                            <?php else: ?>
+                                            <div class="row mt-2">
+                                                <form action="<?php echo e(route('alotech.login')); ?>" method="post" class="col-10 mx-auto">
+                                                    <?php echo csrf_field(); ?>
+                                                    <div class="form-group">
+                                                        <label for="login"><?php echo e(__('Email')); ?></label>
+                                                        <input type="email" id="login" name="email" class="form-control form-control-sm">
+                                                    </div>
+                                                    <button class="btn btn-sm btn-primary" type="submit"><?php echo e(__('Login')); ?></button>
+                                                </form>
+                                            </div>
+                                            <?php endif; ?>
                                         </div>
                                     </div>
                                 </div>

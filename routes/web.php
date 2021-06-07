@@ -107,8 +107,9 @@ Route::group(
         Route::resource('leads', 'LeadsController');
 
         // Calls
-
+        Route::post('/alotech/login','AloTechController@loginAloTech' )->name('alotech.login');
         Route::post('/click-to-call', 'AloTechController@getCall')->name('click2call');
+        Route::post('/click-to-hang', 'AloTechController@getHang')->name('click2hang');
 
 
         // Settings
