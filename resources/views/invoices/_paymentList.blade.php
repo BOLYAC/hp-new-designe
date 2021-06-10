@@ -21,7 +21,7 @@
 @section('script_after')
     <script>
         $(function () {
-            var table = $('#payments-table').DataTable({
+            let table = $('#payments-table').DataTable({
                 processing: true,
                 serverSide: true,
                 autoWidth: false,

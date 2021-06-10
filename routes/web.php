@@ -16,6 +16,9 @@ Route::group(['prefix' => 'clients', 'middleware' => 'auth'], function () {
     Route::post('fetch', 'ClientsController@fetch')->name('autocomplete.fetch');
     Route::get('/compose/email/{email?}/{client?}', 'ClientsController@composeEmail')->name('clients.compose.email');
     Route::post('/send/email', 'ClientsController@sendEmail')->name('clients.send.email');
+    Route::get('/fields-select', 'ClientsController@getFieldReport')->name('clients.field.report');
+    Route::post('/fields-select', 'ClientsController@postFieldReport')->name('clients.field.report.post');
+    Route::post('/clients/reports', 'ClientsController@postViewReport')->name('clients.report');
 });
 Route::group(
     ['middleware' => ['auth']],

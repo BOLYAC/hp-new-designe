@@ -133,6 +133,11 @@ class Client extends Model implements Auditable, Documentable, Noteable, Taskabl
         // TODO: Implement getCreateTaskEndpoint() method.
     }
 
+    // Get column names
+    public function getTableColumns() {
+        return $this->getConnection()->getSchemaBuilder()->getColumnListing($this->getTable());
+    }
+
 
     // this is a recommended way to declare event handlers
 

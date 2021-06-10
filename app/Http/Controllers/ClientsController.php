@@ -209,6 +209,7 @@ class ClientsController extends Controller
                 ->WhereDoesntHave('tasks');
         }
         $clients->OrderByDesc('created_at');
+
         return Datatables::of($clients)
             ->setRowId('id')
             ->addColumn('check', '<input type="checkbox" class="checkbox-circle check-task" name="selected_clients[]" value="{{ $id }}">')
@@ -431,14 +432,11 @@ class ClientsController extends Controller
         $users = User::all();
         $sources = Source::all();
         $agencies = Agency::all();
-        $notes = $client->notes()->get();
         $clientDocuments = $client->documents()->get();
+        //dd($client->tasks()->get());
         $previous_record = Client::where('id', '<', $client->id)->orderBy('id', 'desc')->first();
         $next_record = Client::where('id', '>', $client->id)->orderBy('id')->first();
-        $tasks = Task::whereHas('client', function ($query) use ($client) {
-            $query->where('client_id', $client->id);
-        })->get()->sortByDesc('created_at');
-        return view('clients.edit', compact('client', 'notes', 'tasks', 'users', 'sources', 'agencies', 'clientDocuments', 'next_record', 'previous_record'));
+        return view('clients.edit', compact('client', 'users', 'sources', 'agencies', 'clientDocuments', 'next_record', 'previous_record'));
     }
 
     /**
@@ -711,12 +709,191 @@ class ClientsController extends Controller
         return \view('inbox.compose', compact('email', 'client'));
     }
 
-    public function sendEmail(Request $request)
+    public function getFieldReport()
     {
-        $data = [
-            'message' => $request->get('text-box')
+//        $drink = Drink::where('shopId', $request->session()->get('shopId'))->first();
+//
+//        if($drink) {
+//            $drink = $drink->attributesToArray();
+//        }
+//        else {
+//            $drink = Drink::firstOrNew(['shopId' => $request->session()->get('shopId')]);
+//
+//            // get the column names for the table
+//            $columns = Schema::getColumnListing($drink->getTable());
+//            // create array where column names are keys, and values are null
+//            $columns = array_fill_keys($columns, null);
+//
+//            // merge the populated values into the base array
+//            $drink = array_merge($columns, $drink->attributesToArray());
+//        }
+
+        $sources = Source::all();
+        $agencies = Agency::all();
+
+        $users = User::all();
+        $teams = Team::all();
+        $departments = Department::all();
+
+
+        $client = new Client();
+        $table = $client->getTable();
+        $columns = DB::getSchemaBuilder()->getColumnListing($table);
+
+        $remove = [
+            'lead_id',
+            'updated_at',
+            'created_at',
+            'deleted_at',
+            'updated_by',
+            'created_by',
+            'next_call',
+            'called',
+            'spoken',
+            'appointment_date',
+            'zipcode',
+            'address',
+            'public_id',
+            'id',
+            'client_email',
+            'client_email_2',
+            'client_number',
+            'client_number_2',
+            'budget',
+            'rooms',
+            'duration_stay',
+            'requirements',
+            'type',
+            'team_id',
+            'department_id',
+            'city'
+        ];
+        $newArr = array_filter($columns, function ($value) use ($remove) {
+            return !in_array($value, $remove);
+        });
+
+        return \view('clients.field-report', compact('newArr', 'sources', 'agencies', 'users', 'teams', 'departments'));
+    }
+
+    public function postFieldReport(Request $request)
+    {
+        $data = $request->validate([
+            "fields" => "required|array|min:3",
+            "fields.*" => "required|string|distinct",
+        ]);
+
+        $r = [
+            'tasks',
+            'notes',
         ];
 
-        \Mail::to($request->get('email'))->send(new \App\Mail\SendClientEmail($data));
+        $newArr = array_filter($data['fields'], function ($value) use ($r) {
+            return !in_array($value, $r);
+        });
+
+        $leads = Client::query();
+        $leads = $leads->with(['source', 'user', 'tasks', 'agency', 'notes']);
+
+        if ($request->get('status')) {
+            $leads->where('status', '=', $request->get('status'));
+        }
+        if ($request->get('source')) {
+            $leads->where('source_id', '=', $request->get('source'));
+        }
+        if ($request->get('priority')) {
+            $leads->where('priority', '=', $request->get('priority'));
+        }
+        if ($request->get('agency')) {
+            $leads->where('agency_id', '=', $request->get('agency'));
+        }
+        if ($request->get('user')) {
+            $leads->where('user_id', '=', $request->get('user'));
+        }
+        if ($request->get('team')) {
+            $leads->where('team_id', '=', $request->get('team'));
+        }
+        if ($request->get('department')) {
+            $leads->where('department_id', '=', $request->get('department'));
+        }
+        if ($request->get('daysActif')) {
+            $leads->where('updated_at', '<=', \Carbon\Carbon::today()->subDays($request->get('daysActif')));
+        }
+
+        if ($request->country_check === 'true') {
+            $d = $request->get('country_type');
+            switch ($d) {
+                case '1':
+                    $leads->Where('country', 'LIKE', '%' . $request->get('country') . '%')
+                        ->orWhereJsonContains('country', $request->get('country'));
+                    break;
+                case '2':
+                    $leads->Where('country', 'not like', '%' . $request->get('country') . '%')
+                        ->orWhereJsonDoesntContain('country', $request->get('country'));
+                    break;
+                case '3':
+                    $leads->Where('country', 'sounds like', '%' . $request->get('country') . '%');
+                    break;
+                case '4':
+                    $leads->Where('country', 'not sounds like', '%' . $request->get('country') . '%');
+                    break;
+                case '5':
+                    $leads->Where('country', 'like', $request->get('country') . '%');
+                    break;
+                case '6':
+                    $leads->Where('country', 'like', '%' . $request->get('country'));
+                    break;
+                case '7':
+                    $leads->whereNull('country')->orWhere('country', '=', '');
+                    break;
+                case '8':
+                    $leads->whereNotNull('country')->orWhere('country', '<>', '');
+                    break;
+            }
+        }
+
+        if ($request->filterDateBase !== 'none') {
+            $date = explode('-', $request->get('daterange'));
+            $from = $date[0];
+            $to = $date[1];
+
+            $from = Carbon::parse($from)
+                ->startOfDay()        // 2018-09-29 00:00:00.000000
+                ->toDateTimeString(); // 2018-09-29 00:00:00
+
+            $to = Carbon::parse($to)
+                ->endOfDay()          // 2018-09-29 23:59:59.000000
+                ->toDateTimeString(); // 2018-09-29 23:59:59
+
+            $d = $request->get('filterDateBase');
+            switch ($d) {
+                case 'creation':
+                    $leads->whereBetween('created_at', [$from, $to]);
+                    break;
+                case 'modification':
+                    $leads->whereBetween('updated_at', [$from, $to]);
+                    break;
+                case 'arrival':
+                    $leads->whereBetween('appointment_date', [$from, $to]);
+                    break;
+            }
+        }
+
+        if ($request->lastUpdate === 'true') {
+            $leads->whereHas('tasks', function ($query) {
+                $query->where('archive', '=', 0);
+            }, '=', 0)
+                ->WhereDoesntHave('tasks');
+        }
+
+        $leads = $leads->get();
+
+        $fields = $request->fields;
+        return \View::make('clients.partials._table-report', compact('fields', 'leads'));
+
+    }
+
+    public function postViewReport()
+    {
+        return view('clients.report', compact('clients'));
     }
 }

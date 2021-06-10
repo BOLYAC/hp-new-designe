@@ -33,6 +33,7 @@ class AloTechController extends Controller
         $click2 = new Click2($aloTech);
         $res = $click2->call([
             'phonenumber' => '5522926875',
+
         ]);
         return response()->json($res);
     }

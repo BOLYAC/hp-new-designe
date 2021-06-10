@@ -1,71 +1,37 @@
 @extends('layouts.vertical.master')
-@section('title', '| Leads')
+@section('title', '| Leads reports')
+
 @section('style_before')
-    <!-- Datatables.css -->
-    <link rel="stylesheet" href="{{ asset('assets/css/datatables.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/datatable-extension.css') }}">
     <!-- Notification.css -->
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/daterange-picker.css') }}">
-@endsection
-
-
-@section('style')
-    <style>
-        .dt-head-center {
-            text-align: center;
-            vertical-align: middle !important;
-        }
-
-        table.dataTable thead .sorting::after,
-        table.dataTable thead .sorting_asc::after,
-        table.dataTable thead .sorting_desc::after {
-            display: none;
-        }
-
-        table.dataTable thead .sorting::before,
-        table.dataTable thead .sorting_asc::before,
-        table.dataTable thead .sorting_desc::before {
-            display: none;
-        }
-
-        table.dataTable thead .sorting {
-            background-image: url(https://datatables.net/media/images/sort_both.png);
-            background-repeat: no-repeat;
-            background-position: center right;
-        }
-
-        table.dataTable thead .sorting_asc {
-            background-image: url(https://datatables.net/media/images/sort_asc.png);
-            background-repeat: no-repeat;
-            background-position: center right;
-        }
-
-        table.dataTable thead .sorting_desc {
-            background-image: url(https://datatables.net/media/images/sort_desc.png);
-            background-repeat: no-repeat;
-            background-position: center right;
-        }
-    </style>
+    <!-- Notification.css -->
+    <link rel="stylesheet" href="{{ asset('assets/css/datatables.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/datatable-extension.css') }}">
 @endsection
 
 @section('script')
-    <!-- Datatables.js -->
-    <script src="{{asset('assets/js/datatables/jquery.dataTables.min.js')}}"></script>
-    <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.buttons.min.js')}}"></script>
-    <script src="{{asset('assets/js/datatables/datatable-extension/buttons.bootstrap4.min.js')}}"></script>
-
-    <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.bootstrap4.min.js')}}"></script>
-    <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.responsive.min.js')}}"></script>
-    <script src="{{asset('assets/js/datatables/datatable-extension/responsive.bootstrap4.min.js')}}"></script>
-    <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.colReorder.min.js')}}"></script>
-    <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.rowReorder.min.js')}}"></script>
     <!-- Plugins JS start-->
     <script src="{{ asset('assets/js/datepicker/daterange-picker/moment.min.js') }}"></script>
     <script src="{{ asset('assets/js/datepicker/daterange-picker/daterangepicker.js') }}"></script>
     <script src="{{ asset('assets/js/datepicker/daterange-picker/daterange-picker.custom.js') }}"></script>
+    <script src="{{ asset('assets/js/datatables/jquery.dataTables.min.js')}}"></script>
+    <script src="{{ asset('assets/js/datatables/datatable-extension/dataTables.buttons.min.js')}}"></script>
+    <script src="{{ asset('assets/js/datatables/datatable-extension/jszip.min.js') }}"></script>
+    <script src="{{ asset('assets/js/datatables/datatable-extension/buttons.colVis.min.js') }}"></script>
+    <script src="{{ asset('assets/js/datatables/datatable-extension/pdfmake.min.js') }}"></script>
+    <script src="{{ asset('assets/js/datatables/datatable-extension/vfs_fonts.js') }}"></script>
+    <script src="{{ asset('assets/js/datatables/datatable-extension/dataTables.autoFill.min.js') }}"></script>
+    <script src="{{ asset('assets/js/datatables/datatable-extension/dataTables.select.min.js') }}"></script>
+    <script src="{{ asset('assets/js/datatables/datatable-extension/buttons.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('assets/js/datatables/datatable-extension/buttons.html5.min.js') }}"></script>
+    <script src="{{ asset('assets/js/datatables/datatable-extension/buttons.print.min.js') }}"></script>
+    <script src="{{ asset('assets/js/datatables/datatable-extension/dataTables.bootstrap4.min.js')}}"></script>
+    <script src="{{ asset('assets/js/datatables/datatable-extension/dataTables.responsive.min.js')}}"></script>
+    <script src="{{ asset('assets/js/datatables/datatable-extension/responsive.bootstrap4.min.js')}}"></script>
     <!-- Notify -->
     <script src="{{ asset('assets/js/notify/bootstrap-notify.min.js') }}"></script>
     <script>
+        // Notify
         function notify(title, type) {
             $.notify({
                     title: title
@@ -94,61 +60,7 @@
                 });
         }
 
-        // Main data table
-        let table = $('#leads-table').DataTable({
-            processing: true,
-            serverSide: true,
-            searching: true,
-            responsive: true,
-            ajax: {
-                url: '{!! route('clients.data') !!}',
-                data: function (d) {
-                    d.status = $('select[name=status_filter]').val();
-                    d.source = $('select[name=source_filter]').val();
-                    d.priority = $('select[name=priority_filter]').val();
-                    d.agency = $('select[name=agency_filter]').val();
-                    d.country_check = $('#country_check').is(':checked');
-                    d.country_type = $('select[name=country_type]').val();
-                    d.country = $('input[name=country_field]').val();
-                    d.phone_check = $('#phone_check').is(':checked');
-                    d.phone_type = $('select[name=phone_type]').val();
-                    d.phone = $('input[name=phone_field]').val();
-                    d.user = $('select[name=user_filter]').val();
-                    d.team = $('select[name=team_filter]').val();
-                    d.department = $('select[name=department_filter]').val();
-                    d.daysActif = $('#last_active').val();
-                    d.lastUpdate = $('#no_tasks').is(':checked');
-                    d.daterange = $('input[name=daterange]').val()
-                    d.filterDateBase = $('input[type="radio"]:checked').val();
-                }
-            },
-            "drawCallback": function (settings) {
-                var api = this.api();
-            },
-            columns: [
-                {data: 'id', name: 'id', visible: false},
-                {data: 'check', name: 'check', orderable: false, searchable: false,},
-                {data: 'public_id', name: 'public_id'},
-                {data: 'full_name', name: 'full_name'},
-                {data: 'country', name: 'country'},
-                {data: 'status', name: 'status', orderable: false, searchable: false,},
-                {data: 'source_id', name: 'source_id', orderable: false, searchable: false,},
-                {data: 'agency_id', name: 'agency_id', orderable: false, searchable: false,},
-                {data: 'priority', name: 'priority', orderable: false, searchable: false,},
-                {data: 'user_id', name: 'user_id', orderable: false, searchable: false},
-                {data: 'created_at', name: 'created_at', searchable: false},
-                {data: 'action', name: 'action', orderable: false, searchable: false},
-            ],
-            columnDefs: [
-                // Center align the header content of column 1
-                {
-                    className: "dt-head-center",
-                    targets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-                }
-            ],
-            order: [[1, 'asc']]
-        });
-        // Assigne user
+        // Refresh filter
         $('#refresh').click(function () {
             $('select[name=status_filter]').val('');
             $('select[name=source_filter]').val('');
@@ -167,70 +79,59 @@
             $('input[type="radio"]').filter('[value=none]').prop('checked', true);
             valueChanged()
             valuePhoneChanged()
-            table.DataTable().destroy();
         });
         // Search form
         $('#search-form').on('submit', function (e) {
-            table.draw();
             e.preventDefault();
-        });
-        // Check/Uncheck ALl
-        $('#checkAll').change(function () {
-            if ($(this).is(':checked')) {
-                $('.checkbox-circle').prop('checked', true);
-            } else {
-                $('.checkbox-circle').each(function () {
-                    $(this).prop('checked', false);
+
+            function get_filter(class_name) {
+                let filter = [];
+                $('.' + class_name + ':checked').each(function () {
+                    filter.push($(this).val());
                 });
+                return filter;
             }
-        });
-        @can('share-client')
-        // Select all, trigger modal
-        $('#row-select-btn').on('click', function (e) {
-            e.preventDefault();
-            let filter = [];
-            $('.checkbox-circle:checked').each(function () {
-                filter.push($(this).val());
-            });
-            if (filter.length > 0) {
-                $('#massAssignModal').modal('show');
-            } else {
-                notify('At least select one lead!', 'danger');
-            }
-        });
-        @endcan
-        // Mass assign modal
-        $('#massAssignForm').on('submit', function (e) {
-            e.preventDefault();
-            let ids = [];
-            $('.checkbox-circle:checked').each(function () {
-                ids.push($(this).val());
-            });
+
             $.ajax({
-                url: "{{ route('sales.share.mass') }}",
+                url: "{{ route('clients.field.report.post') }}",
+                headers: {'X-CSRF-TOKEN': "{{ csrf_token() }}"},
                 type: "POST",
                 data: {
-                    "_token": "{{ csrf_token() }}",
-                    user_id: $('#assigned_user_mass').val(),
-                    clients: ids,
+                    status: $('select[name=status_filter]').val(),
+                    source: $('select[name=source_filter]').val(),
+                    priority: $('select[name=priority_filter]').val(),
+                    agency: $('select[name=agency_filter]').val(),
+                    country_check: $('#country_check').is(':checked'),
+                    country_type: $('select[name=country_type]').val(),
+                    country: $('input[name=country_field]').val(),
+                    phone_check: $('#phone_check').is(':checked'),
+                    phone_type: $('select[name=phone_type]').val(),
+                    phone: $('input[name=phone_field]').val(),
+                    user: $('select[name=user_filter]').val(),
+                    team: $('select[name=team_filter]').val(),
+                    department: $('select[name=department_filter]').val(),
+                    daysActif: $('#last_active').val(),
+                    lastUpdate: $('#no_tasks').is(':checked'),
+                    daterange: $('input[name=daterange]').val(),
+                    filterDateBase: $('input[type="radio"]:checked').val(),
+                    fields: get_filter('field')
                 },
                 success: function (response) {
-                    table.ajax.reload(null, false);
-                    $('#massAssignModal').modal('hide');
-                    notify('Lead transferred', 'success');
+                    notify('Report generated successfully', 'success');
+                    $('.custom-table').html(response);
+                    initTable()
                 },
+                error: function (response) {
+                    notify('You have to select minimum 3 fields!', 'danger');
+                }
             });
         });
-
         // Filtration sidebar
         $("#cts_select").hide();
         $("#pts_select").hide();
-
-
         $(document).ready(function () {
             $('input[name=daterange]').val('')
         });
-
 
         function valueChanged() {
             if ($('#country_check').is(":checked"))
@@ -246,17 +147,45 @@
                 $("#pts_select").hide();
         }
 
+        function initTable() {
+            let table = $('#report-table').DataTable({
+                @can('can-generate-report')
+                dom: 'lfrtBip',
+                buttons: [
+                    {
+                        extend: 'excel',
+                        orientation: 'landscape',
+                        pageSize: 'LEGAL',
+                        title: '',
+                    },
+                    {
+                        extend: 'pdf',
+                        orientation: 'landscape',
+                        pageSize: 'LEGAL',
+                        title: '',
+                    },
+                    {
+                        extend: 'print',
+                        orientation: 'landscape',
+                        pageSize: 'LEGAL',
+                        title: '',
+                    }
+                ],
+                @endcan
+            });
+        }
     </script>
-
 @endsection
 
 @section('breadcrumb-items')
-    <li class="breadcrumb-item">{{ __('Leads') }}</li>
+    <li class="breadcrumb-item"><a href="{{ route('clients.index') }}">{{ __('Leads') }}</a></li>
+    <li class="breadcrumb-item">{{ __('Select fields:') }}</li>
 @endsection
 
 @section('content')
     <div class="container-fluid">
         <div class="row">
+            <!-- Zero config.table start -->
             <div class="col-sm-2">
                 <div class="card p-1">
                     <div class="card-header b-l-primary p-2">
@@ -330,27 +259,6 @@
                                 <input type="text" class="form-control form-control-sm"
                                        placeholder="{{ __('Type here') }}"
                                        id="country_field" name="country_field">
-                            </div>
-                            <div class="checkbox checkbox-primary">
-                                <input id="phone_check" type="checkbox"
-                                       onclick="valuePhoneChanged()">
-                                <label for="phone_check">{{ __('Phone') }}</label>
-                            </div>
-                            <div class="form-group mb-2 ml-2" id="pts_select">
-                                <select class="form-control form-control-sm digits mb-1" id="phone_type"
-                                        name="phone_type">
-                                    <option value="1">{{ __('is') }}</option>
-                                    <option value="2">{{ __('isn\'t') }}</option>
-                                    <option value="3">{{ __('contains') }}</option>
-                                    <option value="4">{{ __('dosen\'t contain') }}</option>
-                                    <option value="5">{{ __('start with') }}</option>
-                                    <option value="6">{{ __('ends with') }}</option>
-                                    <option value="7">{{ __('is empty') }}</option>
-                                    <option value="8">{{ __('is note empty') }}</option>
-                                </select>
-                                <input type="text" class="form-control form-control-sm"
-                                       placeholder="{{ __('Type here') }}"
-                                       id="phone_field" name="phone_field">
                             </div>
                             @if(auth()->user()->hasRole('Admin'))
                                 <div class="form-group mb-2">
@@ -440,121 +348,39 @@
                 </div>
             </div>
             <div class="col-sm-10">
-                <div class="card p-1">
-                    <div class="card-header card-no-border p-2 b-t-primary row">
-                        <div class="col-lg-6 col-md-12 pr-1 pl-1">
-                            @can('share-client')
-                                <div class="btn-group btn-group-sm btn-group-toggle" data-toggle="buttons">
-                                    <label class="btn btn-primary btn-sm">
-                                        <input id="checkAll" type="checkbox" checked
-                                               autocomplete="off">{{ __('Select/Unselect') }}
-                                    </label>
+                <div class="card b-t-primary">
+                    <div class="card-body">
+                        <div class="row">
+                            @foreach($newArr as $k => $value)
+                                <div class="col-2" data-aos="fade-right" data-aos-duration="2000">
+                                    <label>
+                                        <input type="checkbox" name="fields[]"
+                                               value="{{ $value }}" class="field"> {{ $value }} </label>
                                 </div>
-                                <button type="button" id="row-select-btn" class="btn btn-primary btn-sm">
-                                    {{ __('Assign Lead') }}
-                                </button>
-                                <button type="button" id="row-send-btn" class="btn btn-primary btn-sm">
-                                    {{ __('Send project') }}
-                                </button>
-                                <button type="button" id="row-delete-btn" class="btn btn-danger btn-sm">
-                                    {{ __('Delete') }}
-                                </button>
-                            @endcan
+                            @endforeach
+                            <div class="col-2" data-aos="fade-right" data-aos-duration="2000">
+                                <label>
+                                    <input type="checkbox" name="fields[]"
+                                           value="tasks" class="field"> {{ __('Tasks') }} </label>
+                            </div>
+                            <div class="col-2" data-aos="fade-right" data-aos-duration="2000">
+                                <label>
+                                    <input type="checkbox" name="fields[]"
+                                           value="notes" class="field"> {{ __('Notes') }} </label>
+                            </div>
                         </div>
-                        <div class="col-lg-6 col-md-12 pr-1 pl-1">
-                            @if(auth()->user()->hasRole('Admin'))
-                                <a class="btn btn-sm btn-outline-success"
-                                   href="{{ route('importExportZoho') }}">
-                                    {{ __('Zoho Import') }}
-                                </a>
-                            @endif
-                            @can('client-import')
-                                <a class="btn btn-sm btn-outline-success"
-                                   href="{{ route('importExport') }}">
-                                    {{ __('Leads Import') }}
-                                </a>
-                            @endcan
-
-                            @can('client-create')
-                                <a href="{{ route('clients.create') }}"
-                                   class="btn btn-sm btn-outline-primary">
-                                    {{ __('New lead') }}
-                                </a>
-                            @endcan
-                            @can('client-create')
-                                <a href="{{ route('clients.field.report') }}"
-                                   class="btn btn-sm btn-outline-primary">
-                                    {{ __('Generate report') }}
-                                </a>
-                            @endcan
+                        <div class="custom-table">
 
                         </div>
                     </div>
-                    <div class="card-body p-1 b-t-primary">
-                        <div class="order-history dt-ext table-responsive m-2">
-                            <table id="leads-table" class="display" width="100%" cellspacing="0">
-                                <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th></th>
-                                    <th data-priority="1">N°</th>
-                                    <th data-priority="2">{{ __('Name') }}</th>
-                                    <th>{{ __('Country') }}</th>
-                                    <th>
-                                        {{ __('Status') }}
-                                    </th>
-                                    <th>
-                                        {{ __('Source') }}
-                                    </th>
-                                    <th>
-                                        {{ __('Agency') }}
-                                    </th>
-                                    <th>
-                                        {{ __('Priority') }}
-                                    </th>
-                                    <th>
-                                        {{ __('Assigned') }}
-                                    </th>
-                                    <th>{{ __('Creation date') }}</th>
-                                    <th data-priority="3">{{ __('Action') }}</th>
-                                </tr>
-                                </thead>
-                            </table>
-                        </div>
+                    <div class="card-footer b-t-primary p-2">
+                        <a href="{{ url()->previous() }}" class="btn btn-warning btn-sm"><i
+                                class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Mass Assigne -->
-    <div class="modal fade" id="massAssignModal" tabindex="-1">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">{{ __('Assign to user') }}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <form id="massAssignForm">
-                    @csrf
-                    <div class="modal-body p-b-0">
-                        <div class="form-group">
-                            <select class="form-control" name="assigned_user_mass" id="assigned_user_mass">
-                                <option value="" selected>-- {{ __('Select user') }} --</option>
-                                @foreach($users as $user)
-                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">{{ __('Save') }} <i class="icon-save"></i>
-                        </button>
-                        <button type="button" class="btn btn-warning" data-dismiss="modal">{{ __('Cancel') }}</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+
+
 @endsection

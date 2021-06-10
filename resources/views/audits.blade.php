@@ -1,4 +1,4 @@
-@extends('layouts.vertical.master')
+w@extends('layouts.vertical.master')
 @section('style')
 
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css">

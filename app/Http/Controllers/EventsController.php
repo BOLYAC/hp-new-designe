@@ -391,8 +391,7 @@ class EventsController extends Controller
         return $pdf->stream('test_pdf.pdf');
     }
 
-    public
-    function customReport(Request $request)
+    public function customReport(Request $request)
     {
         if (!empty($request->from_date) && !empty($request->to_date)) {
             $from = $request->from_date;
