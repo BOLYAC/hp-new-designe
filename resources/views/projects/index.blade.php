@@ -37,7 +37,7 @@
                     <div class="card-body b-t-primary">
                         <div class="order-history dt-ext table-responsive">
                             <table id="datatable"
-                                   class="table task-list-table table-striped table-bordered nowrap"
+                                   class="table display"
                                    style="width:100%">
                                 <thead>
                                 <tr>

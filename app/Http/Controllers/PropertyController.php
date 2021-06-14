@@ -79,11 +79,22 @@ class PropertyController extends Controller
      *
      * @param Request $request
      * @param Property $property
-     * @return Response
+     * @return RedirectResponse
      */
-    public function update(Request $request, Property $property): Response
+    public function update(Request $request, Property $property): RedirectResponse
     {
-        //
+
+        $project = Property::findOrFail($request->property_id);
+        $property->update([
+            'unit_type' => $request->unit_type,
+            'flat_type' => $request->flat_type,
+            'floor' => $request->floor,
+            'gross_sqm' => $request->gross_sqm,
+            'net_sqm' => $request->net_sqm
+        ]);
+
+        return redirect()->route('projects.edit', $property->project->id)
+            ->with('toast_danger', __("Successfully created new apartment"));
     }
 
     /**
@@ -92,9 +103,11 @@ class PropertyController extends Controller
      * @param Property $property
      * @return Response
      */
-    public function destroy(Property $property): Response
+    public function destroy(Property $property): RedirectResponse
     {
-        //
+        $project = $property->project_id;
+        $property->delete();
+        return redirect()->route('projects.edit', $project)->with('toast_success', __("Apartment deleted with success"));
     }
 
     public function getSingleProperty($id)

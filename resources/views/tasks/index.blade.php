@@ -71,7 +71,7 @@
                         d.department = $('select[name=department_filter]').val();
                         d.country = $('select[name=country_filter]').val();
                         d.team = $('select[name=team_filter]').val();
-                        d.val = document.querySelector("input[name=radio]:checked").value;
+                        d.val = $("input[name=radio]:checked").val();
                     }
                 },
                 @can('can-generate-report')
@@ -96,6 +96,7 @@
                 lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]]
 
             });
+            // Change task owner
             @can('change-task')
             table.on('click', '.assign', function () {
                 let $tr = $(this).closest('tr');
@@ -132,7 +133,8 @@
                 });
             });
             // Assigned user
-            $('#refresh').click(function () {
+            $('#refresh').click(function (e) {
+                e.preventDefault();
                 $('select[name=status_filter]').val('');
                 $('select[name=user_filter]').val('');
                 $('select[name=department_filter]').val('');
@@ -145,7 +147,7 @@
                 e.preventDefault();
                 table.draw();
             });
-
+            // Radion form changes
             $("#radioForm input[type='radio']").change(function (e) {
                 //const val = document.querySelector("input[name=radio]:checked").value;
                 e.preventDefault();

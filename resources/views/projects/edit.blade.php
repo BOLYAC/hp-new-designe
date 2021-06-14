@@ -18,9 +18,37 @@
     <script src="{{asset('assets/js/datatables/jquery.dataTables.min.js')}}"></script>
     <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.bootstrap4.min.js')}}"></script>
     <script>
-        $(document).ready(function () {
-            // Start Edit record
+        $(function () {
+            // Init Table Apartments
             let table = $('#res-config').DataTable();
+            // Edit apartment
+            table.on('click', '.edit', function () {
+                $tr = $(this).closest('tr');
+                if ($($tr).hasClass('child')) {
+                    $tr = $tr.prev('.parent');
+                }
+                var data = table.row($tr).data();
+                $('#unit_type').val(data[0]);
+                $('#flat_type').val(data[1]);
+                $('#floor').val(data[2]);
+                $('#gross_sqm').val(data[3]);
+                $('#net_sqm').val(data[4]);
+                let id = $(this).data('id');
+                $('#property_id').val(id)
+                $('#editForm').attr('action', '/properties/' + id);
+                $('#editModal').modal('show');
+            })
+            // Delete apartment
+            table.on('click', '.delete', function () {
+                $tr = $(this).closest('tr');
+                if ($($tr).hasClass('child')) {
+                    $tr = $tr.prev('.parent');
+                }
+                var data = table.row($tr).data();
+                let id = $(this).data('id');
+                $('#deleteForm').attr('action', '/properties/' + id);
+                $('#deleteModal').modal('show');
+            })
         })
     </script>
 @endsection
@@ -33,7 +61,7 @@
 @section('content')
     <div class="container-fluid">
         <div class="row">
-            <div class="col-sm-6">
+            <div class="col-xl-6">
                 <!-- Zero config.table start -->
                 @include('partials.flash-message')
                 <div class="card">
@@ -159,7 +187,7 @@
                     </form>
                 </div>
             </div>
-            <div class="col-sm-6">
+            <div class="col-xl-6">
                 <div class="card">
                     <div class="card-header p-2">
                         <button class="btn btn-primary" type="button" data-toggle="modal"
@@ -169,7 +197,7 @@
                     </div>
                     <div class="card-body b-t-primary">
                         <div class="dt-ext table-responsive">
-                            <table id="res-config" class="display">
+                            <table id="res-config" class="table table-striped table-bordered nowrap">
                                 <thead>
                                 <tr>
                                     <th>{{ __('Unit Type') }}</th>
@@ -177,6 +205,7 @@
                                     <th>{{ __('Floor') }}</th>
                                     <th>{{ __('Gross SQM') }}</th>
                                     <th>{{ __('Net SQM') }}</th>
+                                    <th></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -187,6 +216,15 @@
                                         <td>{{ $property->floor ?? '' }}</td>
                                         <td>{{ $property->gross_sqm ?? '' }}</td>
                                         <td>{{ $property->net_sqm ?? '' }}</td>
+                                        <td class="action-icon">
+                                            <a href="javascript:void(0)"
+                                               class="m-r-15 text-muted f-18 edit" data-id="{{ $property->id }}">
+                                               <i class="icofont icofont-eye-alt"></i>
+                                            </a>
+                                            <a href="#!" class="m-r-15 text-muted f-18 delete" data-id="{{ $property->id }}">
+                                                <i class="icofont icofont-trash"></i>
+                                            </a>
+                                        </td>
                                     </tr>
                                 @endforeach
                                 </tbody>
@@ -241,4 +279,75 @@
         </div>
     </div>
     <!-- End create apartment -->
+    <!-- Edit modal start -->
+    <div class="modal fade" id="editModal" tabindex="-1">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ __('Edit apartment') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="" method="POST" id="editForm">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-body">
+                        <input type="hidden" name="property_id" id="property_id">
+                        <div class="form-group">
+                            <label for="">{{ __('Unit Type') }}</label>
+                            <input type="text" name="unit_type" id="unit_type" class="form-control form-control-sm">
+                        </div>
+                        <div class="form-group">
+                            <label for="">{{ __('Flat Type') }}</label>
+                            <input type="text" name="flat_type" id="flat_type" class="form-control form-control-sm">
+                        </div>
+                        <div class="form-group">
+                            <label for="">{{ __('Floor') }}</label>
+                            <input type="text" name="floor" id="floor" class="form-control form-control-sm">
+                        </div>
+                        <div class="form-group">
+                            <label for="">{{ __('Gross SQM') }}</label>
+                            <input type="text" name="gross_sqm" id="gross_sqm" class="form-control form-control-sm">
+                        </div>
+                        <div class="form-group">
+                            <label for="">{{ __('Net SQM') }}</label>
+                            <input type="text" name="net_sqm" id="net_sqm" class="form-control form-control-sm">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" type="button" data-dismiss="modal">{{ __('Close') }}</button>
+                        <button class="btn btn-secondary" type="submit">{{ __('Save') }}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Edit modal end -->
+    <!-- Delete modal start -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{__('Delete apartment')}}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="" method="POST" id="deleteForm">
+                    @csrf
+                    @method('DELETE')
+                    <div class="modal-body p-b-0">
+                        <p>{{ __('Are sur you want to delete this apartment?') }}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">{{ __('Delete') }} <i class="icon-trash"></i>
+                        </button>
+                        <button type="button" class="btn btn-warning" data-dismiss="modal">{{ __('Cancel') }}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Delete modal end -->
 @endsection

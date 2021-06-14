@@ -348,14 +348,16 @@
                 </div>
             </div>
             <div class="col-sm-10">
-                <div class="card b-t-primary">
-                    <div class="card-body">
+                <div class="card">
+                    <div class="card-header b-t-primary b-b-primary">
                         <div class="row">
                             @foreach($newArr as $k => $value)
                                 <div class="col-2" data-aos="fade-right" data-aos-duration="2000">
                                     <label>
                                         <input type="checkbox" name="fields[]"
-                                               value="{{ $value }}" class="field"> {{ $value }} </label>
+                                               value="{{ $value }}" class="field">
+                                        {{ __('leads-report.' . $value) }}
+                                    </label>
                                 </div>
                             @endforeach
                             <div class="col-2" data-aos="fade-right" data-aos-duration="2000">
@@ -369,6 +371,8 @@
                                            value="notes" class="field"> {{ __('Notes') }} </label>
                             </div>
                         </div>
+                    </div>
+                    <div class="card-body">
                         <div class="custom-table">
 
                         </div>

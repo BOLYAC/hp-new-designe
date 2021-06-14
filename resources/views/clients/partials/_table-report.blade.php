@@ -33,11 +33,11 @@
                         ];
         @endphp
 
-        <h3>{{ __('List') }}</h3>
+        <h3>{{ __('Leads') }}</h3>
         <thead>
         <tr>
             @forelse ($fields as $field)
-                <th>{{ $field }}</th>
+                <th>{{ __('leads-report.' . $field) }}</th>
             @empty
                 <p>{{ __('Nothing to show') }}</p>
             @endforelse
@@ -272,13 +272,13 @@
                             @foreach($lead->tasks as $task)
                                 {{ $task->title }}
                                 <br>
-                                {{ Carbon\Carbon::parse($task->date)->format('d-m-Y H:i') }}
+                                <b>{{ Carbon\Carbon::parse($task->date)->format('d-m-Y H:i') }}</b>
                             @endforeach
                         @elseif($field == 'notes')
                             @foreach($lead->notes as $note)
                                 {!! $note->body !!}
                                 <br>
-                                {{ Carbon\Carbon::parse($note->date)->format('d-m-Y H:i') }}
+                                <b>{{ Carbon\Carbon::parse($note->date)->format('d-m-Y H:i') }}</b>
                             @endforeach
                         @else
                             {{ $lead->$field }}
