@@ -74,6 +74,21 @@ class EventsController extends Controller
         if ($request->get('team')) {
             $events->where('team_id', '=', $request->get('team'));
         }
+        if ($request->get('daterange')) {
+            $date = explode('-', $request->get('daterange'));
+            $from = $date[0];
+            $to = $date[1];
+
+            $from = \Carbon\Carbon::parse($from)
+                ->startOfDay()        // 2018-09-29 00:00:00.000000
+                ->toDateTimeString(); // 2018-09-29 00:00:00
+
+            $to = Carbon::parse($to)
+                ->endOfDay()          // 2018-09-29 23:59:59.000000
+                ->toDateTimeString(); // 2018-09-29 23:59:59
+
+            $events->whereBetween('event_date', [$from, $to]);
+        }
 
         $events->OrderByDesc('created_at');
 
@@ -81,53 +96,27 @@ class EventsController extends Controller
         return Datatables::of($events)
             ->setRowId('id')
             ->editColumn('name', function ($events) {
-                return '<a href="' . route('events.show', $events) . '">' . ($event->name ?? '') . '</a>';
+                return '<a href="' . route('events.show', $events) . '">' . ($events->name ?? '') . '</a>';
             })
             ->editColumn('full_name', function ($events) {
-                return '<a href="leads/' . $events->id . '">' . $events->lead_name ?? $events->client->full_name ?? '' . '</a>';
+                return $events->lead_name ?? $events->client->full_name;
             })
-            ->editColumn(
-                'user',
-                function ($leads) {
-                    return '<span class="badge badge-success">' . optional($leads->user)->name . '</span>';
-                }
-            )
-            ->editColumn(
-                'sells',
-                function ($leads) {
-                    $cou = '';
-                    $sellRep = collect($leads->sells_names)->toArray();
-                    foreach ($sellRep as $name) {
-                        $cou .= '<span class="badge badge-dark">' . $name . '</span>';
-                    }
-                    return $cou;
-                })
-            ->addColumn(
-                'stat', function ($leads) {
-                if ($leads->invoice_id <> 0) {
-                    return '<span class="badge badge-success">' . __('Deal Won') . '</span >';
-                } else {
-                    if (auth()->user()->hasPermissionTo('transfer-deal-to-invoice')) {
-                        return '<form action="' . route('lead.convert.order', $leads->id) . '"
-                                  onSubmit="return confirm(\'Are you sure?\');"
-                                  method="post">
-                                <input type="hidden" name="_token" value="' . csrf_token() . '" />
-                                <button type="submit"
-                                        class="btn btn-success btn-xs">'
-                            . __('To the invoice') .
-                            ' <i class="icon-arrow-right"></i>
-                                </button>
-                            </form>';
-                    }
-                }
-
-            })->addColumn('action', '<a href="{{ route(\'leads.show\', $id) }}"
+            ->editColumn('event_date', function ($events) {
+                return Carbon::parse($events->event_date)->format('Y-m-d H:i');
+            })
+            ->editColumn('place', function ($events) {
+                return $events->place ?? '';
+            })
+            ->addColumn('user', function ($events) {
+                return '<span class="badge badge-success">' . optional($events->user)->name . '</span>';
+            })
+            ->addColumn('action', '<a href="{{ route(\'events.show\', $id) }}"
                                                class="m-r-15 text-muted f-18"><i
                                                     class="icofont icofont-eye-alt"></i></a>
                                             <a href="#!"
                                                class="m-r-15 text-muted f-18 delete"><i
                                                     class="icofont icofont-trash"></i></a>')
-            ->rawColumns(['full_name', 'user', 'stage', 'sells', 'stat', 'action'])
+            ->rawColumns(['user', 'name', 'action'])
             ->make(true);
     }
 

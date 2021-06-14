@@ -35,12 +35,14 @@ class AloTechController extends Controller
             'phonenumber' => '5522926875',
 
         ]);
+        session(['current_call' => $click2]);
         return response()->json($res);
     }
 
     public function getHang(Request $request)
     {
         $aloTech = $request->session()->pull('alotech');
+        $click2 = $request->session()->pull('current_call');
         return $res = $click2->hang();
     }
 }

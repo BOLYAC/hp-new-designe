@@ -31,7 +31,6 @@ Route::group(
         Route::resource('users', 'UsersController');
         Route::resource('roles', 'RolesController');
         Route::resource('tasks', 'TasksController');
-        Route::resource('events', 'EventsController');
         Route::resource('sources', 'SourcesController');
         Route::resource('documents', 'DocumentController');
         Route::resource('payments', 'PaymentController');
@@ -64,11 +63,13 @@ Route::group(
 
         Route::resource('invoices', 'OrderController');
 
-        // Report For events
+        // Events & events report
+        Route::get('/events/data', 'EventsController@anyData')->name('events.data');
         Route::get('/show-report/{val}', 'EventsController@showReport')->name('view.report');
         Route::get('/create-report/{val}', 'EventsController@createReport')->name('generate.report');
         Route::post('/create-report/custom', 'EventsController@customReport')->name('generate.custom.report');
         Route::get('/events/duplicate/{event}', 'EventsController@replicate')->name('replicate.event');
+        Route::resource('events', 'EventsController');
 
         // Reports
         Route::get('stats', 'StatisticController@index')->name('static.index');

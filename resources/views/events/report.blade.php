@@ -103,14 +103,14 @@
                                     <th>{{ __('Lead Owner’s Notes') }}</th>
                                     <th>{{ __('Lead Owner') }}</th>
                                     @switch($val)
-                                        @case('today')
+                                        @case('tomorrow')
+
+                                        @break
+
+                                        @default
                                         <th>{{ __('Results') }}</th>
                                         <th>{{ __('Feedback') }}</th>
                                         <th>{{ __('Negativity') }}</th>
-                                        @break
-
-                                        @case('tomorrow')
-
                                         @break
                                     @endswitch
                                     <th>{{ __('Previous Appointments Count') }}</th>
@@ -128,7 +128,7 @@
                                         </td>
                                         <td>{{ $event->client->full_name ?? '' }}</td>
                                         <td>
-                                            {{ Carbon\Carbon::parse($event->event_date)->format('Y-m-d H:m') }}
+                                            {{ Carbon\Carbon::parse($event->event_date)->format('Y-m-d H:i') }}
                                         </td>
                                         <td>
                                             @if(is_null($event->client->nationality))
@@ -158,7 +158,10 @@
                                             {{ $event->user->name ?? '' }}
                                         </td>
                                         @switch($val)
-                                            @case('today')
+                                            @case('tomorrow')
+
+                                            @break
+                                            @default
                                             <td>
                                                 @php
                                                     $i = $event->results;
@@ -234,20 +237,15 @@
                                                 @endphp
                                             </td>
                                             @break
-
-                                            @case('tomorrow')
-
-                                            @break
                                         @endswitch
 
                                         <td>
                                             @switch($val)
-                                                @case('today')
-                                                {{ $event->client->events->where('event_date', '<', Carbon\Carbon::today())->count() }}
-                                                @break
-
                                                 @case('tomorrow')
                                                 {{ $event->client->events->where('event_date', '<', Carbon\Carbon::tomorrow())->count() }}
+                                                @break
+                                                @default
+                                                {{ $event->client->events->where('event_date', '<', Carbon\Carbon::today())->count() }}
                                                 @break
                                             @endswitch
                                         </td>

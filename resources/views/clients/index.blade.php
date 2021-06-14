@@ -171,8 +171,8 @@
         });
         // Search form
         $('#search-form').on('submit', function (e) {
-            table.draw();
             e.preventDefault();
+            table.draw();
         });
         // Check/Uncheck ALl
         $('#checkAll').change(function () {

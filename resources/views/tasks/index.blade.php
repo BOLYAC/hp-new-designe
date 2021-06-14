@@ -6,6 +6,8 @@
     <link rel="stylesheet" href="{{ asset('assets/css/datatable-extension.css') }}">
     <!-- Select 2 css -->
     <link rel="stylesheet" href="{{ asset('assets/css/select2.css') }}"/>
+    <!-- Datarange.css -->
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/daterange-picker.css') }}">
 @endsection
 
 @section('script')
@@ -26,6 +28,10 @@
     <script src="{{ asset('assets/js/datatables/datatable-extension/dataTables.bootstrap4.min.js')}}"></script>
     <script src="{{ asset('assets/js/datatables/datatable-extension/dataTables.responsive.min.js')}}"></script>
     <script src="{{ asset('assets/js/datatables/datatable-extension/responsive.bootstrap4.min.js')}}"></script>
+    <!-- Plugins JS start-->
+    <script src="{{ asset('assets/js/datepicker/daterange-picker/moment.min.js') }}"></script>
+    <script src="{{ asset('assets/js/datepicker/daterange-picker/daterangepicker.js') }}"></script>
+    <script src="{{ asset('assets/js/datepicker/daterange-picker/daterange-picker.custom.js') }}"></script>
 
     <script>
         $(document).ready(function () {
@@ -72,6 +78,7 @@
                         d.country = $('select[name=country_filter]').val();
                         d.team = $('select[name=team_filter]').val();
                         d.val = $("input[name=radio]:checked").val();
+                        d.daterange = $('input[name=daterange]').val()
                     }
                 },
                 @can('can-generate-report')
@@ -140,6 +147,7 @@
                 $('select[name=department_filter]').val('');
                 $('select[name=team_filter]').val('');
                 $('input[type="radio"]').filter('[value=all]').prop('checked', true);
+                $('input[name=daterange]').val('')
                 table.DataTable().destroy();
             });
             // Search form
@@ -176,6 +184,9 @@
                 });
             });
 
+            $(document).ready(function () {
+                $('input[name=daterange]').val('')
+            });
         })
         ;
     </script>
@@ -241,10 +252,19 @@
                                     </div>
                                 @endif
                             @endif
+                            <div class="theme-form mb-2">
+                                <label for="daterange">{{ __('Date') }}</label>
+                                <input class="form-control form-control-sm digits" type="text" name="daterange" id="daterange"
+                                       value="">
+                            </div>
                             <div class="col">
                                 <div class="form-group m-t-15 custom-radio-ml">
                                     <div class="radio radio-primary">
-                                        <input id="radio1" type="radio" name="radio" value="all">
+                                        <input id="radio1" type="radio" name="radio" value="custom">
+                                        <label for="radio1">{{ __('Custom') }}</label>
+                                    </div>
+                                    <div class="radio radio-primary">
+                                        <input id="radio1" type="radio" name="radio" value="all" checked>
                                         <label for="radio1">{{ __('All') }}</label>
                                     </div>
                                     <div class="radio radio-primary">

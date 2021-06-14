@@ -407,16 +407,16 @@ class ClientsController extends Controller
             'requirements_request' => $request->requirements_request
         ]);
 
-        return redirect()->route('clients.edit', $client)->with('toast_success', 'Client created successfully');
+        return redirect()->route('clients.edit', $client)->with('toast_success', __('Lead created successfully'));
     }
 
     /**
      * Display the specified resource.
      *
      * @param Client $client
-     * @return view
+     * @return Application|Factory|\Illuminate\Contracts\View\View|View
      */
-    public function show(Client $client): View
+    public function show(Client $client)
     {
         return view('clients.show', compact('client'));
     }
@@ -508,7 +508,7 @@ class ClientsController extends Controller
 
             ])->save();*/
 
-        return redirect()->route('clients.edit', $client)->with('toast_success', 'Client updated successfully');
+        return redirect()->route('clients.edit', $client)->with('toast_success', __('Lead updated successfully'));
     }
 
     /**
@@ -521,7 +521,7 @@ class ClientsController extends Controller
     public function destroy(Client $client): RedirectResponse
     {
         $client->delete();
-        return redirect()->route('clients.index')->with('toast_success', 'Client deleted successfully');
+        return redirect()->route('clients.index')->with('toast_success', __('Lead deleted successfully'));
     }
 
 
@@ -571,7 +571,7 @@ class ClientsController extends Controller
                 return back()->withFailures($import->failures());
             }
 
-            return redirect()->route('clients.index')->with('toast_success', 'File upload  successfully');
+            return redirect()->route('clients.index')->with('toast_success', __('File upload successfully'));
         }
     }
 
@@ -606,7 +606,7 @@ class ClientsController extends Controller
                 return back()->withFailures($import->failures());
             }
 
-            return redirect()->route('clients.index')->with('toast_success', 'File upload  successfully');
+            return redirect()->route('clients.index')->with('toast_success', __('File upload  successfully'));
         }
     }
 
@@ -701,7 +701,7 @@ class ClientsController extends Controller
             }
         }
 
-        return redirect()->back()->with('toast_success', 'File upload  successfully');
+        return redirect()->back()->with('toast_success', __('File upload  successfully'));
     }
 
     public function composeEmail($email, Client $client)

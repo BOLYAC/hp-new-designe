@@ -29,14 +29,62 @@
         $(document).ready(function () {
             // Start Edit record
             let table = $('#res-config').DataTable({
-                order: []
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: '{{ route('events.data') }}',
+                    data: function (d) {
+                        d.stage = $('select[name=status_filter]').val();
+                        d.user = $('select[name=user_filter]').val();
+                        d.department = $('select[name=department_filter]').val();
+                        d.country = $('select[name=country_filter]').val();
+                        d.team = $('select[name=team_filter]').val();
+                        d.daterange = $('input[name=daterange]').val()
+                    }
+                },
+                columns: [
+                    {data: 'id', name: 'id'},
+                    {data: 'name', name: 'name'},
+                    {data: 'full_name', name: 'full_name'},
+                    {data: 'event_date', name: 'event_date'},
+                    {data: 'place', name: 'place'},
+                    {data: 'user', name: 'user'},
+                    {data: 'action', name: 'action'},
+                ],
+                order: [],
+                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]]
             });
+            // Assigne user
+            $('#refresh').click(function () {
+                $('select[name=status_filter]').val('');
+                $('select[name=user_filter]').val('');
+                $('select[name=department_filter]').val('');
+                $('select[name=team_filter]').val('');
+                $('input[name=daterange]').val('')
+                table.DataTable().destroy();
+            });
+            // Search form
+            $('#search-form').on('submit', function (e) {
+                e.preventDefault();
+                table.draw();
+            });
+            @can('event-delete')
             table.on('click', '.delete', function () {
                 $tr = $(this).closest('tr');
                 if ($($tr).hasClass('child')) {
                     $tr = $tr.prev('.parent');
                 }
-                var data = table.row($tr).data();
+                let data = table.row($tr).data();
+                $('#deleteForm').attr('action', 'events/' + data[0]);
+                $('#deleteModal').modal('show');
+            })
+            @endcan
+            table.on('click', '.delete', function () {
+                $tr = $(this).closest('tr');
+                if ($($tr).hasClass('child')) {
+                    $tr = $tr.prev('.parent');
+                }
+                let data = table.row($tr).data();
                 console.log(data)
                 $('#deleteForm').attr('action', 'events/' + data[0]);
                 $('#deleteModal').modal('show');
@@ -177,57 +225,6 @@
                                     <th width="5%"></th>
                                 </tr>
                                 </thead>
-                                <tbody class="task-page">
-                                @foreach($events as $key => $event)
-                                    <tr>
-                                        <td>
-                                            {{ $event->id }}
-                                        </td>
-                                        <td>
-                                            <a href="{{ route('events.show', $event) }}">{{ $event->name ?? '' }}</a>
-                                        </td>
-                                        <td>
-                                            {{ $event->lead_name ?? $event->client->full_name }}
-                                        </td>
-
-                                        <td>
-                                            {{ Carbon\Carbon::parse($event->event_date)->format('Y-m-d') }}
-                                        </td>
-
-                                        <td>
-                                            {{ $event->place ?? '' }}
-                                        </td>
-                                        <td><span class="badge badge-success">
-                                                {{ $event->user->name ?? '' }}</span>
-                                        </td>
-                                        <td class="action-icon">
-                                            <a class="dropdown-toggle addon-btn" data-toggle="dropdown"
-                                               aria-expanded="true">
-                                                <i class="icofont icofont-ui-settings"></i>
-                                            </a>
-                                            <div class="dropdown-menu dropdown-menu-right">
-                                                <a href="{{ route('events.show', $event) }}"
-                                                   class="dropdown-item m-r-15 text-muted f-18"><i
-                                                        class="icofont icofont-eye-alt"></i>{{ __('Show') }}</a>
-                                                @can('event-edit')
-                                                    <a href="{{ route('events.edit', $event) }}"
-                                                       class="dropdown-item m-r-15 text-muted f-18"><i
-                                                            class="icofont icofont-ui-edit"></i>{{ __('Edit') }}</a>
-                                                @endcan
-                                                @can('event-replicate')
-                                                    <a href="{{ route('replicate.event', $event) }}"
-                                                       class="dropdown-item m-r-15 text-muted f-18"><i
-                                                            class="fa fa-clone"></i>{{ __('Duplicate') }}</a>
-                                                @endcan
-                                                @can('event-delete')
-                                                    <a class="dropdown-item m-r-15 text-muted f-18 delete"><i
-                                                            class="icofont icofont-trash"></i>{{ __('Delete') }}</a>
-                                                @endcan
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                                </tbody>
                             </table>
                         </div>
 

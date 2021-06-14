@@ -78,6 +78,22 @@ class TasksController extends Controller
             $tasks->archive(false);
         }
 
+        if ($request->get('val') == 'custom') {
+            $date = explode('-', $request->get('daterange'));
+            $from = $date[0];
+            $to = $date[1];
+
+            $from = \Carbon\Carbon::parse($from)
+                ->startOfDay()        // 2018-09-29 00:00:00.000000
+                ->toDateTimeString(); // 2018-09-29 00:00:00
+
+            $to = Carbon::parse($to)
+                ->endOfDay()          // 2018-09-29 23:59:59.000000
+                ->toDateTimeString(); // 2018-09-29 23:59:59
+
+            $tasks->whereBetween('date', [$from, $to]);
+        }
+
         $tasks->OrderByDesc('created_at');
 
         switch ($request->get('val')) {
@@ -97,6 +113,7 @@ class TasksController extends Controller
                 $tasks->archive(true);
                 break;
         }
+
         return Datatables::of($tasks)
             ->setRowId('id')
             ->editColumn('date', function ($tasks) {
@@ -178,7 +195,8 @@ class TasksController extends Controller
      *
      * @return Response
      */
-    public function create()
+    public
+    function create()
     {
         //
     }
@@ -189,7 +207,8 @@ class TasksController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function store(Request $request)
+    public
+    function store(Request $request)
     {
         $data = $request->all();
         $data['user_id'] = Auth::id();
@@ -207,7 +226,8 @@ class TasksController extends Controller
      * @param int $id
      * @return Response
      */
-    public function show($id)
+    public
+    function show($id)
     {
         //
     }
@@ -218,7 +238,8 @@ class TasksController extends Controller
      * @param Task $task
      * @return Application|Factory|View
      */
-    public function edit(Task $task)
+    public
+    function edit(Task $task)
     {
         return view('tasks.edit', compact('task'));
     }
@@ -230,7 +251,8 @@ class TasksController extends Controller
      * @param Task $task
      * @return Response
      */
-    public function update(Request $request, Task $task)
+    public
+    function update(Request $request, Task $task)
     {
         $data = $request->all();
         $task->update($data);
@@ -245,14 +267,16 @@ class TasksController extends Controller
      * @param Task $task
      * @return void
      */
-    public function destroy(Task $task)
+    public
+    function destroy(Task $task)
     {
         $task->delete();
         return redirect()->route('tasks.index')
             ->with('toast_success', 'Task deleted successfully');
     }
 
-    public function addTask(Request $request)
+    public
+    function addTask(Request $request)
     {
 
         $note = Task::create([
@@ -270,7 +294,8 @@ class TasksController extends Controller
         return \View::make('clients.tasks.index', compact('tasks'));
     }
 
-    public function archive(Request $request)
+    public
+    function archive(Request $request)
     {
 
         if ($request->get('archive')) {
@@ -288,7 +313,8 @@ class TasksController extends Controller
         return \View::make('clients.tasks.index', compact('tasks'));
     }
 
-    public function assigneTask(Request $request)
+    public
+    function assigneTask(Request $request)
     {
         $task = Task::find($request->task_assigned_id);
         $task->update([
