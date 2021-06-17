@@ -19,19 +19,39 @@
 <script src="{{ asset('assets/js/notify/bootstrap-notify.min.js') }}"></script>
 <script src="https://cdn.rawgit.com/robcowie/jquery-stopwatch/master/jquery.stopwatch.js"></script>
 <script>
+    var count = 0;
+
+    $(".digit").on('click', function () {
+        var num = ($(this).clone().children().remove().end().text());
+        if (count < 11) {
+            $("#output").append('<span>' + num.trim() + '</span>');
+
+            count++
+        }
+    });
+
+    $("#emptyField").on('click', function () {
+            $("#output").text('');
+    });
+
+    $('.fa-long-arrow-left').on('click', function () {
+        $('#output span:last-child').remove();
+        count--;
+    });
+</script>
+<script>
     $(document).ready(function () {
-        function notify(title, type) {
+        function notify(message,type, icon) {
             $.notify({
-                    title: title
+                    icon: icon,
+                    message: message
                 },
                 {
                     type: type,
                     allow_dismiss: true,
                     newest_on_top: true,
                     mouse_over: true,
-                    showProgressbar: true,
                     spacing: 10,
-                    timer: 2000,
                     placement: {
                         from: 'top',
                         align: 'right'
@@ -51,18 +71,19 @@
 
         $('#click2call').on('click', function (e) {
             e.preventDefault();
+            console.log(phonenumber)
             $.ajax({
                 url: "{{ route('click2call') }}",
                 type: "POST",
                 data: {
                     "_token": "{{ csrf_token() }}",
+                    "phonenumber": phonenumber
                 },
                 success: function (response) {
-                    $('#demo1').stopwatch().stopwatch('start');
-                    notify('Task transferred', 'success');
+                    notify(response['message'], response['type']);
                 },
-                error: function (response) {
-                    notify('Something wrong', 'danger');
+                error: function () {
+                    notify('Something Wrong!', 'danger');
                 }
             });
         });
@@ -76,13 +97,10 @@
                     "_token": "{{ csrf_token() }}",
                 },
                 success: function (response) {
-                    $('#demo1').stopwatch().click(function(){ 
-                        $(this).stopwatch('reset');
-                    });
-                    notify('Task transferred', 'success');
+                    notify(response['message'], response['type']);
                 },
                 error: function (response) {
-                    notify('Something wrong', 'danger');
+                    notify(response['message'], response['type']);
                 }
             });
         });

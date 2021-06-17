@@ -52,69 +52,67 @@
     </div>
     <div class="customizer-contain">
         <div class="customizer-links">
-            <div class="row">
-                <div class="col call-chat-body">
-                    <div class="card shadow-0 border">
-                        <div class="card-body p-0">
-                            <div class="chat-box">
-                                <!-- Chat right side start-->
-                                <div class="chat-right-aside" style="max-width:100%!important;">
-                                    <!-- chat start-->
-                                    <div class="chat">
-                                        <!-- chat-header start-->
-                                        <div class="chat-header clearfix">
-                                            <div class="about">
-
-                                            </div>
-                                            <ul class="list-inline float-left float-sm-right chat-menu-icons">
-                                                <li class="list-inline-item"><a id="click2call" href="#"><i
-                                                            class="icon-headphone-alt"></i></a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div class="chat-history">
-                                            @if(Session::has('alotech'))
-                                            <p class="alert
-                                            {{ Session::get('alert-class', 'alert-info') }}">{{Session::get('message') }}
-                                            </p>
-
-                                            <div class="text-center pr-0 call-content">
-                                                <div>
-                                                    <div class="total-time">
-                                                        <h2 class="digits" id="demo1">00 : 00</h2>
-                                                    </div>
-                                                    <div class="call-icons">
-                                                    </div>
-                                                    <button class="btn btn-danger-gradien btn-block btn-lg" id="endCall">END CALL
-                                                    </button>
-                                                    <div class="receiver-img"><img
-                                                            src="../assets/images/other-images/receiver-img.jpg"
-                                                            alt=""></div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-7 pl-0 caller-img">
-                                                <img class="img-fluid"
-                                                     src="../assets/images/other-images/caller.jpg"
-                                                     alt="">
-                                            </div>
-                                            @else
-                                            <div class="row mt-2">
-                                                <form action="{{  route('alotech.login') }}" method="post" class="col-10 mx-auto">
-                                                    @csrf
-                                                    <div class="form-group">
-                                                        <label for="login">{{ __('Email') }}</label>
-                                                        <input type="email" id="login" name="email" class="form-control form-control-sm">
-                                                    </div>
-                                                    <button class="btn btn-sm btn-primary" type="submit">{{ __('Login') }}</button>
-                                                </form>
-                                            </div>
-                                            @endif
-                                        </div>
-                                    </div>
+            <div class="card shadow-0 border">
+                <div class="card-body p-2">
+                    <!-- chat-header start-->
+                    @if( Session::has('current_call') )
+                    @endif
+                    @if(Session::has('alotech'))
+                        <!-- <div>
+                            <button class="btn btn-danger-gradien btn-block btn-lg"
+                                    id="endCall">{{ __('END CALL') }}
+                            </button>
+                        </div>-->
+                        <div class="container">
+                            <div id="output"></div>
+                            <div class="row justify-content-center">
+                                <div class="digit" id="one">1</div>
+                                <div class="digit" id="two">2</div>
+                                <div class="digit" id="three">3</div>
+                            </div>
+                            <div class="row justify-content-center">
+                                <div class="digit" id="four">4</div>
+                                <div class="digit" id="five">5</div>
+                                <div class="digit">6</div>
+                            </div>
+                            <div class="row justify-content-center">
+                                <div class="digit">7</div>
+                                <div class="digit">8</div>
+                                <div class="digit">9</div>
+                            </div>
+                            <div class="row justify-content-center">
+                                <div class="digit">*</div>
+                                <div class="digit">0</div>
+                                <div class="digit">#</div>
+                            </div>
+                            <div class="botrow">
+                                <div id="click2call">
+                                    <i class="fa fa-phone" aria-hidden="true"></i>
+                                </div>
+                                <div id="endCall">
+                                    <i class="fa fa-ban" aria-hidden="true"></i>
+                                </div>
+                                <div id="removeNumber">
+                                <i class="fa fa-long-arrow-left dig" aria-hidden="true"></i>
                                 </div>
                             </div>
+                            <button class="btn btn-sm btn-block btn-primary" id="emptyField">{{ __('Empty field') }}</button>
                         </div>
-                    </div>
+                    @else
+                        <div class="m-2 p-2">
+                            <h6>{{  __('AloTech connection') }}</h6>
+                            <form action="{{ route('alotech.login') }}" method="post">
+                                @csrf
+                                <div class="form-group">
+                                    <label for="login">{{ __('Email') }}</label>
+                                    <input type="email" id="login" name="email"
+                                            class="form-control form-control-sm">
+                                </div>
+                                <button class="btn btn-sm btn-primary"
+                                        type="submit">{{ __('Login') }}</button>
+                            </form>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

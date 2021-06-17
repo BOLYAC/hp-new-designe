@@ -1,15 +1,6 @@
 @extends('layouts.vertical.master')
 @section('title', '| Calls')
 
-@section('style_before')
-
-@endsection
-
-@section('script')
-
-
-@endsection
-
 
 @section('breadcrumb-items')
     <li class="breadcrumb-item">{{ __('Call') }}</li>

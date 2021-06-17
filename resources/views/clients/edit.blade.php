@@ -150,10 +150,9 @@
         ]
 
         //Welcome Message (not for login page)
-        function notify(title, message, type, icon) {
+        function notify(message, type, icon) {
             $.notify({
                     icon: icon,
-                    title: title,
                     message: message
                 },
                 {
@@ -251,6 +250,16 @@
             $('#assignModal').modal('show');
         });
         @endcan
+        $('.ph1').click(function (e) {
+            e.preventDefault();
+            let ph = '{{ $client->client_number ?? '' }}'
+            $('#output').text(ph);
+        });
+        $('.ph2').click(function (e) {
+            e.preventDefault();
+            let ph = '{{ $client->client_number_2 ?? ''}}'
+            $('#output').text(ph);
+        });
         // Submit Assignment
         $('#assignForm').on('submit', function (e) {
             e.preventDefault();
@@ -449,10 +458,9 @@
                                                             for="client_number_2">{{ __('Phone number') }}</label>
                                                     </div>
                                                     <div class="col-2">
-                                                        <a href="https://wa.me/{{$client->client_number}}?text={{ __('Hello, how can we help you?') }}"
-                                                           target="_blank"
-                                                           class="btn btn-xs btn-outline-success float-right"><i
-                                                                class="fa fa-whatsapp"></i></a>
+                                                        <a href="javascript:void(0)"
+                                                           class="btn btn-xs btn-outline-primary float-right theme-setting ph1"><i
+                                                                class="fa fa-phone"></i></a>
                                                     </div>
                                                 </div>
                                                 <input type="text" name="client_number"
@@ -477,10 +485,9 @@
                                                             for="client_number_2">{{ __('Phone number 2') }}</label>
                                                     </div>
                                                     <div class="col-2">
-                                                        <a href="https://wa.me/{{$client->client_number_2}}?text={{ __('Hello, how can we help you?') }}"
-                                                           target="_blank"
-                                                           class="btn btn-xs btn-outline-success float-right"><i
-                                                                class="fa fa-whatsapp"></i></a>
+                                                        <a href="javascript:void(0)"
+                                                           class="btn btn-xs btn-outline-primary float-right theme-setting ph2"><i
+                                                                class="fa fa-phone"></i></a>
                                                     </div>
                                                 </div>
                                                 <input type="text" name="client_number_2"

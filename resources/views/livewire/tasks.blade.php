@@ -88,7 +88,7 @@
                 <div class="todo-list-wrapper">
                     <div class="todo-list-container">
                         <div class="todo-list-body">
-                            <ul id="todo-list" wire:poll.keep-alive>
+                            <ul id="todo-list">
                                 @if($mode = 'show3')
                                     @foreach($tasks as $task)
                                         <li class="{{ $task->archive === true ? 'completed' : '' }} task">
