@@ -78,11 +78,12 @@
             </li>
         @endcan
         @can('stats-list')
-            <li class="nav-item single-item {{ Request::is('stats') ? 'active' : ''}}">
-                <a href="{{ route('static.index') }}">
-                    <i class="icon-bar-chart"></i>
-                    <span> {{ __('Reporting') }}</span>
-                </a>
+            <li class="dropdown"><a class="nav-link menu-title" href="#"><i
+                        data-feather="home"></i><span>{{ __('Reporting') }}</span></a>
+                <ul class="nav-submenu menu-content">
+                    <li><a href="{{ route('static.index') }}">{{ __('Users Status') }}</a></li>
+                    <li><a href="{{ route('calls.filter') }}">{{ __('Calls reporting') }}</a></li>
+                </ul>
             </li>
         @endcan
         @can('user-list')

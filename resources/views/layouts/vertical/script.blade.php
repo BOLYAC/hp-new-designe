@@ -17,21 +17,38 @@
 <script src="{{asset('assets/js/script.js')}}"></script>
 <script src="{{ asset('assets/js/theme-customizer/customizer.js') }}"></script>
 <script src="{{ asset('assets/js/notify/bootstrap-notify.min.js') }}"></script>
-<script src="https://cdn.rawgit.com/robcowie/jquery-stopwatch/master/jquery.stopwatch.js"></script>
 <script>
-    var count = 0;
+    // Allowed keypress numbers
+    const keyPressedNumbersAllowed = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+'];
 
+    let count = 0;
     $(".digit").on('click', function () {
-        var num = ($(this).clone().children().remove().end().text());
-        if (count < 11) {
+        let num = ($(this).clone().children().remove().end().text());
+        if (count < 14) {
             $("#output").append('<span>' + num.trim() + '</span>');
-
             count++
         }
     });
 
+    document.addEventListener('keydown', (event) => {
+        let code = event.key;
+        // Numbers 0-9
+        if (keyPressedNumbersAllowed.includes(code)) {
+            if (count < 14) {
+                $("#output").append(`<span>${code}</span>`);
+                count++
+            }
+        }
+
+        if (code == 'Backspace') {
+            $('#output span:last-child').remove();
+            count--;
+        }
+    }, false);
+
     $("#emptyField").on('click', function () {
-            $("#output").text('');
+        $('#output span').remove();
+        count = 0;
     });
 
     $('.fa-long-arrow-left').on('click', function () {
@@ -41,7 +58,7 @@
 </script>
 <script>
     $(document).ready(function () {
-        function notify(message,type, icon) {
+        function notify(message, type, icon) {
             $.notify({
                     icon: icon,
                     message: message
@@ -71,6 +88,7 @@
 
         $('#click2call').on('click', function (e) {
             e.preventDefault();
+            let phonenumber = $('#output').text()
             console.log(phonenumber)
             $.ajax({
                 url: "{{ route('click2call') }}",

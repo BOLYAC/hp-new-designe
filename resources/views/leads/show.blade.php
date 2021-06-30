@@ -468,7 +468,7 @@
                                             @csrf
                                             <button type="submit"
                                                     class="btn btn-success btn-sm"
-                                                    >{{ __('Convert to invoice') }} <i class="ti-money"></i>
+                                            >{{ __('Convert to invoice') }} <i class="ti-money"></i>
                                             </button>
                                         </form>
                                     </div>
@@ -489,9 +489,53 @@
                 @include('partials.comments', ['subject' => $lead])
                 @include('partials.events', ['subject' => $lead])
                 @include('leads.partials.reservation')
+                @if($lead->invoices()->exists())
+                    <div class="col-xl-5 xl-100 box-col-6">
+                        <div class="card card-with-border">
+                            <div class="card-header">
+                                <h5>{{ __('Invoice history') }}</h5>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive groups-table agent-performance-table">
+                                    <table class="table">
+                                        <tbody>
+                                        @foreach($lead->invoices as $invoice)
+                                            <tr>
+                                                <td>
+                                                    <div class="d-inline-block align-middle"><img
+                                                            class="img-radius img-40 align-top m-r-15 rounded-circle"
+                                                            src="{{ asset('storage/' . $invoice->user->image_path) }}"
+                                                            alt="">
+                                                        <div class="d-inline-block"><span
+                                                                class="f-w-600">{{ $invoice->user->name }}</span><span
+                                                                class="d-block f-12 font-primary">{{ $invoice->user->roles->first()->name }}</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span>
+                                                        <a href="{{ route('invoices.show', $invoice) }}" class="f-w-700">
+                                                            {{ $invoice->client_name ?? $invoice->client->full_name ??'' }}
+                                                        </a>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <button class="btn badge-light-primary btn-xs" type="button">
+                                                        {{ $invoices->project->project_name ?? $invoices->project_name ?? '' }}
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
             </div>
             <div class="col-md-4">
-                <div class="card">
+                <div class="card card-with-border">
                     <div class="card-header b-b-info">
                         <h5 class="text-muted">{{ __('Owned by') }}</h5>
                     </div>
@@ -499,8 +543,9 @@
                         <div class="inbox">
                             <div class="media active">
                                 <div class="media-size-email">
-                                    <img class="mr-3 rounded-circle"
-                                         src="{{ asset('/assets/images/user/user.png') }}"
+                                    <img class="mr-3 rounded-circle img-50"
+                                         style="width: 50px;height:50px;"
+                                         src="{{ asset('storage/' . $lead->user->image_path) }}"
                                          alt="">
                                 </div>
                                 <div class="media-body">
@@ -531,7 +576,7 @@
                         @endcan
                     </div>
                 </div>
-                <div class="card">
+                <div class="card card-with-border">
                     <div class="card-header b-b-primary">
                         <h6 class="text-muted">
                             @if($lead->client)
@@ -552,7 +597,7 @@
                     </div>
                 </div>
                 @can('share-deal')
-                    <div class="card">
+                    <div class="card card-with-border">
                         <div class="card-header b-b-primary">
                             <h6 class="text-muted">{{ __('sale(s) representative') }}</h6>
                         </div>
@@ -606,7 +651,7 @@
                     </div>
                     <div class="card-body activity-social">
                         <ul>
-                            @foreach($stage_logs as $log)
+                            @foreach($lead->stageLog as $log)
                                 <li class="border-recent-success">
                                     <small>{{ $log->created_at->format('Y-m-d H:i') }}</small>
                                     <p class="mb-0">{{ __('Stage change to') }}: <span

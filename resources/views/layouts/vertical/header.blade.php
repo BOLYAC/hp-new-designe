@@ -16,11 +16,13 @@
         <div class="nav-right col pull-right right-menu">
             <ul class="nav-menus">
                 <li></li>
+                @if(auth()->user()->department_id !== 2)
                 <li class="theme-setting"><i data-feather="phone-call"></i></li>
+                @endif
                 <li class="onhover-dropdown px-0"><span class="media user-header"><img
                             class="mr-2 rounded-circle img-35"
                             style="width: 35px;height:35px;"
-                            src="{{  asset('storage/' . auth()->user()->image_path) }}"
+                            src="{{ asset('storage/' . auth()->user()->image_path) }}"
                             alt=""><span class="media-body"><span class="f-12 f-w-600">{{ auth()->user()->name }}</span><span
                                 class="d-block">{{ auth()->user()->roles->first()->name }}</span></span></span>
                     <ul class="profile-dropdown onhover-show-div">

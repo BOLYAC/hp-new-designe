@@ -1,5 +1,20 @@
 @extends('layouts.vertical.master')
 @section('title', '| Show client')
+@section('style_before')
+    <!-- Plugins css start-->
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/summernote.css') }}">
+    <!-- ToDo css -->
+    <link rel="stylesheet" href="{{ asset('assets/css/todo.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css">
+@endsection
+@section('script')
+    <!-- Plugins JS start-->
+    <script src="{{ asset('assets/js/editor/summernote/summernote.js') }}"></script>
+    <script src="{{ asset('assets/js/editor/summernote/summernote.custom.js') }}"></script>
+    <!-- Plugins JS start-->
+    <script src="{{ asset('assets/js/notify/bootstrap-notify.min.js') }}"></script>
+    <script src="{{ asset('assets/js/notify/notify-script.js') }}"></script>
+@endsection
 @section('breadcrumb-items')
     <li class="breadcrumb-item"><a href="{{ route('clients.index') }}">{{ __('Leads') }}</a></li>
     <li class="breadcrumb-item">{{ __('Show:') }} {{ $client->full_name }}</li>
@@ -11,6 +26,16 @@
             <div class="col-md-9 col-lg-10">
                 <!-- Zero config.table start -->
                 <div class="card b-t-primary">
+                    <div class="card-header b-t-primary b-b-primary p-2 d-flex justify-content-between">
+                        <h5 class="mr-auto mt-2">{{ __('Lead') }}: {{ $client->full_name ?? '' }}</h5>
+                        @can('client-edit')
+                            <a class="btn btn-sm btn-warning mr-2" href="{{ route('clients.index') }}"><i
+                                    class="icon-arrow-left"></i> {{ __('Back') }}</a>
+                            <a class="btn btn-sm btn-primary"
+                               href="{{ route('clients.edit', $client) }}">{{ __('Edit') }}</a>
+
+                        @endcan
+                    </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-lg-6">
@@ -277,14 +302,11 @@
                             <!-- end of table col-lg-6 -->
                         </div>
                     </div>
-                    <div class="card-footer b-t-primary">
-                        <a href="{{ url()->previous() }}" class="btn btn-warning btn-sm"><i
-                                class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
-                    </div>
                 </div>
+                @include('clients.task-note')
             </div>
             <div class="col-md-3 col-lg-2">
-                <div class="card">
+                <div class="card card-with-border">
                     <div class="card-header b-b-info">
                         <h5 class="text-muted">{{ __('Owned by') }}</h5>
                     </div>
@@ -292,8 +314,9 @@
                         <div class="inbox">
                             <div class="media active">
                                 <div class="media-size-email">
-                                    <img class="mr-3 rounded-circle"
-                                         src="{{ asset('/assets/images/user/user.png') }}"
+                                    <img class="mr-3 rounded-circle img-50"
+                                         style="width: 50px;height:50px;"
+                                         src="{{ asset('storage/' . $lead->user->image_path) }}"
                                          alt="">
                                 </div>
                                 <div class="media-body">
@@ -302,6 +325,93 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Transfer to Deal -->
+                @can('transfer-lead-to-deal')
+                    <div class="card card-with-border">
+                        <div class="card-header b-b-info">
+                            <h5 class="text-muted">{{ __('Transfer to deal') }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <form action="{{ route('sales.transfer') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="clientId" value="{{ $client->id }}">
+                                <button class="btn btn-outline-success btn-sm form-control"
+                                        id="tran-to">{{ __('Done') }} <i
+                                        class="icon-arrow-right"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                @endcan
+                @if($client->leads()->exists())
+                    <div class="card card-with-border">
+                        <div class="card-header">
+                            <h5 class="d-inline-block">{{ __('Deals history') }}</h5>
+                        </div>
+                        <div class="card-body activity-social">
+                            <ul>
+                                @foreach($client->leads as $lead)
+                                    <li class="border-recent-success">
+                                        <small>{{ $lead->created_at->format('Y-m-d') }}</small>
+                                        <p class="mb-0">{{ __('Stage') }}: <span
+                                                class="f-w-800 text-primary">
+                                                @php
+                                                    $i = $lead->stage_id;
+                                                switch ($i) {
+                                                    case 1:
+                                                        echo '<span class="badge badge-light-primary f-w-600">' . __('In contact') . '</span>';
+                                                        break;
+                                                    case 2:
+                                                        echo '<span class="badge badge-light-primary f-w-600">' . __('Appointment Set') . '</span>';
+                                                        break;
+                                                    case 3:
+                                                        echo '<span class="badge badge-light-primary f-w-600">' . __('Follow up') . '</span>';
+                                                        break;
+                                                    case 4:
+                                                        echo '<span class="badge badge-light-primary f-w-600">' . __('Reservation') . '</span>';
+                                                        break;
+                                                    case 5:
+                                                        echo '<span class="badge badge-light-primary f-w-600">' . __('Contract signed') . '</span>';
+                                                        break;
+                                                    case 6:
+                                                        echo '<span class="badge badge-light-primary f-w-600">' . __('Down payment') . '</span>';
+                                                        break;
+                                                    case 7:
+                                                        echo '<span class="badge badge-light-primary f-w-600">' . __('Developer invoice') . '</span>';
+                                                        break;
+                                                    case 8:
+                                                        echo '<span class="badge badge-light-success f-w-600">' . __('Won Deal') . '</span>';
+                                                        break;
+                                                    case 9:
+                                                        echo '<span class="badge badge-light-danger f-w-600">' . __('Lost') . '</span>';
+                                                        break;
+                                                }
+                                                @endphp
+                                        </span></p>
+                                        <p>{{ __('Name') }} <a href="{{ route('leads.show', $lead) }}">{{ $lead->lead_name }}</a></p>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                @endif
+                <div class="card card-with-border">
+                    <div class="card-header b-b-info">
+                        <h5 class="text-muted">{{ __('History') }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6>{{ __('Modified By:') }} </h6>
+                        <p>{{ $client->updateBy->name }}</p>
+                        <h6>{{ __('Created time:') }} </h6>
+                        <p>
+                            {{ Carbon\Carbon::parse($client->created_at)->format('Y-m-d H:m') }}
+                        </p>
+                        <h6>{{ __('Modified time:') }} </h6>
+                        <p>
+                            {{ Carbon\Carbon::parse($client->updated_at)->format('Y-m-d H:m') }}
+                        </p>
                     </div>
                 </div>
             </div>

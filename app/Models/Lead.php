@@ -40,7 +40,7 @@ class Lead extends Model implements Commentable
 
     public function creator()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function client()
@@ -76,6 +76,11 @@ class Lead extends Model implements Commentable
             ->withPivot('user_name', 'added_by')
             ->withTimestamps()
             ->as('sharedLeads');
+    }
+
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class);
     }
 
     public function convertToOrder()

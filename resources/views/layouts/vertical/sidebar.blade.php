@@ -95,22 +95,33 @@
                         </li>
                     @endcan
                     @can('stats-list')
-                        @if(auth()->user()->department_id === 2)
+                        @if(auth()->user()->hasRole('Admin'))
                             <li class="dropdown">
-                                <a href="{{ route('calls.index') }}"
-                                   class="nav-link menu-title {{ Route::currentRouteName() === 'calls.index' ? 'active' : '' }}">
-                                    <i class="icon-bar-chart"></i>
-                                    <span> {{ __('Reporting') }}</span>
-                                </a>
+                                <a class="nav-link menu-title" href="#"><i
+                                        data-feather="home"></i><span>{{ __('Reporting') }}</span></a>
+                                <ul class="nav-submenu menu-content">
+                                    <li><a href="{{ route('static.index') }}">{{ __('Users Status') }}</a></li>
+                                    <li><a href="{{ route('calls.index') }}">{{ __('Calls reporting') }}</a></li>
+                                </ul>
                             </li>
                         @else
-                            <li class="dropdown">
-                                <a href="{{ route('static.index') }}"
-                                   class="nav-link menu-title {{ Route::currentRouteName() === 'static.index' ? 'active' : '' }}">
-                                    <i class="icon-bar-chart"></i>
-                                    <span> {{ __('Reporting') }}</span>
-                                </a>
-                            </li>
+                            @if(auth()->user()->department_id === 2)
+                                <li class="dropdown">
+                                    <a href="{{ route('calls.index') }}"
+                                       class="nav-link menu-title {{ Route::currentRouteName() === 'calls.index' ? 'active' : '' }}">
+                                        <i class="icon-bar-chart"></i>
+                                        <span> {{ __('Reporting') }}</span>
+                                    </a>
+                                </li>
+                            @else
+                                <li class="dropdown">
+                                    <a href="{{ route('static.index') }}"
+                                       class="nav-link menu-title {{ Route::currentRouteName() === 'static.index' ? 'active' : '' }}">
+                                        <i class="icon-bar-chart"></i>
+                                        <span> {{ __('Reporting') }}</span>
+                                    </a>
+                                </li>
+                            @endif
                         @endif
                     @endcan
                     <li class="dropdown">

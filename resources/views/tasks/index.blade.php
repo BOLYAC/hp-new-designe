@@ -183,14 +183,9 @@
                     }
                 });
             });
-
-            $(document).ready(function () {
-                $('input[name=daterange]').val('')
-            });
-        })
-        ;
+            $('input[name=daterange]').val('')
+        });
     </script>
-
 @endsection
 
 

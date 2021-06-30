@@ -34,6 +34,8 @@ class OrderController extends Controller
                 $teams = auth()->user()->allTeams();
             }
             return view('invoices.index', compact('users', 'teams', 'projects'));
+        } else {
+            return view('invoices.index', compact('projects'));
         }
     }
 

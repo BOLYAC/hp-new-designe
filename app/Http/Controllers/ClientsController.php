@@ -217,7 +217,7 @@ class ClientsController extends Controller
                 return $clients->public_id ?? '';
             })
             ->editColumn('full_name', function ($clients) {
-                return '<a href="clients/' . $clients->id . '/edit">' . $clients->full_name . '</a>';
+                return '<a href="clients/' . $clients->id . '">' . $clients->full_name . '</a>';
             })
             ->editColumn('country', function ($clients) {
                 if (is_null($clients->country)) {

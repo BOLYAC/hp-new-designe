@@ -129,15 +129,11 @@
 
 @endsection
 
-
 @section('breadcrumb-items')
     <li class="breadcrumb-item"><a href="{{ route('events.index') }}">{{ __('Events') }}</a></li>
     <li class="breadcrumb-item">{{ __('Show event') }}</li>
 @endsection
 
-@section('breadcrumb-title')
-
-@endsection
 @section('content')
     <div class="container-fluid">
         <div class="row">

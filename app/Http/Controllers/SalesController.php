@@ -41,6 +41,7 @@ class SalesController extends Controller
         $lead['lead_phone'] = $client->client_number;
         $lead['owner_name'] = auth()->user()->name;
         $lead['sells_names'] = $s;
+        $lead['description'] = $client->description;
         $lead = Lead::create($lead);
         //$client->update(['lead_id' => $lead->id]);
         $lead->ShareWithSelles()->attach($l, ['added_by' => Auth::id(), 'user_name' => Auth::user()->name]);

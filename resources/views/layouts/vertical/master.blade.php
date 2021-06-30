@@ -73,16 +73,16 @@
                             <div class="row justify-content-center">
                                 <div class="digit" id="four">4</div>
                                 <div class="digit" id="five">5</div>
-                                <div class="digit">6</div>
+                                <div class="digit" id="six">6</div>
                             </div>
                             <div class="row justify-content-center">
-                                <div class="digit">7</div>
-                                <div class="digit">8</div>
-                                <div class="digit">9</div>
+                                <div class="digit" id="seven">7</div>
+                                <div class="digit" id="eight">8</div>
+                                <div class="digit" id="nine">9</div>
                             </div>
                             <div class="row justify-content-center">
                                 <div class="digit">*</div>
-                                <div class="digit">0</div>
+                                <div class="digit" id="zero">0</div>
                                 <div class="digit">#</div>
                             </div>
                             <div class="botrow">

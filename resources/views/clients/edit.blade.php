@@ -832,6 +832,10 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="form-group">
+                                    <textarea class="summernote"
+                                              name="description">{{ $client->descirption ?? '' }}</textarea>
+                            </div>
                             <!-- end of table col-lg-6 -->
                             <div class="text-right">
                                 <button type="submit" class="btn btn-sm btn-primary">
@@ -853,8 +857,9 @@
                         <div class="inbox">
                             <div class="media active">
                                 <div class="media-size-email">
-                                    <img class="mr-3 rounded-circle"
-                                         src="{{ asset('/assets/images/user/user.png') }}"
+                                    <img class="mr-3 rounded-circle img-50"
+                                         style="width: 50px;height:50px;"
+                                         src="{{ asset('storage/' . $lead->user->image_path) }}"
                                          alt="">
                                 </div>
                                 <div class="media-body">
@@ -950,7 +955,7 @@
         </div>
     </div>
     <!-- Delete file modal end -->
-    <!-- assigne modal start -->
+    <!-- Assign modal start -->
     <div class="modal fade" id="assignModal" tabindex="-1">
         <div class="modal-dialog" role="document">
             <div class="modal-content">

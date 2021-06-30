@@ -8,46 +8,6 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/daterange-picker.css') }}">
 @endsection
 
-
-@section('style')
-    <style>
-        .dt-head-center {
-            text-align: center;
-            vertical-align: middle !important;
-        }
-
-        table.dataTable thead .sorting::after,
-        table.dataTable thead .sorting_asc::after,
-        table.dataTable thead .sorting_desc::after {
-            display: none;
-        }
-
-        table.dataTable thead .sorting::before,
-        table.dataTable thead .sorting_asc::before,
-        table.dataTable thead .sorting_desc::before {
-            display: none;
-        }
-
-        table.dataTable thead .sorting {
-            background-image: url(https://datatables.net/media/images/sort_both.png);
-            background-repeat: no-repeat;
-            background-position: center right;
-        }
-
-        table.dataTable thead .sorting_asc {
-            background-image: url(https://datatables.net/media/images/sort_asc.png);
-            background-repeat: no-repeat;
-            background-position: center right;
-        }
-
-        table.dataTable thead .sorting_desc {
-            background-image: url(https://datatables.net/media/images/sort_desc.png);
-            background-repeat: no-repeat;
-            background-position: center right;
-        }
-    </style>
-@endsection
-
 @section('script')
     <!-- Datatables.js -->
     <script src="{{asset('assets/js/datatables/jquery.dataTables.min.js')}}"></script>
@@ -138,13 +98,6 @@
                 {data: 'user_id', name: 'user_id', orderable: false, searchable: false},
                 {data: 'created_at', name: 'created_at', searchable: false},
                 {data: 'action', name: 'action', orderable: false, searchable: false},
-            ],
-            columnDefs: [
-                // Center align the header content of column 1
-                {
-                    className: "dt-head-center",
-                    targets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-                }
             ],
             order: [[1, 'asc']]
         });
@@ -264,6 +217,52 @@
                     </div>
                     <form id="search-form">
                         <div class="card-body p-2">
+                            @if(auth()->user()->hasRole('Admin'))
+                                <div class="form-group mb-2">
+                                    <option value="">{{ __('Department') }}</option>
+                                    <select name="department_filter" id="department_filter"
+                                            class="custom-select custom-select-sm">
+                                        <option value="">{{ __('Department') }}</option>
+                                        @foreach($departments as $row)
+                                            <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <option value="">{{ __('Assigned') }}</option>
+                                    <select name="user_filter" id="user_filter"
+                                            class="custom-select custom-select-sm">
+                                        <option value="">{{ __('Assigned') }}</option>
+                                        @foreach($users as $row)
+                                            <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            @elseif(auth()->user()->hasPermissionTo('team-manager'))
+                                @if(isset($users))
+                                    <div class="form-group mb-2">
+                                        <select name="user_filter" id="user_filter"
+                                                class="custom-select custom-select-sm">
+                                            <option value="">{{ __('Assigned') }}</option>
+                                            @foreach($users as $user)
+                                                <option
+                                                    value="{{ $user->id }}">{{ $user->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endif
+                            @endif
+                            @if(isset($teams))
+                                <div class="form-group mb-2">
+                                    <select name="team_filter" id="team_filter"
+                                            class="custom-select custom-select-sm">
+                                        <option value="">{{ __('Team') }}</option>
+                                        @foreach($teams as $row)
+                                            <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            @endif
                             <div class="form-group mb-2">
                                 <select class="form-control form-control-sm digits" id="status_filter"
                                         name="status_filter">
@@ -292,15 +291,6 @@
                                 </select>
                             </div>
                             <div class="form-group mb-2">
-                                <select class="form-control form-control-sm digits" id="priority_filter"
-                                        name="priority_filter">
-                                    <option value="">{{ __('Priority') }}</option>
-                                    <option value="1">{{ __('Low') }}</option>
-                                    <option value="2">{{ __('Medium') }}</option>
-                                    <option value="3">{{ __('High') }}</option>
-                                </select>
-                            </div>
-                            <div class="form-group mb-2">
                                 <select class="form-control form-control-sm digits" id="agency_filter"
                                         name="agency_filter">
                                     <option value="">{{ __('Agency') }}</option>
@@ -310,6 +300,16 @@
 
                                 </select>
                             </div>
+                            <div class="form-group mb-2">
+                                <select class="form-control form-control-sm digits" id="priority_filter"
+                                        name="priority_filter">
+                                    <option value="">{{ __('Priority') }}</option>
+                                    <option value="1">{{ __('Low') }}</option>
+                                    <option value="2">{{ __('Medium') }}</option>
+                                    <option value="3">{{ __('High') }}</option>
+                                </select>
+                            </div>
+
                             <div class="checkbox checkbox-primary">
                                 <input id="country_check" type="checkbox"
                                        onclick="valueChanged()">
@@ -352,52 +352,6 @@
                                        placeholder="{{ __('Type here') }}"
                                        id="phone_field" name="phone_field">
                             </div>
-                            @if(auth()->user()->hasRole('Admin'))
-                                <div class="form-group mb-2">
-                                    <option value="">{{ __('Assigned') }}</option>
-                                    <select name="user_filter" id="user_filter"
-                                            class="custom-select custom-select-sm">
-                                        <option value="">{{ __('Assigned') }}</option>
-                                        @foreach($users as $row)
-                                            <option value="{{ $row->id }}">{{ $row->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="form-group mb-2">
-                                    <option value="">{{ __('Department') }}</option>
-                                    <select name="department_filter" id="department_filter"
-                                            class="custom-select custom-select-sm">
-                                        <option value="">{{ __('Department') }}</option>
-                                        @foreach($departments as $row)
-                                            <option value="{{ $row->id }}">{{ $row->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            @elseif(auth()->user()->hasPermissionTo('team-manager'))
-                                @if(isset($users))
-                                    <div class="form-group mb-2">
-                                        <select name="user_filter" id="user_filter"
-                                                class="custom-select custom-select-sm">
-                                            <option value="">{{ __('Assigned') }}</option>
-                                            @foreach($users as $user)
-                                                <option
-                                                    value="{{ $user->id }}">{{ $user->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                @endif
-                            @endif
-                            @if(isset($teams))
-                                <div class="form-group mb-2">
-                                    <select name="team_filter" id="team_filter"
-                                            class="custom-select custom-select-sm">
-                                        <option value="">{{ __('Team') }}</option>
-                                        @foreach($teams as $row)
-                                            <option value="{{ $row->id }}">{{ $row->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            @endif
                             <div class="form-group mb-2">
                                 <input type="text" class="form-control form-control-sm"
                                        placeholder="{{ __('Last active') }}"

@@ -1,5 +1,8 @@
 <div>
-    <div class="card b-t-primary {{ $lead->stage_id >= 4 ? 'visible': 'invisible' }}">
+    <div class="card {{ $lead->stage_id >= 4 ? 'visible': 'invisible' }}">
+        <div class="card-header b-b-primary b-t-primary p-2">
+            <h6>{{ __('Reservation form') }}</h6>
+        </div>
         <div class="card-body row">
             <div class="col-lg-6">
                 <table class="table m-0">

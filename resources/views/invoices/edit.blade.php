@@ -184,6 +184,12 @@
                                 <input class="form-control form-control-sm" name="address"
                                        id="address" value="{{ old('address', $invoice->address) }}">
                             </div>
+                            <div class="form-group">
+                                <label for="country_province">{{ __('Province/Country') }}</label>
+                                <input class="form-control form-control-sm" name="country_province"
+                                       id="country_province"
+                                       value="{{ old('country_province', $invoice->country_province) }}">
+                            </div>
                             <div class="row">
                                 <div class="form-group col-12">
                                     <label for="project_id">{{ __('Project name') }}</label>
@@ -196,12 +202,6 @@
                                             </option>
                                         @endforeach
                                     </select>
-                                </div>
-                                <div class="form-group col">
-                                    <label for="country_province">{{ __('Province/Country') }}</label>
-                                    <input class="form-control form-control-sm" name="country_province"
-                                           id="country_province"
-                                           value="{{ old('country_province', $invoice->country_province) }}">
                                 </div>
                             </div>
                             <div class="row">

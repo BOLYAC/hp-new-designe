@@ -49,6 +49,8 @@ class TasksController extends Controller
                 $teams = auth()->user()->allTeams();
             }
             return view('tasks.index', compact('users', 'teams'));
+        } else {
+            return view('tasks.index');
         }
     }
 

@@ -39,6 +39,8 @@ class LeadsController extends Controller
                 $teams = auth()->user()->allTeams();
             }
             return view('leads.index', compact('users', 'teams'));
+        } else {
+            return view('leads.index');
         }
     }
 
@@ -204,9 +206,8 @@ class LeadsController extends Controller
     public function show(Lead $lead)
     {
         $users = User::all();
-        $stage_logs = StageLog::all();
         $projects = Project::all();
-        return view('leads.show', compact('lead', 'users', 'stage_logs', 'projects'));
+        return view('leads.show', compact('lead', 'users', 'projects'));
     }
 
     /**
