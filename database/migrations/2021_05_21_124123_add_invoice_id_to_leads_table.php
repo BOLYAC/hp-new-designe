@@ -14,7 +14,7 @@ class AddInvoiceIdToLeadsTable extends Migration
     public function up()
     {
         Schema::table('leads', function (Blueprint $table) {
-            $table->foreignId('invoice_id')->constrained();
+            //$table->foreignId('invoice_id')->constrained();
         });
     }
 

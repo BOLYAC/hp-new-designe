@@ -35,12 +35,12 @@
                     }
                 },
                 columns: [
-                    {data: 'full_name', name: 'full_name'},
-                    {data: 'stage', name: 'stage'},
-                    {data: 'user', name: 'user'},
-                    {data: 'sells', name: 'sells'},
-                    {data: 'stat', name: 'stat'},
-                    {data: 'action', name: 'action'},
+                    {data: 'lead_name', name: 'lead_name'},
+                    {data: 'stage', name: 'stage', 'searchable': false, 'orderable': false},
+                    {data: 'user', name: 'user', 'searchable': false, 'orderable': false},
+                    {data: 'sells', name: 'sells', 'searchable': false, 'orderable': false},
+                    {data: 'stat', name: 'stat', 'searchable': false, 'orderable': false},
+                    {data: 'action', name: 'action', 'searchable': false, 'orderable': false},
                 ],
                 order: [],
                 lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]]

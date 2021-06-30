@@ -1,12 +1,13 @@
 <div class="dt-ext table-responsive">
     <table class="stripe hover display" id="report-table">
-        @php $requirements_request = [
+        @php
+            $requirements_request = [
                             ['id' => 1,'text' => 'Investments'],
                             ['id' => 2,'text' => 'Life style'],
                             ['id' => 3,'text' => 'Investments + Life style'],
                             ['id' => 4,'text' => 'Citizenship'],
                         ];
-            $rooms_request = [
+            $budget_request= [
                             ['id' => 1,'text' => 'Less then 50K'],
                             ['id' => 2,'text' => '50K-100K'],
                             ['id' => 3,'text' => '100K-150K'],
@@ -19,7 +20,7 @@
                             ['id' => 10,'text' => '1M-2M'],
                             ['id' => 11,'text' => 'More then 2M'],
                         ];
-            $budget_request = [
+            $rooms_request = [
                             ['id' => 1,'text' => '0 + 1'],
                             ['id' => 2,'text' => '1 + 1'],
                             ['id' => 3,'text' => '2 + 1'],
@@ -268,14 +269,16 @@
                         @elseif($field == 'tasks')
                             @foreach($lead->tasks as $task)
                                 <span class="f-w-600">{{ $task->title }}</span>
-                                <span class="text-muted f-w-600">{{ Carbon\Carbon::parse($task->date)->format('d-m-Y H:i') }}</span>
+                                <span
+                                    class="text-muted f-w-600">{{ Carbon\Carbon::parse($task->date)->format('d-m-Y H:i') }}</span>
                                 <br>
                             @endforeach
                         @elseif($field == 'notes')
                             @foreach($lead->notes as $note)
                                 {!! $note->body !!}
                                 <br>
-                                <span class="text-muted f-w-600">{{ Carbon\Carbon::parse($note->date)->format('d-m-Y H:i') }}</span>
+                                <span
+                                    class="text-muted f-w-600">{{ Carbon\Carbon::parse($note->date)->format('d-m-Y H:i') }}</span>
                             @endforeach
                         @else
                             {{ $lead->$field }}

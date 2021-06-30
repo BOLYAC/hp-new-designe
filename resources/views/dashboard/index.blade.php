@@ -36,34 +36,12 @@
                     url: '{!! route('dashboard.data') !!}'
                 },
                 columns: [
-                    {
-                        data: 'created_at',
-                        name: 'created_at',
-                    },
-                    {
-                        data: 'full_name',
-                        name: 'full_name',
-                    },
-                    {
-                        data: 'country',
-                        name: 'country'
-                    },
-                    {
-                        data: 'nationality',
-                        name: 'nationality'
-                    },
-                    {
-                        data: 'status',
-                        name: 'status',
-                        orderable: false,
-                        searchable: false,
-                    },
-                    {
-                        data: 'priority',
-                        name: 'priority',
-                        orderable: false,
-                        searchable: false,
-                    }
+                    {data: 'created_at', name: 'created_at',},
+                    {data: 'full_name', name: 'full_name',},
+                    {data: 'country', name: 'country'},
+                    {data: 'nationality', name: 'nationality'},
+                    {data: 'status', name: 'status', orderable: false, searchable: false},
+                    {data: 'priority', name: 'priority', orderable: false, searchable: false}
                 ],
             });
             $('#agency-table').DataTable({
@@ -77,28 +55,74 @@
                     url: '{!! route('dashboard.agencies.data') !!}'
                 },
                 columns: [
-                    {
-                        data: 'created_at',
-                        name: 'created_at',
-                    },
-                    {
-                        data: 'company_type',
-                        name: 'company_type',
-                    },
-                    {
-                        data: 'name',
-                        name: 'name'
-                    },
-                    {
-                        data: 'phone',
-                        name: 'phone'
-                    },
+                    {data: 'created_at', name: 'created_at',},
+                    {data: 'company_type', name: 'company_type',},
+                    {data: 'name', name: 'name'},
+                    {data: 'phone', name: 'phone'},
                 ],
             });
-            $('#today-table').DataTable();
-            $('#tomorrow-table').DataTable();
-            $('#pending-table').DataTable();
-            $('#completed-table').DataTable();
+            $('#today-table').DataTable({
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                ajax: {
+                    url: '{!! route('dashboard.task_today') !!}'
+                },
+                columns: [
+                    {data: 'title', name: 'title',},
+                    {data: 'name', name: 'name',},
+                    {data: 'country', name: 'country'},
+                    {data: 'nationality', name: 'nationality'},
+                    {data: 'date', name: 'date'},
+                ],
+            });
+            $('#tomorrow-table').DataTable({
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                ajax: {
+                    url: '{!! route('dashboard.task_tomorrow') !!}'
+                },
+                columns: [
+                    {data: 'title', name: 'title',},
+                    {data: 'name', name: 'name',},
+                    {data: 'country', name: 'country'},
+                    {data: 'nationality', name: 'nationality'},
+                    {data: 'date', name: 'date'},
+                ],
+            });
+            $('#pending-table').DataTable({
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                ajax: {
+                    url: '{!! route('dashboard.task_pending') !!}'
+                },
+                columns: [
+                    {data: 'title', name: 'title',},
+                    {data: 'name', name: 'name',},
+                    {data: 'country', name: 'country'},
+                    {data: 'nationality', name: 'nationality'},
+                    {data: 'date', name: 'date'},
+                ],
+            });
+            $('#completed-table').DataTable({
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                ajax: {
+                    url: '{!! route('dashboard.task_completed') !!}'
+                },
+                columns: [
+                    {data: 'checked', name: 'checked',},
+                    {data: 'title', name: 'title',},
+                    {data: 'name', name: 'name',},
+                    {data: 'country', name: 'country'},
+                    {data: 'nationality', name: 'nationality'},
+                    {data: 'date', name: 'date'},
+                    {data: 'updated_at', name: 'updated_at'},
+                ],
+            });
         });
     </script>
 
@@ -134,7 +158,7 @@
                                     <p class="mb-0">{{ __('Completed tasks') }}</p>
                                 </div>
                                 <div class="col-xl-2 col-sm-4 col-6">
-                                    <h2 class="f-w-600 counter font-info">{{ $todayTasks->count() }}</h2>
+                                    <h2 class="f-w-600 counter font-info">{{ $todayTasks }}</h2>
                                     <p class="mb-0">{{ __('Today tasks') }}</p>
                                 </div>
                                 <div class="col-xl-2 col-sm-4 col-6">
@@ -220,53 +244,6 @@
                                         <th>{{ __('Date') }}</th>
                                     </tr>
                                     </thead>
-                                    <tbody>
-                                    @foreach($todayTasks as $todayTask)
-                                        <tr class="unread">
-                                            <td>
-                                                @if($todayTask->source_type === 'App\Agency')
-                                                    <a href="{{ route('agencies.edit', ['agency' => $todayTask->agency->id]) }}"
-                                                       class="email-name">
-                                                        {{ $todayTask->title ?? '' }}
-                                                    </a>
-                                                @else
-                                                    <a href="{{ route('clients.edit', ['client' => $todayTask->client->id]) }}"
-                                                       class="email-name">
-                                                        {{ $todayTask->title ?? '' }}
-                                                    </a>
-                                                @endif
-                                            </td>
-                                            <td>
-                                                {{ optional($todayTask->client)->full_name }}
-                                                {{ optional($todayTask->agency)->title }}
-                                            </td>
-                                            <td>
-                                                @if(is_null($todayTask->client->country))
-                                                    <div class="col-form-label">
-                                                        {{ $todayTask->client->getRawOriginal('country') ?? '' }}</div>
-                                                @else
-                                                    @php $countries = collect($todayTask->client->country)->toArray() @endphp
-                                                    @foreach( $countries as $name)
-                                                        <span class="badge badge-inverse">{{ $name }}</span>
-                                                    @endforeach
-                                                @endif
-                                            </td>
-                                            <td>
-                                                @if(is_null($todayTask->client->nationality))
-                                                    {{ $todayTask->client->getRawOriginal('nationality') ?? '' }}
-                                                @else
-                                                    @php $countries = collect($todayTask->client->nationality)->toArray() @endphp
-                                                    @foreach( $countries as $name)
-                                                        <span class="badge badge-inverse">{{ $name }}</span>
-                                                    @endforeach
-                                                @endif
-                                            </td>
-                                            <td class="email-time">
-                                                {{ Carbon\Carbon::parse($todayTask->date)->format('Y-m-d H:i') }}
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -282,52 +259,6 @@
                                         <th>{{ __('Date') }}</th>
                                     </tr>
                                     </thead>
-                                    <tbody>
-                                    @foreach($tomorrowTasks as $tomorrowTask)
-                                        <tr class="unread">
-                                            <td>
-                                                @if($tomorrowTask->source_type === 'App\Agency')
-                                                    <a href="{{ route('agencies.edit', ['agency' => $tomorrowTask->agency->id]) }}"
-                                                       class="email-name">
-                                                        {{ $tomorrowTask->title ?? '' }}
-                                                    </a>
-                                                @else
-                                                    <a href="{{ route('clients.edit', ['client' => $tomorrowTask->client->id]) }}"
-                                                       class="email-name">
-                                                        {{ $tomorrowTask->title ?? '' }}
-                                                    </a>
-                                                @endif
-                                            </td>
-                                            <td>
-                                                {{ optional($tomorrowTask->client)->full_name }}
-                                                {{ optional($tomorrowTask->agency)->title }}
-                                            </td>
-                                            <td>
-                                                @if(is_null($tomorrowTask->client->country))
-                                                    {{ $tomorrowTask->client->getRawOriginal('country') ?? '' }}
-                                                @else
-                                                    @php $countries = collect($tomorrowTask->client->country)->toArray() @endphp
-                                                    @foreach( $countries as $name)
-                                                        <span class="badge badge-inverse">{{ $name }}</span>
-                                                    @endforeach
-                                                @endif
-                                            </td>
-                                            <td>
-                                                @if(is_null($tomorrowTask->client->nationality))
-                                                    {{ $tomorrowTask->client->getRawOriginal('nationality') ?? '' }}
-                                                @else
-                                                    @php $nat = collect($tomorrowTask->client->nationality)->toArray() @endphp
-                                                    @foreach( $nat as $name)
-                                                        <span class="badge badge-inverse">{{ $name }}</span>
-                                                    @endforeach
-                                                @endif
-                                            </td>
-                                            <td class="email-time">
-                                                {{ Carbon\Carbon::parse($tomorrowTask->date)->format('Y-m-d H:i') }}
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -344,54 +275,6 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    @foreach($pendingTasks as $pendingTask)
-                                        <tr>
-                                            <td>
-                                                @if($pendingTask->source_type == 'App\Agency')
-                                                    <a href="{{ route('agencies.edit', ['agency' => $pendingTask->agency->id]) }}"
-                                                       class="email-name">
-                                                        {{ $pendingTask->title ?? '' }}
-                                                    </a>
-                                                @else
-                                                    @if(!is_null($pendingTask->client_id))
-                                                        <a href="{{ route('clients.edit', ['client' => $pendingTask->client_id]) }}"
-                                                           class="email-name">
-                                                            {{ $pendingTask->title ?? '' }}
-                                                        </a>
-                                                    @endif
-                                                @endif
-                                                {{ $pendingTask->soure_type }}
-                                            </td>
-                                            <td>
-                                                {{ optional($pendingTask->client)->full_name }}
-                                                {{ optional($pendingTask->agency)->title }}
-                                            </td>
-                                            <td>
-                                                @if(is_null($pendingTask->client->country))
-                                                    {{ $pendingTask->client->getRawOriginal('country') ?? '' }}
-                                                @else
-                                                    @php $countries = collect($pendingTask->client->country)->toArray() @endphp
-                                                    @foreach( $countries as $name)
-                                                        <span class="badge badge-light-primary">{{ $name }}</span>
-                                                    @endforeach
-                                                @endif
-                                            </td>
-                                            <td>
-                                                @if(is_null($pendingTask->client->nationality))
-                                                    {{ $pendingTask->client->getRawOriginal('nationality') ?? '' }}
-                                                @else
-                                                    @php $nat = collect($pendingTask->client->nationality)->toArray() @endphp
-                                                    @foreach( $nat as $name)
-                                                        <span class="badge badge-light-primary">{{ $name }}</span>
-                                                    @endforeach
-                                                @endif
-                                            </td>
-                                            <td class="email-time">
-                                                {{ Carbon\Carbon::parse($pendingTask->date)->format('Y-m-d') }}
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -410,59 +293,6 @@
                                         <th>{{ __('Completed at') }}</th>
                                     </tr>
                                     </thead>
-                                    <tbody>
-                                    @foreach($completedTasks as $completedTask)
-                                        <tr>
-                                            <td>
-                                                <div class="round-product"><i
-                                                        class="icofont icofont-check"></i></div>
-                                            </td>
-                                            <td>
-                                                @if($completedTask->source_type === 'App\Agency')
-                                                    <a href="{{ route('agencies.edit', ['agency' => $completedTask->agency->id]) }}"
-                                                       class="email-name">
-                                                        {{ $completedTask->title ?? '' }}
-                                                    </a>
-                                                @else
-                                                    <a href="{{ route('clients.edit', ['client' => $completedTask->client->id]) }}"
-                                                       class="email-name">
-                                                        {{ $completedTask->title ?? '' }}
-                                                    </a>
-                                                @endif
-                                            </td>
-                                            <td>
-                                                {{ optional($completedTask->client)->full_name }}
-                                                {{ optional($completedTask->agency)->title }}
-                                            </td>
-                                            <td>
-                                                @if(is_null($completedTask->client->country))
-                                                    {{ $completedTask->client->getRawOriginal('country') ?? '' }}
-                                                @else
-                                                    @php $countries = collect($completedTask->client->country)->toArray() @endphp
-                                                    @foreach( $countries as $name)
-                                                        <span class="badge badge-light-primary">{{ $name }}</span>
-                                                    @endforeach
-                                                @endif
-                                            </td>
-                                            <td>
-                                                @if(is_null($completedTask->client->nationality))
-                                                    {{ $completedTask->client->getRawOriginal('nationality') ?? '' }}
-                                                @else
-                                                    @php $nat = collect($completedTask->client->nationality)->toArray() @endphp
-                                                    @foreach( $nat as $name)
-                                                        <span class="badge badge-light-primary">{{ $name }}</span>
-                                                    @endforeach
-                                                @endif
-                                            </td>
-                                            <td>
-                                                {{ Carbon\Carbon::parse($completedTask->date)->format('Y-m-d') }}
-                                            </td>
-                                            <td>
-                                                {{ Carbon\Carbon::parse($completedTask->updated_at)->format('Y-m-d') }}
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                    </tbody>
                                 </table>
                             </div>
                         </div>

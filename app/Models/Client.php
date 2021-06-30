@@ -43,6 +43,16 @@ class Client extends Model implements Auditable, Documentable, Noteable, Taskabl
         'requirements_request' => 'array'
     ];
 
+    public function getCompleteNameAttribute(): string
+    {
+        return ucfirst($this->first_name) . ' ' . ucfirst($this->last_name);
+    }
+
+    public function StatusLog()
+    {
+        return $this->hasMany(StatusLog::class, 'client_id');
+    }
+
     /**
      * @return BelongsTo
      */

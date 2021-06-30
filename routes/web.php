@@ -26,6 +26,10 @@ Route::group(
         Route::get('/', 'HomeController@index')->name('home');
         Route::get('clients/all-new', 'HomeController@userNew')->name('dashboard.data');
         Route::get('agencies/all-new', 'HomeController@agenciesAll')->name('dashboard.agencies.data');
+        Route::get('/task-today', 'HomeController@todayTask')->name('dashboard.task_today');
+        Route::get('/task-tomorrow', 'HomeController@tomorrowTasks')->name('dashboard.task_tomorrow');
+        Route::get('/task-pending', 'HomeController@pendingTasks')->name('dashboard.task_pending');
+        Route::get('/task-completed', 'HomeController@completedTasks')->name('dashboard.task_completed');
         Route::resource('clients', 'ClientsController');
         Route::resource('notes', 'NotesController');
         Route::resource('users', 'UsersController');
@@ -111,7 +115,7 @@ Route::group(
         Route::resource('leads', 'LeadsController');
 
         // Calls
-        Route::post('/alotech/login','AloTechController@loginAloTech' )->name('alotech.login');
+        Route::post('/alotech/login', 'AloTechController@loginAloTech')->name('alotech.login');
         Route::post('/click-to-call', 'AloTechController@getCall')->name('click2call');
         Route::post('/click-to-hang', 'AloTechController@getHang')->name('click2hang');
 

@@ -459,6 +459,8 @@ class ClientsController extends Controller
 
         $data_request = $request->except('_token', 'files');
 
+        $oldStatus = $client->status;
+
         if ($client->client_number) {
             if (auth()->user()->can('cant-update-field') && isset($data_request['client_number'])) {
                 unset($data_request['client_number']);
@@ -483,30 +485,59 @@ class ClientsController extends Controller
         $data_request['type'] = 0;
 
         $client->fill($data_request)->save();
-        /*$client->fill([
-                'first_name' => $request->first_name,
-                'last_name' => $request->last_name,
-                'full_name' => $fullname === '' ? $request->full_name : $fullname,
-                'client_number' => $request->client_number,
-                'client_number_2' => $request->client_number_2,
-                'client_email' => $request->client_email,
-                'client_email_2' => $request->client_email_2,
-                'address' => $request->address,
-                'zipcode' => $request->zipcode,
-                'city' => $request->city,
-                'country' => $request->country,
-                'nationality' => $request->nationality,
-                'budget' => $request->budget,
-                'rooms' => $request->rooms,
-                'appointment_date' => $request->appointment_date,
-                'type' => $request->has('type') ? 1 : 0,
-                'status' => $request->status,
-                'requirements' => $request->requirements,
-                'priority' => $request->priority,
-                //'source' => $request->source,
-                'source_id' => $request->source_id,
 
-            ])->save();*/
+        if ($client->status !== $oldStatus) {
+            $i = $client->status;
+
+            switch ($i) {
+                case 1:
+                    $status = 'New Lead';
+                    break;
+                case 8:
+                    $status = 'No Answer';
+                    break;
+                case 12:
+                    $status = 'In progress';
+                    break;
+                case 3:
+                    $status = 'Potential appointment';
+                    break;
+                case 4:
+                    $status = 'Appointment set';
+                    break;
+                case 10:
+                    $status = 'Appointment follow up';
+                    break;
+                case 5:
+                    $status = 'Sold';
+                    break;
+                case 13:
+                    $status = 'Unreachable';
+                    break;
+                case 7:
+                    $status = 'Not interested';
+                    break;
+                case 11:
+                    $status = 'Low budget';
+                    break;
+                case 9:
+                    $status = 'Wrong Number';
+                    break;
+                case 14:
+                    $status = 'Unqualified';
+                    break;
+                case 15:
+                    $status = 'Lost';
+                    break;
+            }
+
+            $client->StatusLog()->create([
+                'status_name' => $status,
+                'updated_by' => \auth()->id(),
+                'user_name' => \auth()->user()->name,
+                'status_id' => $request->get('status')
+            ]);
+        }
 
         return redirect()->route('clients.edit', $client)->with('toast_success', __('Lead updated successfully'));
     }

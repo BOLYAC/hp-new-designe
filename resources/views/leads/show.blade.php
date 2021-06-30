@@ -580,7 +580,7 @@
                     <div class="card-header b-b-primary">
                         <h6 class="text-muted">
                             @if($lead->client)
-                                <a href="{{ route('clients.edit', $lead->client) }}">{{ $lead->client->full_name ?? '' }}</a>
+                                <a href="{{ route('clients.show', $lead->client) }}">{{ $lead->client->full_name ?? '' }}</a>
                             @else
                                 {{ $lead->lead_name ?? '' }}
                             @endif

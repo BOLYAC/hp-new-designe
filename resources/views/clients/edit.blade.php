@@ -307,7 +307,6 @@
             }).val({!! json_encode($client->budget_request) !!}).trigger('change.select2');
         });
         $('.js-country-all').select2({
-            placeholder: "Select a country",
             theme: 'classic',
             ajax: {
                 url: "{{ route('country.name') }}",
@@ -327,7 +326,6 @@
             }
         });
         $('.js-nationality-all').select2({
-            placeholder: "Select a nationality",
             theme: 'classic',
             ajax: {
                 url: "{{ route('nationality.name') }}",
@@ -859,7 +857,7 @@
                                 <div class="media-size-email">
                                     <img class="mr-3 rounded-circle img-50"
                                          style="width: 50px;height:50px;"
-                                         src="{{ asset('storage/' . $lead->user->image_path) }}"
+                                         src="{{ asset('storage/' . $client->user->image_path) }}"
                                          alt="">
                                 </div>
                                 <div class="media-body">

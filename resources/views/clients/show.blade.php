@@ -17,17 +17,48 @@
 @endsection
 @section('breadcrumb-items')
     <li class="breadcrumb-item"><a href="{{ route('clients.index') }}">{{ __('Leads') }}</a></li>
-    <li class="breadcrumb-item">{{ __('Show:') }} {{ $client->full_name }}</li>
+    <li class="breadcrumb-item">{{ __('Show:') }} {{ $client->complete_name ?? $client->full_name ?? '' }}</li>
 @endsection
 
 @section('content')
+    @php
+        $requirements_request = [
+                        ['id' => 1,'text' => 'Investments'],
+                        ['id' => 2,'text' => 'Life style'],
+                        ['id' => 3,'text' => 'Investments + Life style'],
+                        ['id' => 4,'text' => 'Citizenship'],
+                    ];
+        $budget_request = [
+                        ['id' => 1,'text' => 'Less then 50K'],
+                        ['id' => 2,'text' => '50K-100K'],
+                        ['id' => 3,'text' => '100K-150K'],
+                        ['id' => 4,'text' => '150K200K'],
+                        ['id' => 5,'text' => '200K-300K'],
+                        ['id' => 6,'text' => '300K-400k'],
+                        ['id' => 7,'text' => '400k-500K'],
+                        ['id' => 8,'text' => '500K-600k'],
+                        ['id' => 9,'text' => '600K-1M'],
+                        ['id' => 10,'text' => '1M-2M'],
+                        ['id' => 11,'text' => 'More then 2M'],
+                    ];
+        $rooms_request = [
+                        ['id' => 1,'text' => '0 + 1'],
+                        ['id' => 2,'text' => '1 + 1'],
+                        ['id' => 3,'text' => '2 + 1'],
+                        ['id' => 4,'text' => '3 + 1'],
+                        ['id' => 5,'text' => '4 + 1'],
+                        ['id' => 6,'text' => '5 + 1'],
+                        ['id' => 7,'text' => '6 + 1'],
+                    ];
+    @endphp
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-9 col-lg-10">
                 <!-- Zero config.table start -->
                 <div class="card b-t-primary">
                     <div class="card-header b-t-primary b-b-primary p-2 d-flex justify-content-between">
-                        <h5 class="mr-auto mt-2">{{ __('Lead') }}: {{ $client->full_name ?? '' }}</h5>
+                        <h5 class="mr-auto mt-2">{{ __('Lead') }}
+                            : {{ $client->complete_name ?? $client->full_name ?? '' }}</h5>
                         @can('client-edit')
                             <a class="btn btn-sm btn-warning mr-2" href="{{ route('clients.index') }}"><i
                                     class="icon-arrow-left"></i> {{ __('Back') }}</a>
@@ -47,31 +78,49 @@
                                     </tr>
                                     <tr>
                                         <th scope="row">{{ __('Full Name') }}</th>
-                                        <td>{{ $client->full_name ?? '' }}</td>
+                                        <td>{{ $client->complete_name ?? $client->full_name ?? '' }}</td>
                                     </tr>
                                     <tr>
                                         <th scope="row">{{ __('Phone(s)') }}</th>
-                                        <td>{{ $client->client_number }}
-                                            <br> {{ $client->client_number_2 }}</td>
+                                        <td>
+                                            {{ $client->client_number }}
+                                            <a href="javascript:void(0)"
+                                               class="btn btn-xs btn-outline-primary float-right theme-setting ph1"><i
+                                                    class="fa fa-phone"></i></a>
+                                            <a href="https://wa.me/{{$client->client_number}}" target="_blank"
+                                               class="btn btn-xs btn-outline-success float-right mr-2"><i
+                                                    class="fa fa-whatsapp"></i></a>
+                                            <br>
+                                            {{ $client->client_number_2 }}
+                                            <a href="javascript:void(0)"
+                                               class="btn btn-xs btn-outline-primary float-right theme-setting ph1"><i
+                                                    class="fa fa-phone"></i></a>
+                                            <a href="https://wa.me/{{$client->client_number_2}}" target="_blank"
+                                               class="btn btn-xs btn-outline-success float-right mr-2"><i
+                                                    class="fa fa-whatsapp"></i></a>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <th scope="row">{{ __('Email(s)') }}</th>
-                                        <td>{{ $client->client_email }}
-                                            <br> {{ $client->client_email_2 }}</td>
+                                        <td>
+                                            <a href="{{ route('clients.compose.email', ['client' => $client]) }}"
+                                               class="btn btn-xs btn-outline-primary"><i
+                                                    class="icon-email"></i> {{ __('Send email') }}
+                                            </a>
                                     </tr>
                                     <tr>
                                         <th scope="row">{{ __('Country') }}</th>
                                         <td>
                                             @php
                                                 if (is_null($client->country)){
-                                                echo $client->getRawOriginal('country') ?? '';
+                                                    echo $client->getRawOriginal('country') ?? '';
                                                 } else  {
-                                                $cou = '';
-                                                $countries = collect($client->country)->toArray();
+                                                    $cou = '';
+                                                    $countries = collect($client->country)->toArray();
                                                 foreach( $countries as $name) {
-                                                $cou .=  '<span class="badge badge-dark">' .  $name . '</span>';
+                                                    $cou .=  '<span class="badge badge-dark">' .  $name . '</span>';
                                                 }
-                                                echo $cou;
+                                                    echo $cou;
                                                 }
                                             @endphp
                                         </td>
@@ -108,6 +157,12 @@
                                                 echo $cou;
                                                 }
                                             @endphp
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>{{ __('Desciption') }}</th>
+                                        <td>
+                                            {!! $client->description ?? '' !!}
                                         </td>
                                     </tr>
                                     </tbody>
@@ -159,79 +214,8 @@
                                                 case 14:
                                                 echo '<span class="badge badge-light-danger">'.__('Unqualified').'</span>';
                                                 break;
-                                                }
-                                            @endphp
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">{{ __('Budget') }}</th>
-                                        <td>
-                                            @php
-                                                $i = $client->status;
-                                                switch ($i) {
-                                                case 1:
-                                                echo 'Less then 50K';
-                                                break;
-                                                case 2:
-                                                echo '50K-100K';
-                                                break;
-                                                case 3:
-                                                echo '100K-150K';
-                                                break;
-                                                case 4:
-                                                echo '150K-200K';
-                                                break;
-                                                case 5:
-                                                echo ' 200K-300K';
-                                                break;
-                                                case 6:
-                                                echo '300K-400k';
-                                                break;
-                                                case 7:
-                                                echo '400k-500K';
-                                                break;
-                                                case 8:
-                                                echo '500K-600k';
-                                                break;
-                                                case 9:
-                                                echo '600K-1M';
-                                                break;
-                                                case 10:
-                                                echo '1M-2M';
-                                                break;
-                                                case 11:
-                                                echo 'More then 2M';
-                                                break;
-                                                }
-                                            @endphp
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">{{ __('Request') }}</th>
-                                        <td>
-                                            @php
-                                                $i = $client->rooms;
-                                                switch ($i) {
-                                                case 1:
-                                                echo '0 + 1';
-                                                break;
-                                                case 2:
-                                                echo '1 + 1';
-                                                break;
-                                                case 3:
-                                                echo '2 + 1';
-                                                break;
-                                                case 4:
-                                                echo '3 + 1';
-                                                break;
-                                                case 5:
-                                                echo '4 + 1';
-                                                break;
-                                                case 6:
-                                                echo '5 + 1';
-                                                break;
-                                                case 7:
-                                                echo '6 + 1';
+                                                case 15:
+                                                echo '<span class="badge badge-light-danger">'.__('Lost').'</span>';
                                                 break;
                                                 }
                                             @endphp
@@ -257,23 +241,63 @@
                                         </td>
                                     </tr>
                                     <tr>
+                                        <th scope="row">{{ __('Budget') }}</th>
+                                        <td>
+                                            @php
+                                                if (is_null($client->budget_request)) {
+                                                    echo $client->getRawOriginal('budget_request') ?? '';
+                                                } else {
+                                                    $cou = '';
+                                                    $countries = collect($client->budget_request)->toArray();
+                                                    $arr = $budget_request;
+                                                    $allowed = $countries;
+                                                    $result = array_intersect_key($arr, array_flip($allowed));
+                                                    foreach ($result as $val) {
+                                                            $cou .= '<span class="badge badge-light-primary">' . $val['text'] . '</span><br>';
+                                                }
+                                                    echo $cou;
+                                                }
+                                            @endphp
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">{{ __('Rooms Request') }}</th>
+                                        <td>
+                                            @php
+                                                if (is_null($client->rooms_request)) {
+                                                    echo $client->getRawOriginal('rooms_request') ?? '';
+                                                } else {
+                                                    $cou = '';
+                                                    $countries = collect($client->rooms_request)->toArray();
+                                                    //$result = array_intersect_key($countries, $requirements_request);
+                                                    $arr = $rooms_request;
+                                                    $allowed = $countries;
+                                                    $result = array_intersect_key($arr, array_flip($allowed));
+                                                    foreach ($result as $val) {
+                                                            $cou .= '<span class="badge badge-light-primary">' . $val['text'] . '</span><br>';
+                                                }
+                                                    echo $cou;
+                                                }
+                                            @endphp
+                                        </td>
+                                    </tr>
+                                    <tr>
                                         <th scope="row">{{ __('Requirement') }}</th>
                                         <td>
                                             @php
-                                                $i = $client->requirements;
-                                                switch ($i) {
-                                                case 1:
-                                                echo __('Investments');
-                                                break;
-                                                case 2:
-                                                echo __('Life style');
-                                                break;
-                                                case 3:
-                                                echo __('Investments + Life style');
-                                                break;
-                                                case 4:
-                                                echo __('Citizenship');
-                                                break;
+                                                if (is_null($client->requirements_request)) {
+                                                    echo $client->getRawOriginal('requirements_request') ?? '';
+                                                } else {
+                                                    $cou = '';
+                                                    $countries = collect($client->requirements_request)->toArray();
+                                                    //$result = array_intersect_key($countries, $requirements_request);
+                                                    $arr = $requirements_request;
+                                                    $allowed = $countries;
+                                                    $result = array_intersect_key($arr, array_flip($allowed));
+                                                    foreach ($result as $val) {
+                                                            $cou .= '<span class="badge badge-light-primary">' . $val['text'] . '</span><br>';
+                                                }
+                                                    echo $cou;
                                                 }
                                             @endphp
                                         </td>
@@ -316,7 +340,7 @@
                                 <div class="media-size-email">
                                     <img class="mr-3 rounded-circle img-50"
                                          style="width: 50px;height:50px;"
-                                         src="{{ asset('storage/' . $lead->user->image_path) }}"
+                                         src="{{ asset('storage/' . $client->user->image_path) }}"
                                          alt="">
                                 </div>
                                 <div class="media-body">
@@ -390,7 +414,8 @@
                                                 }
                                                 @endphp
                                         </span></p>
-                                        <p>{{ __('Name') }} <a href="{{ route('leads.show', $lead) }}">{{ $lead->lead_name }}</a></p>
+                                        <p>{{ __('Name') }} <a
+                                                href="{{ route('leads.show', $lead) }}">{{ $lead->lead_name }}</a></p>
                                     </li>
                                 @endforeach
                             </ul>
