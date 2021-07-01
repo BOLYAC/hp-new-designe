@@ -72,7 +72,7 @@ class LeadsController extends Controller
 
         return Datatables::of($leads)
             ->setRowId('id')
-            ->editColumn('full_name', function ($leads) {
+            ->editColumn('lead_name', function ($leads) {
                 return '<a href="leads/' . $leads->id . '">' . $leads->lead_name ?? $leads->client->full_name ?? '' . '</a>';
             })
             ->editColumn('stage', function ($leads) {
@@ -148,7 +148,7 @@ class LeadsController extends Controller
                                             <a href="#!"
                                                class="m-r-15 text-muted f-18 delete"><i
                                                     class="icofont icofont-trash"></i></a>')
-            ->rawColumns(['full_name', 'user', 'stage', 'sells', 'stat', 'action'])
+            ->rawColumns(['lead_name', 'user', 'stage', 'sells', 'stat', 'action'])
             ->make(true);
     }
 

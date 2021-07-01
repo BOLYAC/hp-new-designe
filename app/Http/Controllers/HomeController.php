@@ -40,18 +40,17 @@ class HomeController extends Controller
         $todayTasks = Task::with(['agency', 'client'])->archive(false)->whereDate('date', Carbon::today())->count();
         $olderTask = Task::with(['agency', 'client'])->archive(true)->whereDate('date', '<', Carbon::today())->count();
         $tomorrowTasks = Task::with(['agency', 'client'])->archive(false)->whereDate('date', Carbon::tomorrow())->count();
-        $pendingTasks = Task::with(['agency', 'client'])->archive(false)->whereDate('date', '<', Carbon::today())->count();
-        $completedTasks = Task::with(['agency', 'client'])->archive(true)->get();
+        $completedTasks = Task::with(['agency', 'client'])->archive(true)->count();
         $events = Event::whereDate('event_date', Carbon::today())->count();
 
         return view('dashboard.index',
-            compact('todayTasks', 'pendingTasks', 'olderTask', 'events', 'completedTasks', 'tomorrowTasks', 'allClients')
+            compact('todayTasks', 'olderTask', 'events', 'completedTasks', 'tomorrowTasks', 'allClients')
         );
     }
 
     public function userNew()
     {
-        $clients = Client::select(['id', 'full_name', 'country', 'nationality', 'status', 'priority', 'type', 'created_at', 'updated_at'])
+        $clients = Client::select(['id', 'full_name', 'country', 'nationality', 'status', 'priority', 'type', 'created_at'])
             ->where('status', 1);
         return Datatables::of($clients)
             ->setRowId('id')
@@ -62,7 +61,7 @@ class HomeController extends Controller
                 return optional($clients->updated_at)->format('d-m-Y') ?? '';
             })
             ->editColumn('full_name', function ($clients) {
-                return '<div class="product-name"><a href = "clients/' . $clients->id . '/edit" > ' . $clients->full_name . '</a></div>';
+                return '<div class="product-name"><a href = "clients/' . $clients->id . '" > ' . $clients->full_name . '</a></div>';
             })
             ->editColumn('country', function ($clients) {
                 if (is_null($clients->country)) {
@@ -144,10 +143,6 @@ class HomeController extends Controller
                         break;
                 };
             })
-            ->addColumn('appointment_date',
-                function ($clients) {
-                    return optional($clients->appointment_date)->format('d-m-Y') ?? '';
-                })
             ->rawColumns(['full_name', 'status', 'priority', 'country', 'nationality'])
             ->make(true);
     }
@@ -187,7 +182,7 @@ class HomeController extends Controller
                 if ($todayTask->source_type === 'App\Agency') {
                     return '<a href="' . route('agencies.edit', ['agency' => $todayTask->agency->id]) . '" class="email-name" >' . $todayTask->title ?? '' . '</a>';
                 } else {
-                    return '<a href="' . route('clients.edit', ['client' => $todayTask->client_id]) . '"class="email-name" >' . $todayTask->title ?? '' . '</a>';
+                    return '<a href="' . route('clients.show', ['client' => $todayTask->client_id]) . '"class="email-name" >' . $todayTask->title ?? '' . '</a>';
                 }
             })
             ->editColumn('name', function ($todayTask) {
@@ -235,7 +230,7 @@ class HomeController extends Controller
                 if ($tomorrowTask->source_type === 'App\Agency') {
                     return '<a href="' . route('agencies.edit', ['agency' => $tomorrowTask->agency->id]) . '" class="email-name" >' . $tomorrowTask->title ?? '' . '</a>';
                 } else {
-                    return '<a href="' . route('clients.edit', ['client' => $tomorrowTask->client_id]) . '"class="email-name" >' . $tomorrowTask->title ?? '' . '</a>';
+                    return '<a href="' . route('clients.show', ['client' => $tomorrowTask->client_id]) . '"class="email-name" >' . $tomorrowTask->title ?? '' . '</a>';
                 }
             })
             ->editColumn('name', function ($tomorrowTask) {
@@ -278,34 +273,34 @@ class HomeController extends Controller
         $pendingTasks = Task::with(['agency', 'client'])->archive(false)->whereDate('date', '<', Carbon::today());
         return Datatables::of($pendingTasks)
             ->setRowId('id')
-            ->editColumn('title', function ($pendingTask) {
-                if ($pendingTask->source_type === 'App\Agency') {
-                    return '<a href="' . route('agencies.edit', ['agency' => $pendingTask->agency->id]) . '" class="email-name" >' . $pendingTask->title ?? '' . '</a>';
+            ->editColumn('title', function ($pendingTasks) {
+                if ($pendingTasks->source_type === 'App\Agency') {
+                    return '<a href="' . route('agencies.edit', ['agency' => $pendingTasks->agency->id]) . '" class="email-name" >' . $pendingTasks->title ?? '' . '</a>';
                 } else {
-                    return '<a href="' . route('clients.edit', ['client' => $pendingTask->client_id]) . '"class="email-name" >' . $pendingTask->title ?? '' . '</a>';
+                    return '<a href="' . route('clients.show', ['client' => $pendingTasks->client_id]) . '"class="email-name" >' . $pendingTasks->title ?? '' . '</a>';
                 }
             })
-            ->editColumn('name', function ($pendingTask) {
-                return $pendingTask->client->full_name ?? $pendingTask->agency->title ?? '';
+            ->editColumn('name', function ($pendingTasks) {
+                return $pendingTasks->client->full_name ?? $pendingTasks->agency->title ?? '';
             })
-            ->editColumn('country', function ($pendingTask) {
-                if (is_null($pendingTask->client->country)) {
-                    return '<div class="col-form-label">' . $pendingTask->client->getRawOriginal('country') ?? '' . '</div>';
+            ->editColumn('country', function ($pendingTasks) {
+                if (is_null($pendingTasks->client->country)) {
+                    return '<div class="col-form-label">' . $pendingTasks->client->getRawOriginal('country') ?? '' . '</div>';
                 } else {
                     $cou = '';
-                    $countries = collect($pendingTask->client->country)->toArray();
+                    $countries = collect($pendingTasks->client->country)->toArray();
                     foreach ($countries as $name) {
                         $cou .= '<span class="badge badge-inverse"> ' . $name . '</span> ';
                     }
                     return $cou;
                 }
             })
-            ->editColumn('nationality', function ($pendingTask) {
-                if (is_null($pendingTask->client->nationality)) {
-                    return $pendingTask->client->getRawOriginal('nationality') ?? '';
+            ->editColumn('nationality', function ($pendingTasks) {
+                if (is_null($pendingTasks->client->nationality)) {
+                    return $pendingTasks->client->getRawOriginal('nationality') ?? '';
                 } else {
                     $cou = '';
-                    $nat = collect($pendingTask->client->nationality)->toArray();
+                    $nat = collect($pendingTasks->client->nationality)->toArray();
                     foreach ($nat as $name) {
                         $cou .= '<span class="badge badge-inverse">' . $name . '</span> ';
                     }
@@ -313,8 +308,8 @@ class HomeController extends Controller
                 }
             })
             ->addColumn('date',
-                function ($pendingTask) {
-                    return optional($pendingTask->date)->format('d-m-Y') ?? '';
+                function ($pendingTasks) {
+                    return optional($pendingTasks->date)->format('d-m-Y') ?? '';
                 })
             ->rawColumns(['title', 'name', 'country', 'nationality', 'date'])
             ->make(true);
@@ -330,7 +325,7 @@ class HomeController extends Controller
                 if ($completedTask->source_type === 'App\Agency') {
                     return '<a href="' . route('agencies.edit', ['agency' => $completedTask->agency->id]) . '" class="email-name" >' . $completedTask->title ?? '' . '</a>';
                 } else {
-                    return '<a href="' . route('clients.edit', ['client' => $completedTask->client_id]) . '"class="email-name" >' . $completedTask->title ?? '' . '</a>';
+                    return '<a href="' . route('clients.show', ['client' => $completedTask->client_id]) . '"class="email-name" >' . $completedTask->title ?? '' . '</a>';
                 }
             })
             ->editColumn('name', function ($completedTask) {
@@ -371,43 +366,41 @@ class HomeController extends Controller
             ->make(true);
     }
 
-    public function getCountry(Request $request)
+    public function getCountry(Request $request): \Illuminate\Http\JsonResponse
     {
         $data = [];
 
-        $key = $request->get('q');
-
-        if ($key) {
-            $data = Country::where(function ($query) use ($key) {
-                $query->where('id', 'like', ' % ' . $key . ' % ')
-                    ->orWhere('name', 'LIKE', ' % ' . $key . ' % ');
-            })->get(['id', 'name']);
+        if ($request->has('q')) {
+            $search = $request->q;
+            $data = Country::select("id", "name")
+                ->where('name', 'LIKE', "%$search%")
+                ->get();
         }
         return response()->json($data);
     }
 
-    public function getNationality(Request $request)
+    public function getNationality(Request $request): \Illuminate\Http\JsonResponse
     {
         $data = [];
-        $key = $request->get('q');
-        if ($key) {
-            $data = Nationality::where(function ($query) use ($key) {
-                $query->where('id', 'like', ' % ' . $key . ' % ')
-                    ->orWhere('name', 'LIKE', ' % ' . $key . ' % ');
-            })->get(['id', 'name']);
+
+        if ($request->has('q')) {
+            $search = $request->q;
+            $data = Nationality::select("id", "name")
+                ->where('name', 'LIKE', "%$search%")
+                ->get();
         }
         return response()->json($data);
     }
 
-    public function getLanguage(Request $request)
+    public function getLanguage(Request $request): \Illuminate\Http\JsonResponse
     {
         $data = [];
-        $key = $request->get('q');
-        if ($key) {
-            $data = Language::where(function ($query) use ($key) {
-                $query->where('id', 'like', ' % ' . $key . ' % ')
-                    ->orWhere('name', 'LIKE', ' % ' . $key . ' % ');
-            })->get(['id', 'name']);
+
+        if ($request->has('q')) {
+            $search = $request->q;
+            $data = Language::select("id", "name")
+                ->where('name', 'LIKE', "%$search%")
+                ->get();
         }
         return response()->json($data);
     }

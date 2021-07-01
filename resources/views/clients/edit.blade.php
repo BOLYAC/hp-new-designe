@@ -184,7 +184,7 @@
             notify(param['type'], param['message'], param['icon'])
         })
 
-
+        let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
         $('#trans-to-sales').on('submit', function (e) {
             e.preventDefault();
             user_id = $('#inCharge').val();
@@ -345,7 +345,6 @@
             }
         });
         $('.js-language-all').select2({
-            placeholder: "Select a language",
             theme: 'classic',
             ajax: {
                 url: "{{ route('language.name') }}",
@@ -353,10 +352,10 @@
                 delay: 250,
                 processResults: function (data) {
                     return {
-                        results: $.map(data, function (item) {
+                        results:  $.map(data, function (item) {
                             return {
                                 text: item.name,
-                                id: item.name
+                                id: item.id
                             }
                         })
                     };
@@ -847,7 +846,7 @@
                 @include('clients.task-note')
             </div>
             <div class="col-md-3 col-lg-2">
-                <div class="card">
+                <div class="card card-with-border">
                     <div class="card-header b-b-info">
                         <h5 class="text-muted">{{ __('Owned by') }}</h5>
                     </div>
@@ -906,7 +905,79 @@
                     </div>
                 @endcan
                 @include('clients.documents.index')
-                <div class="card">
+                @if($client->leads()->exists())
+                    <div class="card card-with-border">
+                        <div class="card-header">
+                            <h5 class="d-inline-block">{{ __('Deals history') }}</h5>
+                        </div>
+                        <div class="card-body activity-social">
+                            <ul>
+                                @foreach($client->leads as $lead)
+                                    <li class="border-recent-success">
+                                        <small>{{ $lead->created_at->format('Y-m-d') }}</small>
+                                        <p class="mb-0">{{ __('Stage') }}: <span
+                                                class="f-w-800 text-primary">
+                                                @php
+                                                    $i = $lead->stage_id;
+                                                switch ($i) {
+                                                    case 1:
+                                                        echo '<span class="badge badge-light-primary f-w-600">' . __('In contact') . '</span>';
+                                                        break;
+                                                    case 2:
+                                                        echo '<span class="badge badge-light-primary f-w-600">' . __('Appointment Set') . '</span>';
+                                                        break;
+                                                    case 3:
+                                                        echo '<span class="badge badge-light-primary f-w-600">' . __('Follow up') . '</span>';
+                                                        break;
+                                                    case 4:
+                                                        echo '<span class="badge badge-light-primary f-w-600">' . __('Reservation') . '</span>';
+                                                        break;
+                                                    case 5:
+                                                        echo '<span class="badge badge-light-primary f-w-600">' . __('Contract signed') . '</span>';
+                                                        break;
+                                                    case 6:
+                                                        echo '<span class="badge badge-light-primary f-w-600">' . __('Down payment') . '</span>';
+                                                        break;
+                                                    case 7:
+                                                        echo '<span class="badge badge-light-primary f-w-600">' . __('Developer invoice') . '</span>';
+                                                        break;
+                                                    case 8:
+                                                        echo '<span class="badge badge-light-success f-w-600">' . __('Won Deal') . '</span>';
+                                                        break;
+                                                    case 9:
+                                                        echo '<span class="badge badge-light-danger f-w-600">' . __('Lost') . '</span>';
+                                                        break;
+                                                }
+                                                @endphp
+                                        </span></p>
+                                        <p>{{ __('Name') }} <a
+                                                href="{{ route('leads.show', $lead) }}">{{ $lead->lead_name }}</a></p>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                @endif
+                @if($client->StatusLog()->exists())
+                    <div class="card card-with-border">
+                        <div class="card-header">
+                            <h5 class="d-inline-block">{{ __('Status activity') }}</h5>
+                        </div>
+                        <div class="card-body activity-social">
+                            <ul>
+                                @foreach($client->StatusLog as $log)
+                                    <li class="border-recent-warning">
+                                        <small>{{ $log->created_at->format('Y-m-d H:i') }}</small>
+                                        <p class="mb-0">{{ __('Status change to') }}: <span
+                                                class="f-w-800 text-primary">{{ $log->status_name }}</span></p>
+                                        <P>by <a href="#">{{ $log->user_name }}</a></P>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                @endif
+                <div class="card card-with-border">
                     <div class="card-header b-b-info">
                         <h5 class="text-muted">{{ __('History') }}</h5>
                     </div>

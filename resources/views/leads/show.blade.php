@@ -514,7 +514,8 @@
                                                 </td>
                                                 <td>
                                                     <span>
-                                                        <a href="{{ route('invoices.show', $invoice) }}" class="f-w-700">
+                                                        <a href="{{ route('invoices.show', $invoice) }}"
+                                                           class="f-w-700">
                                                             {{ $invoice->client_name ?? $invoice->client->full_name ??'' }}
                                                         </a>
                                                     </span>
@@ -645,23 +646,25 @@
                         </ul>
                     </div>
                 </div>
-                <div class="card card-with-border">
-                    <div class="card-header">
-                        <h5 class="d-inline-block">{{ __('Stage activity') }}</h5>
+                @if($lead->stageLog()->exists())
+                    <div class="card card-with-border">
+                        <div class="card-header">
+                            <h5 class="d-inline-block">{{ __('Stage activity') }}</h5>
+                        </div>
+                        <div class="card-body activity-social">
+                            <ul>
+                                @foreach($lead->stageLog as $log)
+                                    <li class="border-recent-success">
+                                        <small>{{ $log->created_at->format('Y-m-d H:i') }}</small>
+                                        <p class="mb-0">{{ __('Stage change to') }}: <span
+                                                class="f-w-800 text-primary">{{ $log->stage_name }}</span></p>
+                                        <P>by <a href="#">{{ $log->user_name }}</a></P>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
                     </div>
-                    <div class="card-body activity-social">
-                        <ul>
-                            @foreach($lead->stageLog as $log)
-                                <li class="border-recent-success">
-                                    <small>{{ $log->created_at->format('Y-m-d H:i') }}</small>
-                                    <p class="mb-0">{{ __('Stage change to') }}: <span
-                                            class="f-w-800 text-primary">{{ $log->stage_name }}</span></p>
-                                    <P>by <a href="#">{{ $log->user_name }}</a></P>
-                                </li>
-                            @endforeach
-                        </ul>
-                    </div>
-                </div>
+                @endif
             </div>
         </div>
 

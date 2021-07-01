@@ -7,10 +7,6 @@
     <link rel="stylesheet" href="{{ asset('assets/css/datatable-extension.css') }}">
 @endsection
 
-@section('style')
-
-@endsection
-
 @section('script')
 
     <script src="{{asset('assets/js/datatables/jquery.dataTables.min.js')}}"></script>
@@ -30,7 +26,6 @@
                 stateSave: false,
                 order: [[0, 'asc']],
                 processing: true,
-                serverSide: true,
                 responsive: true,
                 ajax: {
                     url: '{!! route('dashboard.data') !!}'
@@ -49,7 +44,6 @@
                 stateSave: false,
                 order: [[0, 'asc']],
                 processing: true,
-                serverSide: true,
                 responsive: true,
                 ajax: {
                     url: '{!! route('dashboard.agencies.data') !!}'
@@ -63,7 +57,6 @@
             });
             $('#today-table').DataTable({
                 processing: true,
-                serverSide: true,
                 responsive: true,
                 ajax: {
                     url: '{!! route('dashboard.task_today') !!}'
@@ -78,7 +71,6 @@
             });
             $('#tomorrow-table').DataTable({
                 processing: true,
-                serverSide: true,
                 responsive: true,
                 ajax: {
                     url: '{!! route('dashboard.task_tomorrow') !!}'
@@ -93,7 +85,6 @@
             });
             $('#pending-table').DataTable({
                 processing: true,
-                serverSide: true,
                 responsive: true,
                 ajax: {
                     url: '{!! route('dashboard.task_pending') !!}'
@@ -108,7 +99,6 @@
             });
             $('#completed-table').DataTable({
                 processing: true,
-                serverSide: true,
                 responsive: true,
                 ajax: {
                     url: '{!! route('dashboard.task_completed') !!}'
@@ -154,12 +144,16 @@
                                     <p class="mb-0">{{ __('Past tasks') }}</p>
                                 </div>
                                 <div class="col-xl-2 col-sm-4 col-6">
-                                    <h2 class="f-w-600 counter font-success">{{ $completedTasks->count() }}</h2>
+                                    <h2 class="f-w-600 counter font-success">{{ $completedTasks }}</h2>
                                     <p class="mb-0">{{ __('Completed tasks') }}</p>
                                 </div>
                                 <div class="col-xl-2 col-sm-4 col-6">
                                     <h2 class="f-w-600 counter font-info">{{ $todayTasks }}</h2>
                                     <p class="mb-0">{{ __('Today tasks') }}</p>
+                                </div>
+                                <div class="col-xl-2 col-sm-4 col-6">
+                                    <h2 class="f-w-600 counter font-danger">{{ $tomorrowTasks }}</h2>
+                                    <p class="mb-0">{{ __('Tomorrow tasks') }}</p>
                                 </div>
                                 <div class="col-xl-2 col-sm-4 col-6">
                                     <h2 class="f-w-600 counter font-warning">{{ $events }}</h2>

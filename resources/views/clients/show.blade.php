@@ -422,6 +422,25 @@
                         </div>
                     </div>
                 @endif
+                @if($client->StatusLog()->exists())
+                    <div class="card card-with-border">
+                        <div class="card-header">
+                            <h5 class="d-inline-block">{{ __('Status activity') }}</h5>
+                        </div>
+                        <div class="card-body activity-social">
+                            <ul>
+                                @foreach($client->StatusLog as $log)
+                                    <li class="border-recent-warning">
+                                        <small>{{ $log->created_at->format('Y-m-d H:i') }}</small>
+                                        <p class="mb-0">{{ __('Status change to') }}: <span
+                                                class="f-w-800 text-primary">{{ $log->status_name }}</span></p>
+                                        <P>by <a href="#">{{ $log->user_name }}</a></P>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                @endif
                 <div class="card card-with-border">
                     <div class="card-header b-b-info">
                         <h5 class="text-muted">{{ __('History') }}</h5>

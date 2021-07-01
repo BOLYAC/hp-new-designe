@@ -24,6 +24,7 @@
             let table = $('#res-config').DataTable({
                 processing: true,
                 serverSide: true,
+                responsive: true,
                 ajax: {
                     url: '{{ route('leads.data') }}',
                     data: function (d) {
@@ -89,7 +90,7 @@
                     <form id="search-form">
                         <div class="card-body p-2">
                             <div class="form-group mb-2">
-                                <select class="form-control form-control-sm digits" id="status_filter"
+                                <select class="custom-select custom-select-sm" id="status_filter"
                                         name="status_filter">
                                     <option value="">{{ __('Select stage') }}</option>
                                     <option value="1">{{ __('In contact') }}</option>
@@ -105,7 +106,6 @@
                             </div>
                             @if(auth()->user()->hasRole('Admin') || auth()->user()->hasPermissionTo('team-manager'))
                                 <div class="form-group mb-2">
-                                    <label for="user_filter">{{ __('Assigned') }}</label>
                                     <select name="user_filter" id="user_filter"
                                             class="custom-select custom-select-sm">
                                         <option value="">{{ __('Assigned') }}</option>
@@ -116,7 +116,6 @@
                                 </div>
                                 @if(isset($departments))
                                     <div class="form-group mb-2">
-                                        <label for="department_filter">{{ __('Departments') }}</label>
                                         <select name="department_filter" id="department_filter"
                                                 class="custom-select custom-select-sm">
                                             <option value="">{{ __('Department') }}</option>
@@ -128,7 +127,6 @@
                                 @endif
                                 @if(isset($teams))
                                     <div class="form-group mb-2">
-                                        <label for="team_filter">{{ __('Teams') }}</label>
                                         <select name="team_filter" id="team_filter"
                                                 class="custom-select custom-select-sm">
                                             <option value="">{{ __('Team') }}</option>

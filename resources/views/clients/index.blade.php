@@ -219,7 +219,6 @@
                         <div class="card-body p-2">
                             @if(auth()->user()->hasRole('Admin'))
                                 <div class="form-group mb-2">
-                                    <option value="">{{ __('Department') }}</option>
                                     <select name="department_filter" id="department_filter"
                                             class="custom-select custom-select-sm">
                                         <option value="">{{ __('Department') }}</option>
@@ -228,8 +227,18 @@
                                         @endforeach
                                     </select>
                                 </div>
+                                @if(isset($teams))
+                                    <div class="form-group mb-2">
+                                        <select name="team_filter" id="team_filter"
+                                                class="custom-select custom-select-sm">
+                                            <option value="">{{ __('Team') }}</option>
+                                            @foreach($teams as $row)
+                                                <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endif
                                 <div class="form-group mb-2">
-                                    <option value="">{{ __('Assigned') }}</option>
                                     <select name="user_filter" id="user_filter"
                                             class="custom-select custom-select-sm">
                                         <option value="">{{ __('Assigned') }}</option>
@@ -239,6 +248,17 @@
                                     </select>
                                 </div>
                             @elseif(auth()->user()->hasPermissionTo('team-manager'))
+                                @if(isset($teams))
+                                    <div class="form-group mb-2">
+                                        <select name="team_filter" id="team_filter"
+                                                class="custom-select custom-select-sm">
+                                            <option value="">{{ __('Team') }}</option>
+                                            @foreach($teams as $row)
+                                                <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endif
                                 @if(isset($users))
                                     <div class="form-group mb-2">
                                         <select name="user_filter" id="user_filter"
@@ -252,19 +272,8 @@
                                     </div>
                                 @endif
                             @endif
-                            @if(isset($teams))
-                                <div class="form-group mb-2">
-                                    <select name="team_filter" id="team_filter"
-                                            class="custom-select custom-select-sm">
-                                        <option value="">{{ __('Team') }}</option>
-                                        @foreach($teams as $row)
-                                            <option value="{{ $row->id }}">{{ $row->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            @endif
                             <div class="form-group mb-2">
-                                <select class="form-control form-control-sm digits" id="status_filter"
+                                <select class="custom-select custom-select-sm" id="status_filter"
                                         name="status_filter">
                                     <option value="">{{ __('Status') }}</option>
                                     <option value="1">{{ __('New Lead') }}</option>
@@ -282,7 +291,7 @@
                                 </select>
                             </div>
                             <div class="form-group mb-2">
-                                <select class="form-control form-control-sm digits" id="source_filter"
+                                <select class="custom-select custom-select-sm" id="source_filter"
                                         name="source_filter">
                                     <option value="">{{ __('Source') }}</option>
                                     @foreach($sources as $row)
@@ -291,7 +300,7 @@
                                 </select>
                             </div>
                             <div class="form-group mb-2">
-                                <select class="form-control form-control-sm digits" id="agency_filter"
+                                <select class="custom-select custom-select-sm" id="agency_filter"
                                         name="agency_filter">
                                     <option value="">{{ __('Agency') }}</option>
                                     @foreach($agencies as $row)
@@ -301,7 +310,7 @@
                                 </select>
                             </div>
                             <div class="form-group mb-2">
-                                <select class="form-control form-control-sm digits" id="priority_filter"
+                                <select class="custom-select custom-select-sm" id="priority_filter"
                                         name="priority_filter">
                                     <option value="">{{ __('Priority') }}</option>
                                     <option value="1">{{ __('Low') }}</option>
@@ -316,7 +325,7 @@
                                 <label for="country_check">{{ __('Country') }}</label>
                             </div>
                             <div class="form-group mb-2 ml-2" id="cts_select">
-                                <select class="form-control form-control-sm digits mb-1" id="country_type"
+                                <select class="custom-select custom-select-sm mb-1" id="country_type"
                                         name="country_type">
                                     <option value="1">{{ __('is') }}</option>
                                     <option value="2">{{ __('isn\'t') }}</option>
@@ -337,7 +346,7 @@
                                 <label for="phone_check">{{ __('Phone') }}</label>
                             </div>
                             <div class="form-group mb-2 ml-2" id="pts_select">
-                                <select class="form-control form-control-sm digits mb-1" id="phone_type"
+                                <select class="custom-select custom-select-sm mb-1" id="phone_type"
                                         name="phone_type">
                                     <option value="1">{{ __('is') }}</option>
                                     <option value="2">{{ __('isn\'t') }}</option>
