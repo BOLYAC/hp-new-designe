@@ -225,10 +225,10 @@ class LeadsController extends Controller
      * Update the specified resource in storage.
      *
      * @param Request $request
-     * @param int $id
+     * @param Lead $lead
      * @return void
      */
-    public function update(Request $request, $id): void
+    public function update(Request $request, Lead $lead): void
     {
         //
     }

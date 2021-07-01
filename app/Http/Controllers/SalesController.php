@@ -23,9 +23,52 @@ class SalesController extends Controller
         $n = Auth::user()->name;
         $s[] = $n;
         $client = Client::findOrFail($request->clientId);
+        // Get status name
+        $i = $client->status;
+        switch ($i) {
+            case 1:
+                $status = 'New Lead';
+                break;
+            case 8:
+                $status = 'No Answer';
+                break;
+            case 12:
+                $status = 'In progress';
+                break;
+            case 3:
+                $status = 'Potential appointment';
+                break;
+            case 4:
+                $status = 'Appointment set';
+                break;
+            case 10:
+                $status = 'Appointment follow up';
+                break;
+            case 5:
+                $status = 'Sold';
+                break;
+            case 13:
+                $status = 'Unreachable';
+                break;
+            case 7:
+                $status = 'Not interested';
+                break;
+            case 11:
+                $status = 'Low budget';
+                break;
+            case 9:
+                $status = 'Wrong Number';
+                break;
+            case 14:
+                $status = 'Unqualified';
+                break;
+            case 15:
+                $status = 'Lost';
+                break;
+        }
+
         $lead['client_id'] = $request->clientId;
         $lead['external_id'] = Uuid::uuid4()->toString();
-        $lead['status_id'] = 1;
         $lead['created_by'] = Auth::id();
         $lead['updated_by'] = Auth::id();
         $lead['user_created_id'] = Auth::id();
@@ -35,13 +78,27 @@ class SalesController extends Controller
         $lead['sellers'] = $l;
         $lead['sell_rep'] = Auth::id();
         $lead['stage_id'] = 1;
-        $lead['status'] = 1;
         $lead['lead_name'] = $client->full_name;
         $lead['lead_email'] = $client->client_email;
         $lead['lead_phone'] = $client->client_number;
         $lead['owner_name'] = auth()->user()->name;
         $lead['sells_names'] = $s;
         $lead['description'] = $client->description;
+        $lead['country'] = $client->country;
+        $lead['nationality'] = $client->nationality;
+        $lead['language'] = $client->language;
+        $lead['priority'] = $client->priority;
+        $lead['status_id'] = $client->status;
+        $lead['status_name'] = $status;
+        $lead['source_name'] = $client->source->name;
+        $lead['source_id'] = $client->source_id;
+        $lead['agency_name'] = $client->agency->name;
+        $lead['agency_id'] = $client->agency_id;
+
+        $lead['budget_request'] = $client->budget_request;
+        $lead['rooms_request'] = $client->rooms_request;
+        $lead['requirement_request'] = $client->requirement_requests;
+
         $lead = Lead::create($lead);
         //$client->update(['lead_id' => $lead->id]);
         $lead->ShareWithSelles()->attach($l, ['added_by' => Auth::id(), 'user_name' => Auth::user()->name]);

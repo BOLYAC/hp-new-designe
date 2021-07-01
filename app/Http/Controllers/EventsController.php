@@ -242,13 +242,10 @@ class EventsController extends Controller
      *
      * @param \Illuminate\Http\Request $request
      * @param Event $event
-     * @return RedirectResponse
      */
     public
-    function update(Request $request, Event $event): RedirectResponse
+    function update(Request $request, Event $event)
     {
-        $lead = Lead::findOrfail($event->lead_id);
-
         $users = $request->get('share_with');
 
         if ($request->has('share_with')) {
@@ -273,6 +270,7 @@ class EventsController extends Controller
         $event->update($data);
         $event->SharedEvents()->detach();
         if ($request->get('feedback')) {
+            $lead = Lead::findOrfail($event->lead_id);
             $lead->comments()->create([
                 'external_id' => Uuid::uuid4()->toString(),
                 'description' => $request->get('feedback'),

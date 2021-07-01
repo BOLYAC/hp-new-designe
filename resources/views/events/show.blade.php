@@ -146,6 +146,7 @@
                         @csrf
                         @method('PUT')
                         <div class="card-body b-t-primary">
+                            @include('partials.lead-info', ['client' => $event])
                             @include('events.partial.owner')
                             @can('share-lead')
                                 <div class="form-group input-group-sm">
@@ -219,28 +220,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="card">
-                    <div class="card-header b-b-primary">
-                        <h6 class="text-muted">
-                            @if($event->client->exists())
-                                <a href="{{ route('clients.edit', $event->client) }}">{{ $event->client->full_name ?? '' }}</a>
-                            @else
-                                {{ $event->lead_name ?? '' }}
-                            @endif
-                        </h6>
-                    </div>
-                    <div class="card-body">
-                        @if($event->client->exists())
-                            <p><b>{{ __('Phone number:') }}</b><br>{{ $event->lead_phone ?? '' }}</p>
-                            <p><b>{{ __('Email:') }}</b><br>{{ $event->lead_email ?? '' }}</p>
-                        @else
-                            <p><b>{{ __('Phone number:') }}</b><br>{{ $event->client->client_number ?? '' }}</p>
-                            <p><b>{{ __('Email:') }}</b><br>{{ $event->client->client_email ?? '' }}</p>
-                        @endif
-                    </div>
-                </div>
             </div>
         </div>
-    </div>
     </div>
 @endsection

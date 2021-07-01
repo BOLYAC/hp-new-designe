@@ -20,7 +20,13 @@ class Lead extends Model implements Commentable
 
     protected $casts = [
         'sellers' => 'array',
-        'sells_names' => 'array'
+        'sells_names' => 'array',
+        'budget_request' => 'array',
+        'rooms_request' => 'array',
+        'requirement_request' => 'array',
+        'country' => 'array',
+        'nationality' => 'array',
+        'language' => 'array'
     ];
 
     public function displayValue()

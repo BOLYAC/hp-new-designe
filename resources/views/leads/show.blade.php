@@ -373,30 +373,12 @@
                 },
             });
         });
-        $('.js-language-all').select2({
-            ajax: {
-                url: "{{ route('language.name') }}",
-                dataType: 'json',
-                delay: 250,
-                processResults: function (data) {
-                    return {
-                        results: $.map(data, function (item) {
-                            return {
-                                text: item.name,
-                                id: item.name
-                            }
-                        })
-                    };
-                },
-                cache: true
-            }
-        });
     </script>
 @endsection
 
 @section('breadcrumb-items')
     <li class="breadcrumb-item"><a href="{{ route('leads.index') }}">{{ __('Deals') }}</a></li>
-    <li class="breadcrumb-item">{{ __('Lead name') }}: {{ $lead->client->full_name ?? $lead->full_name }}</li>
+    <li class="breadcrumb-item">{{ __('Deal name') }}: {{ $lead->client->full_name ?? $lead->full_name }}</li>
 @endsection
 
 @section('content')
@@ -413,7 +395,7 @@
                             @else
                                 <div>
                                     <select name="stage_id" id="stage_id"
-                                            class="form-control form-control-sm">
+                                            class="custom-select custom-select-sm">
                                         <option
                                             value="1" {{ old('stage_id', $lead->stage_id) == 1 ? 'selected' : '' }}>
                                             {{ __('In contact') }}
@@ -486,6 +468,7 @@
                         </div>
                     </div>
                 </div>
+                @include('partials.lead-info', ['client' => $lead])
                 @include('partials.comments', ['subject' => $lead])
                 @include('partials.events', ['subject' => $lead])
                 @include('leads.partials.reservation')
@@ -577,26 +560,6 @@
                         @endcan
                     </div>
                 </div>
-                <div class="card card-with-border">
-                    <div class="card-header b-b-primary">
-                        <h6 class="text-muted">
-                            @if($lead->client)
-                                <a href="{{ route('clients.show', $lead->client) }}">{{ $lead->client->full_name ?? '' }}</a>
-                            @else
-                                {{ $lead->lead_name ?? '' }}
-                            @endif
-                        </h6>
-                    </div>
-                    <div class="card-body">
-                        @if(is_null($lead->client))
-                            <p><b>{{ __('Phone number:') }}</b><br>{{ $lead->lead_phone }}</p>
-                            <p><b>{{ __('Email:') }}</b><br>{{ $lead->lead_email }}</p>
-                        @else
-                            <p><b>{{ __('Phone number:') }}</b><br>{{ $lead->client->client_number ?? '' }}</p>
-                            <p><b>{{ __('Email:') }}</b><br>{{ $lead->client->client_email ?? '' }}</p>
-                        @endif
-                    </div>
-                </div>
                 @can('share-deal')
                     <div class="card card-with-border">
                         <div class="card-header b-b-primary">
@@ -628,24 +591,6 @@
                         </div>
                     </div>
                 @endcan
-                <div class="card card-with-border">
-                    <div class="card-header">
-                        <h5 class="d-inline-block">{{ __('Description') }}</h5>
-                    </div>
-                    <div class="card-body activity-social">
-                        <ul>
-                            <li>
-                                <p>
-                                    {!! $lead->description !!}
-                                </p>
-                            </li>
-                            <li>
-                                {{ __('Created at:') }}
-                                {{ Carbon\Carbon::parse($lead->created_at)->format('Y-m-d H:i') }}
-                            </li>
-                        </ul>
-                    </div>
-                </div>
                 @if($lead->stageLog()->exists())
                     <div class="card card-with-border">
                         <div class="card-header">

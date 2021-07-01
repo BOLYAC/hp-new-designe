@@ -157,7 +157,7 @@
                     <form id="search-form">
                         <div class="card-body p-2">
                             <div class="form-group mb-2">
-                                <select class="form-control form-control-sm digits" id="type_filter"
+                                <select class="custom-select custom-select-sm" id="type_filter"
                                         name="type_filter">
                                     <option value="">{{ __('Select Type') }}</option>
                                     <option value="1">{{ __('Freelance') }}</option>
@@ -166,20 +166,18 @@
                             </div>
                             @if(auth()->user()->hasRole('Admin'))
                                 <div class="form-group mb-2">
-                                    <label for="department_filter">{{ __('Department') }}</label>
                                     <select name="department_filter" id="department_filter"
                                             class="custom-select custom-select-sm">
-                                        <option value="">{{ __('Select Department') }}</option>
+                                        <option value="">{{ __('Department') }}</option>
                                         @foreach($departments as $row)
                                             <option value="{{ $row->id }}">{{ $row->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div class="form-group mb-2">
-                                    <label for="user_filter">{{ __('Assigned') }}</label>
                                     <select name="user_filter" id="user_filter"
                                             class="custom-select custom-select-sm">
-                                        <option value="">{{ __('Select Assigned') }}</option>
+                                        <option value="">{{ __('Assigned') }}</option>
                                         @foreach($users as $row)
                                             <option value="{{ $row->id }}">{{ $row->name }}</option>
                                         @endforeach
@@ -200,10 +198,9 @@
                                 @endif
                             @endif
                             <div class="form-group mb-2">
-                                <label for="country_filter">{{ __('Country') }}</label>
                                 <select name="country_filter" id="country_filter"
                                         class="custom-select custom-select-sm">
-                                    <option value="">{{ __('Select Country') }}</option>
+                                    <option value="">{{ __('Country') }}</option>
                                     @foreach($countries as $country)
                                         <option
                                             value="{{ $country->id }}">{{ $country->name }}</option>
@@ -211,9 +208,8 @@
                                 </select>
                             </div>
                             <div class="form-group mb-2">
-                                <label for="city_filter">{{ __('City') }}</label>
                                 <input name="city_filter" id="city_filter"
-                                       class="custom-select custom-select-sm">
+                                       class="custom-control custom-control-sm" placeholder="City">
                             </div>
                         </div>
                         <div class="card-footer p-2">

@@ -11,54 +11,59 @@ use OwenIt\Auditing\Contracts\Auditable;
 class Event extends Model implements Auditable
 
 {
-  use \OwenIt\Auditing\Auditable;
-  use SoftDeletes, DealsTenantable;
+    use \OwenIt\Auditing\Auditable;
+    use SoftDeletes, DealsTenantable;
 
-  protected $guarded = [];
+    protected $guarded = [];
 
-  /**
-   * The attributes that should be cast to native types.
-   *
-   * @var array
-   */
-  protected $casts = [
-    'event_date' => 'datetime:Y-m-d',
-    'lang' => 'array',
-    'sellers' => 'array',
-    'sells_name' => 'array',
-    'budget' => 'array',
-    'lead_lang' => 'array'
-  ];
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'event_date' => 'datetime:Y-m-d',
+        'lang' => 'array',
+        'sellers' => 'array',
+        'sells_name' => 'array',
+        'budget' => 'array',
+        'budget_request' => 'array',
+        'rooms_request' => 'array',
+        'requirement_request' => 'array',
+        'country' => 'array',
+        'nationality' => 'array',
+        'language' => 'array'
+    ];
 
-  public function user()
-  {
-    return $this->belongsTo(User::class, 'user_id');
-  }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
-  public function client()
-  {
-    return $this->belongsTo(Client::class, 'client_id')->withDefault();
-  }
+    public function client()
+    {
+        return $this->belongsTo(Client::class, 'client_id')->withDefault();
+    }
 
-  public function lead()
-  {
-    return $this->belongsTo(Lead::class, 'lead_id')->withDefault();
-  }
+    public function lead()
+    {
+        return $this->belongsTo(Lead::class, 'lead_id')->withDefault();
+    }
 
-  public function SharedEvents(): BelongsToMany
-  {
-    return $this->belongsToMany(User::class, EventUser::class)
-      ->withPivot('user_name', 'added_by')
-      ->withTimestamps()
-      ->as('sharedEvents');
-  }
+    public function SharedEvents(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, EventUser::class)
+            ->withPivot('user_name', 'added_by')
+            ->withTimestamps()
+            ->as('sharedEvents');
+    }
 
-  public static function boot()
-  {
-    parent::boot();
+    public static function boot()
+    {
+        parent::boot();
 
-    static::creating(function ($event) { // On create() method call this
-      $event->team_id = auth()->user()->currentTeam->id ?? '1';
-    });
-  }
+        static::creating(function ($event) { // On create() method call this
+            $event->team_id = auth()->user()->currentTeam->id ?? '1';
+        });
+    }
 }

@@ -222,7 +222,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th scope="row">{{ __('Propriety') }}</th>
+                                        <th scope="row">{{ __('Priority') }}</th>
                                         <td>
                                             @php
                                                 $i = $client->priority;
