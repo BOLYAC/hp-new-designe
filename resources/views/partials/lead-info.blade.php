@@ -187,14 +187,14 @@
                                     echo $client->getRawOriginal('budget_request') ?? '';
                                 } else {
                                     $cou = '';
-                                    $countries = collect($client->budget_request)->toArray();
-                                    $arr = $budget_request;
-                                    $allowed = $countries;
-                                    $result = array_intersect_key($arr, array_flip($allowed));
-                                    foreach ($result as $val) {
-                                            $cou .= '<span class="badge badge-light-primary">' . $val['text'] . '</span><br>';
-                                }
-                                    echo $cou;
+                                    $budgets = collect($client->budget_request)->toArray();
+                                    $newArr = array_filter($budget_request, function($var) use ($budgets){
+                                        return in_array($var['id'], $budgets);
+                                    });
+                                    foreach ($newArr as $val) {
+                                        $cou .= '<span class="badge badge-light-primary">' . $val['text'] . '</span><br>';
+                                    }
+                                        echo $cou;
                                 }
                             @endphp
                         </td>
@@ -207,14 +207,13 @@
                                     echo $client->getRawOriginal('rooms_request') ?? '';
                                 } else {
                                     $cou = '';
-                                    $countries = collect($client->rooms_request)->toArray();
-                                    //$result = array_intersect_key($countries, $requirements_request);
-                                    $arr = $rooms_request;
-                                    $allowed = $countries;
-                                    $result = array_intersect_key($arr, array_flip($allowed));
-                                    foreach ($result as $val) {
-                                            $cou .= '<span class="badge badge-light-primary">' . $val['text'] . '</span><br>';
-                                }
+                                    $rooms = collect($client->rooms_request)->toArray();
+                                    $newArr = array_filter($rooms_request, function($var) use ($rooms){
+                                        return in_array($var['id'], $rooms);
+                                    });
+                                    foreach ($newArr as $val) {
+                                        $cou .= '<span class="badge badge-light-primary">' . $val['text'] . '</span><br>';
+                                    }
                                     echo $cou;
                                 }
                             @endphp
@@ -224,16 +223,15 @@
                         <th scope="row">{{ __('Requirement') }}</th>
                         <td>
                             @php
-                                if (is_null($client->requirement_request)) {
+                                if (is_null($client->requirements_request)) {
                                     echo $client->getRawOriginal('requirements_request') ?? '';
                                 } else {
                                     $cou = '';
-                                    $countries = collect($client->requirement_request)->toArray();
-                                    //$result = array_intersect_key($countries, $requirements_request);
-                                    $arr = $requirements_request;
-                                    $allowed = $countries;
-                                    $result = array_intersect_key($arr, array_flip($allowed));
-                                    foreach ($result as $val) {
+                                    $requirements = collect($client->requirements_request)->toArray();
+                                    $newArr = array_filter($requirements_request, function($var) use ($requirements){
+                                        return in_array($var['id'], $requirements);
+                                    });
+                                    foreach ($newArr as $val) {
                                             $cou .= '<span class="badge badge-light-primary">' . $val['text'] . '</span><br>';
                                 }
                                     echo $cou;

@@ -160,8 +160,8 @@
                                 <select class="custom-select custom-select-sm" id="type_filter"
                                         name="type_filter">
                                     <option value="">{{ __('Select Type') }}</option>
-                                    <option value="1">{{ __('Freelance') }}</option>
-                                    <option value="2">{{ __('Company') }}</option>
+                                    <option value="1">{{ __('Company') }}</option>
+                                    <option value="2">{{ __('Freelance') }}</option>
                                 </select>
                             </div>
                             @if(auth()->user()->hasRole('Admin'))
@@ -209,7 +209,7 @@
                             </div>
                             <div class="form-group mb-2">
                                 <input name="city_filter" id="city_filter"
-                                       class="custom-control custom-control-sm" placeholder="City">
+                                       class="form-control form-control-sm" placeholder="City">
                             </div>
                         </div>
                         <div class="card-footer p-2">
