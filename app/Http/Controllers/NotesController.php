@@ -57,7 +57,7 @@ class NotesController extends Controller
      * Store a newly created resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @return void
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
@@ -69,7 +69,7 @@ class NotesController extends Controller
         ]);
 
         return redirect()->route('clients.edit', $request->client_id)
-            ->with('toast_success', __('Created successfully'));
+            ->with('toast_success', __('Note created successfully'));
     }
 
     /**

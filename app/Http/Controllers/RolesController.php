@@ -66,7 +66,7 @@ class RolesController extends Controller
 
 
         return redirect()->route('roles.index')
-            ->with('toast_success', 'Role created successfully');
+            ->with('toast_success', __('Role created successfully'));
     }
 
     /**
@@ -118,7 +118,7 @@ class RolesController extends Controller
         $role->syncPermissions($request->get('permission'));
 
         return redirect()->route('roles.index')
-            ->with('toast_success', 'Role updated successfully');
+            ->with('toast_success', __('Role updated successfully'));
 
     }
 
@@ -134,6 +134,6 @@ class RolesController extends Controller
 
         $role->delete();
         return redirect()->route('roles.index')
-            ->with('success', 'Role deleted successfully');
+            ->with('success', __('Role deleted successfully'));
     }
 }

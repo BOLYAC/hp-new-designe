@@ -38,50 +38,17 @@
     <script>
         $(function () {
             let budgetData = [
-                {
-                    id: 1,
-                    text: 'Less then 50K'
-                },
-                {
-                    id: 2,
-                    text: '50K <> 100K'
-                },
-                {
-                    id: 3,
-                    text: '100K <> 150K'
-                },
-                {
-                    id: 4,
-                    text: '150K <> 200K'
-                },
-                {
-                    id: 5,
-                    text: '200K <> 300K'
-                },
-                {
-                    id: 6,
-                    text: '300K <> 400k'
-                },
-                {
-                    id: 7,
-                    text: '400k <> 500K'
-                },
-                {
-                    id: 8,
-                    text: '500K <> 600k'
-                },
-                {
-                    id: 9,
-                    text: '600K <> 1M'
-                },
-                {
-                    id: 10,
-                    text: '1M <> 2M'
-                },
-                {
-                    id: 11,
-                    text: 'More then 2M'
-                }
+                {id: 1, text: 'Less then 50K'},
+                {id: 2, text: '50K <> 100K'},
+                {id: 3, text: '100K <> 150K'},
+                {id: 4, text: '150K <> 200K'},
+                {id: 5, text: '200K <> 300K'},
+                {id: 6, text: '300K <> 400k'},
+                {id: 7, text: '400k <> 500K'},
+                {id: 8, text: '500K <> 600k'},
+                {id: 9, text: '600K <> 1M'},
+                {id: 10, text: '1M <> 2M'},
+                {id: 11, text: 'More then 2M'}
             ]
 
             $('.js-budgets-all').select2({
@@ -92,6 +59,7 @@
                 theme: 'classic'
             }).val({!! json_encode($event->lead_budget) !!}).trigger('change.select2');
         });
+
         $('.js-client-all').select2({
             ajax: {
                 url: "{{ route('event.client.filter') }}",
@@ -110,20 +78,23 @@
                 cache: true
             }
         });
+
         $(function () {
             if ($('#results').val() === '3') {
                 $('#negative-form').show();
+                alert($('#results').val())
                 console.log($('#results').val())
             } else {
                 $('#negative-form').hide();
             }
-            $('#results').change(function () {
+
+            $('#results').on('change', function () {
                 if ($('#results').val() === '3') {
                     $('#negative-form').show();
                 } else {
                     $('#negative-form').hide();
                 }
-            })
+            });
         });
     </script>
 
@@ -140,7 +111,7 @@
             <div class="col-md-9">
                 <!-- Zero config.table start -->
                 @include('partials.flash-message')
-                <div class="card">
+                <div class="card card-with-border">
                     <form action="{{ route('events.update', $event) }}" method="post"
                           enctype="multipart/form-data">
                         @csrf
@@ -168,7 +139,6 @@
                                     </select>
                                 </div>
                             @endcan
-
                             @can('share-appointment')
                                 <div class="form-group form-group-sm">
                                     <label for="share_with">{{ __('Sell representative') }}</label>

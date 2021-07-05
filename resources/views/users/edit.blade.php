@@ -107,6 +107,20 @@
                                     @endforeach
                                 </select>
                             </div>
+                            <div class="form-group input-group-sm">
+                                <label for="department_ids">{{__('Other Department')}}</label>
+                                <select class="custom-select custom-select-sm js-example-basic-single"
+                                        name="departments_ids[]" id="department_ids" multiple>
+                                    <option value=""> -- {{ __('Select department') }} --</option>
+                                    @foreach($departments as $department)
+                                        <option
+                                            value="{{ $department->id }}" {{ in_array($department->id, $user->departments_ids) ? 'selected' : ''}}
+                                        >
+                                            {{ $department->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
                             <div class="form-group">
                                 <label>{{ __('Photo profile') }}</label>
                                 <input type="file" name="full" class="form-control">

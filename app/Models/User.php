@@ -25,7 +25,7 @@ class User extends Authenticatable implements Auditable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'external_id', 'image_path', 'department_id', 'phone_1', 'phone_2', 'commission_rate'
+        'name', 'email', 'password', 'external_id', 'image_path', 'department_id', 'phone_1', 'phone_2', 'commission_rate', 'departments_ids'
 
     ];
 
@@ -45,6 +45,7 @@ class User extends Authenticatable implements Auditable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'departments_ids' => 'array'
     ];
 
 
@@ -113,6 +114,11 @@ class User extends Authenticatable implements Auditable
     public function invoices(): HasMany
     {
         return $this->hasMany(Lead::class, 'user_id');
+    }
+
+    public function ownedDepartments()
+    {
+        return $this->belongsToMany(Department::class);
     }
 
     /**

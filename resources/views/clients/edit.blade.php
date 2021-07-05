@@ -306,6 +306,7 @@
                 theme: 'classic'
             }).val({!! json_encode($client->budget_request) !!}).trigger('change.select2');
         });
+
         $('.js-country-all').select2({
             theme: 'classic',
             ajax: {
@@ -325,6 +326,7 @@
                 cache: true
             }
         });
+
         $('.js-nationality-all').select2({
             theme: 'classic',
             ajax: {
@@ -344,6 +346,7 @@
                 cache: true
             }
         });
+
         $('.js-language-all').select2({
             theme: 'classic',
             ajax: {

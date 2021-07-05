@@ -29,7 +29,7 @@
         </div>
     @endcan
     @can('chose-negativity')
-        <div class="form-group">
+        <div class="form-group" id="negative-form">
             <label for="negativity">{{ __('Negativity criterion:') }}</label>
             <select name="negativity" id="negativity" class="form-control form-control-sm">
                 <option value="1" {{ $event->negativity === '1' ? 'selected' : '' }}> - {{ __('None') }} -</option>

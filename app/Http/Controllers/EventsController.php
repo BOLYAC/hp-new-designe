@@ -203,7 +203,7 @@ class EventsController extends Controller
         }
 
         return redirect()->route('events.index')
-            ->with('toast_success', 'Event created successfully');
+            ->with('toast_success', __('Event created successfully'));
     }
 
     /**
@@ -283,7 +283,7 @@ class EventsController extends Controller
         }
 
         return redirect()->route('events.index')
-            ->with('toast_success', 'Event updated successfully');
+            ->with('toast_success', __('Event updated successfully'));
     }
 
     /**
@@ -299,7 +299,7 @@ class EventsController extends Controller
 
         $newEvent->save();
         return redirect()->route('events.edit', $newEvent)
-            ->with('toast_success', 'Event duplicated successfully');
+            ->with('toast_success', __('Event duplicated successfully'));
     }
 
     /**
@@ -314,7 +314,7 @@ class EventsController extends Controller
     {
         $event->delete();
         return redirect()->route('events.index')
-            ->with('toast_success', 'Event deleted successfully');
+            ->with('toast_success', __('Event deleted successfully'));
     }
 
     public
@@ -346,7 +346,7 @@ class EventsController extends Controller
             $events = Event::whereDate('event_date', Carbon::tomorrow()->toDateString())->get();
         }
         if ($events->isEmpty()) {
-            return back()->with('toast_error', 'There is no appointment in this date')->withInput();
+            return back()->with('toast_error', __('There is no appointment in this date'))->withInput();
         }
 
         return view('events.report', compact('events', 'val'));
@@ -369,7 +369,7 @@ class EventsController extends Controller
         }
 
         if ($events->isEmpty()) {
-            return back()->with('toast_error', 'There is no appointment in this date')->withInput();
+            return back()->with('toast_error', __('There is no appointment in this date'))->withInput();
         }
 
         //return view('events.preview',compact('events'));
@@ -399,7 +399,7 @@ class EventsController extends Controller
             ->get();
 
         if ($events->isEmpty()) {
-            return back()->with('toast_error', 'There is no appointment in this date')->withInput();
+            return back()->with('toast_error', __('There is no appointment in this date'))->withInput();
         }
 
         $val = [$from, $to];

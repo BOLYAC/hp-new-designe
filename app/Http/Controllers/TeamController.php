@@ -77,10 +77,11 @@ class TeamController extends Controller
             'personal_team' => true,
             'department_id' => $user->department_id
         ]));
+
         $user->currentTeam();
         return redirect()
             ->route('teams.edit', $user->currentTeam)
-            ->with('toast_success', 'Team updated successfully');
+            ->with('toast_success', __('Team created successfully'));
     }
 
     /**
@@ -138,7 +139,7 @@ class TeamController extends Controller
         }
         return redirect()
             ->route('teams.index')
-            ->with('toast_success', 'Team updated successfully');
+            ->with('toast_success', __('Team updated successfully'));
     }
 
     /**
@@ -152,6 +153,6 @@ class TeamController extends Controller
         $team->purge();
 
         return redirect()->route('teams.index')
-            ->with('toast_success', 'Team deleted successfully');
+            ->with('toast_success', __('Team deleted successfully'));
     }
 }

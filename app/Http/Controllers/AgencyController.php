@@ -142,7 +142,7 @@ class AgencyController extends Controller
         Agency::create($data);
 
         return redirect()->route('agencies.index')
-            ->with('toast_success', 'Agency created successfully');
+            ->with('toast_success', __('Agency created successfully'));
     }
 
     /**
@@ -184,7 +184,7 @@ class AgencyController extends Controller
         $agency->forceFill($data)->save();
 
         return redirect()->route('agencies.index')
-            ->with('toast_success', 'Agency updated successfully');
+            ->with('toast_success', __('Agency updated successfully'));
     }
 
     /**
@@ -197,7 +197,7 @@ class AgencyController extends Controller
     {
         $agency->delete();
         return redirect()->route('agencies.index')
-            ->with('toast_success', 'Agency deleted successfully');
+            ->with('toast_success', __('Agency deleted successfully'));
     }
 
     /**

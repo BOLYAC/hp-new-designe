@@ -59,7 +59,7 @@
                             </div>
                             <div class="form-group input-group-sm">
                                 <label for="roles">{{__('Role')}}</label>
-                                <select class="form-control js-example-basic-single" type="roles" name="roles[]"
+                                <select class="custom-select custom-select-sm js-example-basic-single" type="roles" name="roles[]"
                                         id="roles" multiple>
                                     @foreach($roles as $role)
                                         <option value="{{ $role }}">{{ $role }}</option>
@@ -68,14 +68,22 @@
                             </div>
                             <div class="form-group input-group-sm">
                                 <label for="department">{{__('Department')}}</label>
-                                <select class="form-control" name="department_id" id="department">
-                                    <option value="0"> -- {{ __('Select department') }} --</option>
+                                <select class="custom-select custom-select-sm" name="department_id" id="department">
+                                    <option value=""> -- {{ __('Select department') }} --</option>
                                     @foreach($departments as $department)
                                         <option value="{{ $department->id }}">{{ $department->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
-
+                            <div class="form-group input-group-sm">
+                                <label for="department_ids">{{__('Other Department')}}</label>
+                                <select class="custom-select custom-select-sm js-example-basic-single" name="departments_ids[]" id="department_ids" multiple>
+                                    <option value=""> -- {{ __('Select department') }} --</option>
+                                    @foreach($departments as $department)
+                                        <option value="{{ $department->id }}">{{ $department->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                             <button type="submit" class="btn btn-sm btn-primary">
                                 {{ __('save') }}
                                 <i class="icon-save"></i></button>

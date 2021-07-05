@@ -39,7 +39,7 @@ class PaymentController extends Controller
             'user_id' => $request->user_id
         ]);
 
-        return redirect()->back()->with('toast_success', 'Payment successfully added');
+        return redirect()->back()->with('toast_success', __('Payment successfully added'));
     }
 
     public function paymentsDataTable(Invoice $invoice)
@@ -82,6 +82,6 @@ class PaymentController extends Controller
     public function destroy(Payment $payment)
     {
         $payment->delete();
-        return redirect()->back()->with('toast_success', 'Payment successfully deleted');
+        return redirect()->back()->with('toast_success', __('Payment successfully deleted'));
     }
 }

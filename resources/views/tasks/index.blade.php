@@ -66,9 +66,9 @@
 
             // Select ajax
             let table = $('#datatable').DataTable({
-                destroy: true,
+                stateSave: false,
+                order: [[1, 'desc']],
                 processing: true,
-                serverSide: true,
                 ajax: {
                     url: '{!! route('tasks.data') !!}',
                     data: function (d) {
@@ -90,7 +90,7 @@
                 ],
                 @endcan
                 columns: [
-                    {data: 'id', name: 'id',},
+                    {data: 'id', name: 'id'},
                     {data: 'date', name: 'date'},
                     {data: 'title', name: 'title'},
                     {data: 'client_id', name: 'client_id',},
@@ -155,9 +155,8 @@
                 e.preventDefault();
                 table.draw();
             });
-            // Radion form changes
+            // Radio form changes
             $("#radioForm input[type='radio']").change(function (e) {
-                //const val = document.querySelector("input[name=radio]:checked").value;
                 e.preventDefault();
                 table.draw();
             })
@@ -246,7 +245,8 @@
                             @endif
                             <div class="theme-form mb-2">
                                 <label for="daterange">{{ __('Date') }}</label>
-                                <input class="form-control form-control-sm digits" type="text" name="daterange" id="daterange"
+                                <input class="form-control form-control-sm digits" type="text" name="daterange"
+                                       id="daterange"
                                        value="">
                             </div>
                             <div class="col">
@@ -319,7 +319,7 @@
                                     <th width="20%">{{ __('Nationality') }}</th>
                                     <th width="20%">{{ __('Assigned') }}</th>
                                     <th width="20%">{{ __('Process') }}</th>
-                                    <th>{{ __('Action') }}</th>
+                                    <th data-priority="2">{{ __('Action') }}</th>
                                 </tr>
                                 </thead>
 

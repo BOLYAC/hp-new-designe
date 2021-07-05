@@ -63,7 +63,7 @@ class ProjectsController extends Controller
         Project::create($data);
 
         return redirect()->route('projects.index')
-            ->with('toast_success', 'Project created successfully');
+            ->with('toast_success', __('Project created successfully'));
     }
 
     /**
@@ -102,7 +102,7 @@ class ProjectsController extends Controller
         $project->forceFill($data)->save();
 
         return redirect()->route('projects.index')
-            ->with('toast_success', 'Project updated successfully');
+            ->with('toast_success', __('Project updated successfully'));
     }
 
     /**
@@ -114,10 +114,10 @@ class ProjectsController extends Controller
     public function destroy(Project $project): \Illuminate\Http\RedirectResponse
     {
         if (!$project->invoices->isEmpty()) {
-            return redirect()->route('projects.index')->with('toast_danger', __("Can't delete project with invoices, please remove invoices"));
+            return redirect()->route('projects.index')->with('toast_danger', __('Can\'t delete project with invoices, please remove invoices'));
         }
         $project->delete();
-        return redirect()->route('projects.index')->with('toast_success', __("Project deleted with success"));
+        return redirect()->route('projects.index')->with('toast_success', __('Project deleted with success'));
     }
 
     public function getProject($id)

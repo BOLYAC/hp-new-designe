@@ -44,7 +44,6 @@
             </form>
         </div>
     </div>
-    </div>
 @endif
 @if($mode === 'show')
     <div class="email-right-aside bookmark-tabcontent">

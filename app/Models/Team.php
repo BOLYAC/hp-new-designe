@@ -126,6 +126,7 @@ class Team extends Model
         $this->users()->detach();
 
         $this->delete();
+
     }
 
 }

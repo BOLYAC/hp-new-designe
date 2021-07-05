@@ -57,7 +57,7 @@ class SourcesController extends Controller
     Source::create($data);
 
     return redirect()->route('sources.index')
-      ->with('toast_success', 'Source created successfully');
+      ->with('toast_success', __('Source created successfully'));
   }
 
   /**
@@ -96,7 +96,7 @@ class SourcesController extends Controller
     $source->update($data);
 
     return redirect()->route('sources.index')
-      ->with('toast_success', 'Source updated successfully');
+      ->with('toast_success', __('Source updated successfully'));
   }
 
   /**
@@ -110,7 +110,7 @@ class SourcesController extends Controller
   {
     $source->delete();
     return redirect()->route('sources.index')
-      ->with('toast_success', 'Source deleted successfully');
+      ->with('toast_success', __('Source deleted successfully'));
   }
 
 

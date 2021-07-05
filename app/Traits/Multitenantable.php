@@ -32,6 +32,13 @@ trait Multitenantable
                         ->where('department_id', auth()->user()->department_id);
                 });
             }
+
+            if (auth()->user()->hasPermissionTo('multiple-department')){
+                static::addGlobalScope('team_id', function (Builder $builder) {
+                    $builder->whereIn('team_id', auth()->user()->ownedTeams->pluck('id'))
+                        ->whereIn('department_id', auth()->user()->departments_ids);
+                });
+            }
         }
     }
 }

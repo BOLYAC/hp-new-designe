@@ -163,7 +163,7 @@ class OrderController extends Controller
 
         $amount = $invoice->commission_total - $invoice->payments()->sum('amount');
         return view('invoices.show', compact('invoice', 'amount'))
-            ->with('toast_success', 'Invoice updated successfully');
+            ->with('toast_success', __('Invoice updated successfully'));
     }
 
     /**

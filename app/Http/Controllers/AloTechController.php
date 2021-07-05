@@ -22,7 +22,7 @@ class AloTechController extends Controller
         $token = 'ahRzfm11c3RlcmktaGl6bWV0bGVyaXIfCxISVGVuYW50QXBwbGljYXRpb25zGICA5Ibn17YKDKIBGGhhc2hpbWdyb3VwLmFsby10ZWNoLmNvbQ';
         $userName = $request->email;
         if ($userName == auth()->user()->email) {
-            return redirect()->back()->with('toast_error', 'You can note access!');
+            return redirect()->back()->with('toast_error', __('You can note access!'));
         }
         $authentication = new Authentication();
         $authentication->setUsername($userName);
@@ -35,7 +35,7 @@ class AloTechController extends Controller
 
         Session::put('alotech', $aloTech);
         //$request->session()->put($aloTech);
-        return redirect()->back()->with('toast_success', 'Logged to AloTech successfully');
+        return redirect()->back()->with('toast_success', __('Logged to AloTech successfully'));
     }
 
     public function getCall(Request $request): \Illuminate\Http\JsonResponse
@@ -43,7 +43,7 @@ class AloTechController extends Controller
         $data = $request->except('_token');
         if ($request->session()->has('current_call')) {
             return response()->json(array(
-                'message' => 'Already on call',
+                'message' => __('Already on call'),
                 'type' => 'danger'
             ), 200);
         }
@@ -54,7 +54,7 @@ class AloTechController extends Controller
         // Validate the input and return correct response
         if ($validator->fails()) {
             return response()->json(array(
-                'message' => 'Please verify your phone number!',
+                'message' => __('Please verify your phone number!'),
                 'type' => 'danger'
             ), 200);
         } else {
@@ -63,12 +63,12 @@ class AloTechController extends Controller
             $click2 = new Click2($aloTech);
             $res = $click2->call([
                 'phonenumber' => $phoneNumber,
-                'hangup_url' => 'http://hp-new.local/',
+                'hangup_url' => 'http://crm.hashim.com.tr/',
                 'masked' => '1'
             ]);
             Session::put('current_call', $click2);
             return response()->json(array(
-                'message' => 'Call started',
+                'message' => __('Call started'),
                 'type' => 'success'
             ), 200);
         }
@@ -82,12 +82,12 @@ class AloTechController extends Controller
             $click2->hang();
             Session::forget('current_call');
             return response()->json(array(
-                'message' => 'Call ended',
+                'message' => __('Call ended'),
                 'type' => 'success'
             ), 200);
         } else {
             return response()->json(array(
-                'message' => 'There is no call',
+                'message' => __('There is no call'),
                 'type' => 'danger'
             ), 200);
         }

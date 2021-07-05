@@ -237,24 +237,22 @@ class ClientsController extends Controller
                     $i = $clients->status;
                     switch ($i) {
                         case 1:
-                            return '<span class="label label-inverse-info">' . __('New Lead') . '</span>';
+                            return '<span class="badge badge-light-info">' . __('New Lead') . '</span>';
                             break;
                         case 8:
-                            return '<span class="label label-inverse-info">' . __('No Answer') . '</span>';
+                            return '<span class="badge badge-light-info">' . __('No Answer') . '</span>';
                             break;
                         case 12:
-                            return '<span class="label label-inverse-info">' . __('In progress') . '</span>';
+                            return '<span class="badge badge-light-info">' . __('In progress') . '</span>';
                             break;
                         case 3:
-                            return '<span class="badge badge-light-primary">' . __('Potential
-                appointment') . '</span>';
+                            return '<span class="badge badge-light-primary">' . __('Potential appointment') . '</span>';
                             break;
                         case 4:
                             return '<span class="badge badge-light-primary">' . __('Appointment set') . '</span>';
                             break;
                         case 10:
-                            return '<span class="badge badge-light-primary">' . __('Appointment
-                follow up') . '</span>';
+                            return '<span class="badge badge-light-primary">' . __('Appointment follow up') . '</span>';
                             break;
                         case 5:
                             return '<span class="badge badge-light-success">' . __('Sold') . '</span>';
@@ -273,6 +271,9 @@ class ClientsController extends Controller
                             break;
                         case 14:
                             return '<span class="badge badge-light-warning">' . __('Unqualified') . '</span>';
+                            break;
+                        case 15:
+                            return '<span class="badge badge-light-warning">' . __('Lost') . '</span>';
                             break;
                     }
                 }
@@ -433,7 +434,6 @@ class ClientsController extends Controller
         $sources = Source::all();
         $agencies = Agency::all();
         $clientDocuments = $client->documents()->get();
-        //dd($client->tasks()->get());
         $previous_record = Client::where('id', '<', $client->id)->orderBy('id', 'desc')->first();
         $next_record = Client::where('id', '>', $client->id)->orderBy('id')->first();
         return view('clients.edit', compact('client', 'users', 'sources', 'agencies', 'clientDocuments', 'next_record', 'previous_record'));

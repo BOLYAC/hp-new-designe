@@ -82,7 +82,7 @@ class DepartmentController extends Controller
             'email' => $request->email,
             'phone' => $request->phone
         ]);
-        return redirect()->route('departments.index')->with('toast_danger', __("Successfully created new department"));
+        return redirect()->route('departments.index')->with('toast_danger', __('Department created successfully'));
     }
 
     /**
@@ -123,7 +123,7 @@ class DepartmentController extends Controller
             'email' => $request->email,
             'phone' => $request->phone
         ]);
-        return redirect()->route('departments.index')->with('toast_success', __("Department successfully updated"));
+        return redirect()->route('departments.index')->with('toast_success', __('Department successfully updated'));
     }
 
     /**
@@ -136,9 +136,9 @@ class DepartmentController extends Controller
     {
 
         if (!$department->users->isEmpty()) {
-            return redirect()->route('departments.index')->with('toast_danger', __("Can't delete department with users, please remove users"));
+            return redirect()->route('departments.index')->with('toast_danger', __('Can\'t delete department with users, please remove users'));
         }
         $department->delete();
-        return redirect()->route('departments.index')->with('toast_success', __("Department deleted with success"));
+        return redirect()->route('departments.index')->with('toast_success', __('Department deleted with success'));
     }
 }

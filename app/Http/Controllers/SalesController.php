@@ -27,43 +27,43 @@ class SalesController extends Controller
         $i = $client->status;
         switch ($i) {
             case 1:
-                $status = 'New Lead';
+                $status = __('New Lead');
                 break;
             case 8:
-                $status = 'No Answer';
+                $status = __('No Answer');
                 break;
             case 12:
-                $status = 'In progress';
+                $status = __('In progress');
                 break;
             case 3:
-                $status = 'Potential appointment';
+                $status = __('Potential appointment');
                 break;
             case 4:
-                $status = 'Appointment set';
+                $status = __('Appointment set');
                 break;
             case 10:
-                $status = 'Appointment follow up';
+                $status = __('Appointment follow up');
                 break;
             case 5:
-                $status = 'Sold';
+                $status = __('Sold');
                 break;
             case 13:
-                $status = 'Unreachable';
+                $status = __('Unreachable');
                 break;
             case 7:
-                $status = 'Not interested';
+                $status = __('Not interested');
                 break;
             case 11:
-                $status = 'Low budget';
+                $status = __('Low budget');
                 break;
             case 9:
-                $status = 'Wrong Number';
+                $status = __('Wrong Number');
                 break;
             case 14:
-                $status = 'Unqualified';
+                $status = __('Unqualified');
                 break;
             case 15:
-                $status = 'Lost';
+                $status = __('Lost');
                 break;
         }
 
@@ -102,7 +102,7 @@ class SalesController extends Controller
         $lead = Lead::create($lead);
         //$client->update(['lead_id' => $lead->id]);
         $lead->ShareWithSelles()->attach($l, ['added_by' => Auth::id(), 'user_name' => Auth::user()->name]);
-        return redirect()->route('leads.show', $lead)->with('toast_success', 'Deal created successfully for' . $client->full_name ?? '');
+        return redirect()->route('leads.show', $lead)->with('toast_success', __('Deal created successfully for') . $client->full_name ?? '');
     }
 
 
@@ -127,7 +127,7 @@ class SalesController extends Controller
             ->get();
 
         if (count($audits)) {
-            return \Response::json(array("errors" => 'already have been assigne to this user'), 422);
+            return \Response::json(array("errors" => __('already have been assigned to this user')), 422);
         }
 
         $user = User::find($request->get('user_id'));
@@ -246,7 +246,7 @@ class SalesController extends Controller
 
         //AssignedClientEmailJob::dispatch($data);
 
-        return redirect()->back()->with('toast_success', 'Sellers updated successfully');
+        return redirect()->back()->with('toast_success', __('Sellers updated successfully'));
 
     }
 }

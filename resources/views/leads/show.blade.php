@@ -39,50 +39,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
     <script>
         let budgetData = [
-            {
-                id: 1,
-                text: 'Less then 50K'
-            },
-            {
-                id: 2,
-                text: '50K <> 100K'
-            },
-            {
-                id: 3,
-                text: '100K <> 150K'
-            },
-            {
-                id: 4,
-                text: '150K <> 200K'
-            },
-            {
-                id: 5,
-                text: '200K <> 300K'
-            },
-            {
-                id: 6,
-                text: '300K <> 400k'
-            },
-            {
-                id: 7,
-                text: '400k <> 500K'
-            },
-            {
-                id: 8,
-                text: '500K <> 600k'
-            },
-            {
-                id: 9,
-                text: '600K <> 1M'
-            },
-            {
-                id: 10,
-                text: '1M <> 2M'
-            },
-            {
-                id: 11,
-                text: 'More then 2M'
-            }
+            {id: 1, text: 'Less then 50K'},
+            {id: 2, text: '50K <> 100K'},
+            {id: 3, text: '100K <> 150K'},
+            {id: 4, text: '150K <> 200K'},
+            {id: 5, text: '200K <> 300K'},
+            {id: 6, text: '300K <> 400k'},
+            {id: 7, text: '400k <> 500K'},
+            {id: 8, text: '500K <> 600k'},
+            {id: 9, text: '600K <> 1M'},
+            {id: 10, text: '1M <> 2M'},
+            {id: 11, text: 'More then 2M'}
         ]
 
         $('.js-budgets-all').select2({
@@ -133,7 +100,7 @@
                 $.confirm({
                     title: '{{ __('Reservation From') }}',
                     theme: 'supervan',
-                    columnClass: 'col-md-8',
+                    columnClass: 'col-md-12',
                     bootstrapClasses: {
                         container: 'container',
                         containerFluid: 'container-fluid',
@@ -143,7 +110,7 @@
                         '<form class="reservationForm" enctype="multipart/form-data">' +
                         '@csrf' +
                         '<div class="row">' +
-                        '<div class="form-group col-md-12">' +
+                        '<div class="form-group col-md-6">' +
                         '<label> {{ __('Project name') }} </label>' +
                         '<select id="project" name="project_id" class="project_id form-control form-control-sm">' +
                         '<option value="">-- {{ __('Select Project') }} --</option>' +
@@ -151,12 +118,12 @@
                         '<option value="{{ $project->id }}">{{ $project->project_name }}</option>' +
                         '@endforeach' +
                         '</select>' +
-                        '<div class="form-group">' +
+                        '</div>' +
+                        '<div class="form-group col-md-6">' +
                         '<label for="property">{{ __('Select Property:') }}</label>' +
                         '<select name="property" class="property form-control form-control-sm">' +
                         '<option value="">-- {{ __('Select Property') }} --</option>' +
                         '</select>' +
-                        '</div>' +
                         '</div>' +
                         '<div class="form-group col-md-6">' +
                         '<label> {{ __('Province/Country') }} </label>' +
@@ -243,13 +210,13 @@
                                         file_path
                                     },
                                     success: function () {
+                                        location.href = "{{ route('leads.show', $lead) }}"
                                         notify('Reservation created, Stage change to reservation', 'success');
                                     },
                                     error: function () {
                                         notify('Ops!! Something wrong', 'danger');
                                     },
                                 });
-
                             }
                         },
                         cancel: function () {
@@ -288,8 +255,6 @@
                                         $.each(data, function (key, value) {
                                             property.append('<option value="' + key + '">' + value + '</option>');
                                         });
-
-
                                     }
                                 });
                             } else {
@@ -387,7 +352,7 @@
         @include('partials.flash-message')
         <div class="row">
             <div class="col-md-8">
-                <div class="card">
+                <div class="card card-with-border">
                     <div class="card-header b-t-primary b-b-primary row">
                         <div class="col-md-4 col-lg-4">
                             @if($lead->invoice_id <> 0)

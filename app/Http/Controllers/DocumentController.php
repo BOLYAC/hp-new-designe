@@ -52,7 +52,7 @@ class DocumentController extends Controller
         //ClientDocument::create($data);
 
         return redirect()->back()
-            ->with('toast_success', 'File add successfully');
+            ->with('toast_success', __('File add successfully'));
     }
 
     /**

@@ -55,15 +55,15 @@
             <div class="card shadow-0 border">
                 <div class="card-body p-2">
                     <!-- chat-header start-->
-                    @if( Session::has('current_call') )
-                    @endif
-                    @if(Session::has('alotech'))
-                        <!-- <div>
+                @if( Session::has('current_call') )
+                @endif
+                @if(Session::has('alotech'))
+                    <!-- <div>
                             <button class="btn btn-danger-gradien btn-block btn-lg"
                                     id="endCall">{{ __('END CALL') }}
-                            </button>
-                        </div>-->
-                        <div class="container">
+                        </button>
+                    </div>-->
+                        <div class="container-calls">
                             <div id="output"></div>
                             <div class="row justify-content-center">
                                 <div class="digit" id="one">1</div>
@@ -93,10 +93,11 @@
                                     <i class="fa fa-ban" aria-hidden="true"></i>
                                 </div>
                                 <div id="removeNumber">
-                                <i class="fa fa-long-arrow-left dig" aria-hidden="true"></i>
+                                    <i class="fa fa-long-arrow-left dig" aria-hidden="true"></i>
                                 </div>
                             </div>
-                            <button class="btn btn-sm btn-block btn-primary" id="emptyField">{{ __('Empty field') }}</button>
+                            <button class="btn btn-sm btn-block btn-primary"
+                                    id="emptyField">{{ __('Empty field') }}</button>
                         </div>
                     @else
                         <div class="m-2 p-2">
@@ -106,7 +107,7 @@
                                 <div class="form-group">
                                     <label for="login">{{ __('Email') }}</label>
                                     <input type="email" id="login" name="email"
-                                            class="form-control form-control-sm">
+                                           class="form-control form-control-sm">
                                 </div>
                                 <button class="btn btn-sm btn-primary"
                                         type="submit">{{ __('Login') }}</button>
@@ -120,5 +121,6 @@
 </div>
 @livewireScripts
 @include('layouts.vertical.script')
+@stack('scripts')
 </body>
 </html>

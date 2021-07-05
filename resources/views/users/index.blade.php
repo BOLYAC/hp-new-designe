@@ -48,7 +48,7 @@
                 <!-- Zero config.table start -->
                 @include('partials.flash-message')
                 <div class="card">
-                    <div class="card-header b-t-primary b-b-primary">
+                    <div class="card-header b-t-primary b-b-primary p-2">
                         <a href="{{ route('users.create') }}" class="btn btn-sm btn-outline-primary">
                             {{ __('New user') }}<i class="icon-plus"></i></a>
                     </div>
@@ -63,7 +63,7 @@
                                     <th>{{ __('Name') }}</th>
                                     <th>{{ __('E-mail') }}</th>
                                     <th>{{ __('Role') }}</th>
-                                    <th>{{__('Status')}}</th>
+                                    <th>{{ __('Status') }}</th>
                                     <th></th>
                                 </tr>
                                 </thead>

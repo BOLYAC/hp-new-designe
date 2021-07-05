@@ -6,14 +6,24 @@
     <!-- ToDo css -->
     <link rel="stylesheet" href="{{ asset('assets/css/todo.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css">
+    <!-- Select 2 css -->
+    <link rel="stylesheet" href="{{ asset('assets/css/select2.css') }}"/>
 @endsection
 @section('script')
+    <!-- Plugins JS start-->
+    <script src="{{ asset('assets/js/select2/select2.full.min.js') }}"></script>
     <!-- Plugins JS start-->
     <script src="{{ asset('assets/js/editor/summernote/summernote.js') }}"></script>
     <script src="{{ asset('assets/js/editor/summernote/summernote.custom.js') }}"></script>
     <!-- Plugins JS start-->
     <script src="{{ asset('assets/js/notify/bootstrap-notify.min.js') }}"></script>
     <script src="{{ asset('assets/js/notify/notify-script.js') }}"></script>
+
+    <script>
+        window.livewire.on('alert', param => {
+            notify(param['type'], param['message'], param['icon'])
+        })
+    </script>
 @endsection
 @section('breadcrumb-items')
     <li class="breadcrumb-item"><a href="{{ route('clients.index') }}">{{ __('Leads') }}</a></li>
@@ -55,275 +65,8 @@
         <div class="row">
             <div class="col-md-9 col-lg-10">
                 <!-- Zero config.table start -->
-                <div class="card b-t-primary">
-                    <div class="card-header b-t-primary b-b-primary p-2 d-flex justify-content-between">
-                        <h5 class="mr-auto mt-2">{{ __('Lead') }}
-                            : {{ $client->complete_name ?? $client->full_name ?? '' }}</h5>
-                        @can('client-edit')
-                            <a class="btn btn-sm btn-warning mr-2" href="{{ route('clients.index') }}"><i
-                                    class="icon-arrow-left"></i> {{ __('Back') }}</a>
-                            <a class="btn btn-sm btn-primary"
-                               href="{{ route('clients.edit', $client) }}">{{ __('Edit') }}</a>
-
-                        @endcan
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <table class="table m-0">
-                                    <tbody>
-                                    <tr>
-                                        <th scope="row">Id</th>
-                                        <td>{{ $client->public_id ?? '' }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">{{ __('Full Name') }}</th>
-                                        <td>{{ $client->complete_name ?? $client->full_name ?? '' }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">{{ __('Phone(s)') }}</th>
-                                        <td>
-                                            {{ $client->client_number }}
-                                            <a href="javascript:void(0)"
-                                               class="btn btn-xs btn-outline-primary float-right theme-setting ph1"><i
-                                                    class="fa fa-phone"></i></a>
-                                            <a href="https://wa.me/{{$client->client_number}}" target="_blank"
-                                               class="btn btn-xs btn-outline-success float-right mr-2"><i
-                                                    class="fa fa-whatsapp"></i></a>
-                                            <br>
-                                            {{ $client->client_number_2 }}
-                                            <a href="javascript:void(0)"
-                                               class="btn btn-xs btn-outline-primary float-right theme-setting ph1"><i
-                                                    class="fa fa-phone"></i></a>
-                                            <a href="https://wa.me/{{$client->client_number_2}}" target="_blank"
-                                               class="btn btn-xs btn-outline-success float-right mr-2"><i
-                                                    class="fa fa-whatsapp"></i></a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">{{ __('Email(s)') }}</th>
-                                        <td>
-                                            <a href="{{ route('clients.compose.email', ['client' => $client]) }}"
-                                               class="btn btn-xs btn-outline-primary"><i
-                                                    class="icon-email"></i> {{ __('Send email') }}
-                                            </a>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">{{ __('Country') }}</th>
-                                        <td>
-                                            @php
-                                                if (is_null($client->country)){
-                                                    echo $client->getRawOriginal('country') ?? '';
-                                                } else  {
-                                                    $cou = '';
-                                                    $countries = collect($client->country)->toArray();
-                                                foreach( $countries as $name) {
-                                                    $cou .=  '<span class="badge badge-dark">' .  $name . '</span>';
-                                                }
-                                                    echo $cou;
-                                                }
-                                            @endphp
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">{{ __('Nationality') }}</th>
-                                        <td>
-                                            @php
-                                                if (is_null($client->nationality)){
-                                                echo $client->getRawOriginal('nationality') ?? '';
-                                                } else  {
-                                                $cou = '';
-                                                $countries = collect($client->nationality)->toArray();
-                                                foreach( $countries as $name) {
-                                                $cou .=  '<span class="badge badge-dark">' .  $name . '</span>';
-                                                }
-                                                echo $cou;
-                                                }
-                                            @endphp
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">{{ __('Languages') }}</th>
-                                        <td>
-                                            @php
-                                                if (is_null($client->lang)){
-                                                    echo $client->getRawOriginal('lang') ?? '';
-                                                } else  {
-                                                $cou = '';
-                                                $countries = collect($client->lang)->toArray();
-                                                foreach( $countries as $name) {
-                                                $cou .=  '<span class="badge badge-dark">' .  $name . '</span>';
-                                                }
-                                                echo $cou;
-                                                }
-                                            @endphp
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>{{ __('Desciption') }}</th>
-                                        <td>
-                                            {!! $client->description ?? '' !!}
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <!-- end of table col-lg-6 -->
-                            <div class="col-md-6">
-                                <table class="table">
-                                    <tbody>
-                                    <tr>
-                                        <th scope="row">{{__('Status')}}</th>
-                                        <td>
-                                            @php
-                                                $i = $client->status;
-                                                switch ($i) {
-                                                case 1:
-                                                echo '<span class="badge badge-light-primary">'.__('New Lead').'</span>';
-                                                break;
-                                                case 8:
-                                                echo '<span class="badge badge-light-primary">'.__('No Answer').'</span>';
-                                                break;
-                                                case 12:
-                                                echo '<span class="badge badge-light-primary">'.__('In progress').'</span>';
-                                                break;
-                                                case 3:
-                                                echo '<span class="badge badge-light-primary">'.__('Potential appointment').'</span>';
-                                                break;
-                                                case 4:
-                                                echo '<span class="badge badge-light-primary">'.__('Appointment set').'</span>';
-                                                break;
-                                                case 10:
-                                                echo '<span class="badge badge-light-primary">'.__('Appointment follow up').'</span>';
-                                                break;
-                                                case 5:
-                                                echo '<span class="badge badge-light-success">'.__('Sold').'</span>';
-                                                break;
-                                                case 13:
-                                                echo '<span class="badge badge-light-danger">'.__('Unreachable').'</span>';
-                                                break;
-                                                case 7:
-                                                echo '<span class="badge badge-light-danger">'.__('Not interested').'</span>';
-                                                break;
-                                                case 11:
-                                                echo '<span class="badge badge-light-danger">'.__('Low budget').'</span>';
-                                                break;
-                                                case 9:
-                                                echo '<span class="badge badge-light-danger">'.__('Wrong Number').'</span>';
-                                                break;
-                                                case 14:
-                                                echo '<span class="badge badge-light-danger">'.__('Unqualified').'</span>';
-                                                break;
-                                                case 15:
-                                                echo '<span class="badge badge-light-danger">'.__('Lost').'</span>';
-                                                break;
-                                                }
-                                            @endphp
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">{{ __('Priority') }}</th>
-                                        <td>
-                                            @php
-                                                $i = $client->priority;
-                                                switch ($i) {
-                                                case 1:
-                                                echo '<span class="txt-success f-w-600">'.__('Low').'</span>';
-                                                break;
-                                                case 2:
-                                                echo '<span class="txt-warning f-w-600">'.__('Medium').'</span>';
-                                                break;
-                                                case 3:
-                                                echo '<span class="txt-danger f-w-600">'.__('High').'</span>';
-                                                break;
-                                                }
-                                            @endphp
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">{{ __('Budget') }}</th>
-                                        <td>
-                                            @php
-                                                if (is_null($client->budget_request)) {
-                                                    echo $client->getRawOriginal('budget_request') ?? '';
-                                                } else {
-                                                    $cou = '';
-                                                    $budgets = collect($client->budget_request)->toArray();
-                                                    $newArr = array_filter($budget_request, function($var) use ($budgets){
-                                                        return in_array($var['id'], $budgets);
-                                                    });
-                                                    foreach ($newArr as $val) {
-                                                        $cou .= '<span class="badge badge-light-primary">' . $val['text'] . '</span><br>';
-                                                    }
-                                                        echo $cou;
-                                                }
-                                            @endphp
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">{{ __('Rooms Request') }}</th>
-                                        <td>
-                                            @php
-                                                if (is_null($client->rooms_request)) {
-                                                    echo $client->getRawOriginal('rooms_request') ?? '';
-                                                } else {
-                                                    $cou = '';
-                                                    $rooms = collect($client->rooms_request)->toArray();
-                                                    $newArr = array_filter($rooms_request, function($var) use ($rooms){
-                                                        return in_array($var['id'], $rooms);
-                                                    });
-                                                    foreach ($newArr as $val) {
-                                                        $cou .= '<span class="badge badge-light-primary">' . $val['text'] . '</span><br>';
-                                                    }
-                                                    echo $cou;
-                                                }
-                                            @endphp
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">{{ __('Requirement') }}</th>
-                                        <td>
-                                            @php
-                                                if (is_null($client->requirements_request)) {
-                                                    echo $client->getRawOriginal('requirements_request') ?? '';
-                                                } else {
-                                                    $cou = '';
-                                                    $requirements = collect($client->requirements_request)->toArray();
-                                                    $newArr = array_filter($requirements_request, function($var) use ($requirements){
-                                                        return in_array($var['id'], $requirements);
-                                                    });
-                                                    foreach ($newArr as $val) {
-                                                            $cou .= '<span class="badge badge-light-primary">' . $val['text'] . '</span><br>';
-                                                }
-                                                    echo $cou;
-                                                }
-                                            @endphp
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">{{ __('Source') }}</th>
-                                        <td>
-                                            {{ optional($client->source)->name }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">{{ __('Companies name') }}</th>
-                                        <td>
-                                            {{ optional($client)->campaigne_name }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">{{ __('Agency') }}</th>
-                                        <td>
-                                            {{ optional($client->agency)->name }}
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <!-- end of table col-lg-6 -->
-                        </div>
-                    </div>
+                <div class="card card-with-border">
+                    @livewire('client', ['client' => $client])
                 </div>
                 @include('clients.task-note')
             </div>

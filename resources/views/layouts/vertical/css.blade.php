@@ -39,7 +39,7 @@
         color: grey;
     }
 
-    .container {
+    .container-calls {
         width: 295px;
         padding: 10px;
         margin: 10px 10px 10px 10px;

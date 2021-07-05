@@ -89,14 +89,15 @@ class UsersController extends Controller
             'department_id' => 'required'
         ]);
 
-        $input = $request->all();
+        $input = $request->except('_token', 'roles');
         $input['password'] = Hash::make($input['password']);
         $input['external_id'] = Uuid::uuid4()->toString();
+
         $user = User::create($input);
         $user->assignRole($request->input('roles'));
 
         return redirect()->route('users.index')
-            ->with('toast_success', 'User created successfully');
+            ->with('toast_success', __('User created successfully'));
     }
 
     /**
@@ -187,7 +188,7 @@ class UsersController extends Controller
 
         $user->assignRole($request->input('roles'));
 
-        return redirect()->route('users.index')->with('toast_success', 'User updated Successfully!');
+        return redirect()->route('users.index')->with('toast_success', __('User updated Successfully!'));
     }
 
     /**
@@ -472,6 +473,9 @@ class UsersController extends Controller
                         return '<span class="badge badge-light-danger f-w-400">' . __('Wrong Number') . '</span>';
                         break;
                     case 14:
+                        return '<span class="badge badge-light-danger f-w-400">' . __('Unqualified') . '</span>';
+                        break;
+                    case 15:
                         return '<span class="badge badge-light-danger f-w-400">' . __('Unqualified') . '</span>';
                         break;
                 }

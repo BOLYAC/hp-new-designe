@@ -92,7 +92,6 @@
                         <div class="card-body p-2">
                             @if(auth()->user()->hasRole('Admin') || auth()->user()->hasPermissionTo('team-manager'))
                                 <div class="form-group mb-2">
-                                    <label for="user_filter">{{ __('Assigned') }}</label>
                                     <select name="user_filter" id="user_filter"
                                             class="custom-select custom-select-sm">
                                         <option value="">{{ __('Assigned') }}</option>
@@ -103,7 +102,6 @@
                                 </div>
                                 @if(isset($departments))
                                     <div class="form-group mb-2">
-                                        <label for="department_filter">{{ __('Departments') }}</label>
                                         <select name="department_filter" id="department_filter"
                                                 class="custom-select custom-select-sm">
                                             <option value="">{{ __('Department') }}</option>
@@ -115,7 +113,6 @@
                                 @endif
                                 @if(isset($teams))
                                     <div class="form-group mb-2">
-                                        <label for="team_filter">{{ __('Teams') }}</label>
                                         <select name="team_filter" id="team_filter"
                                                 class="custom-select custom-select-sm">
                                             <option value="">{{ __('Team') }}</option>
@@ -127,7 +124,6 @@
                                 @endif
                             @endif
                             <div class="form-group mb-2">
-                                <label for="project_filter">{{ __('Projects') }}</label>
                                 <select name="project_filter" id="project_filter"
                                         class="custom-select custom-select-sm">
                                     <option value="">{{ __('Project') }}</option>

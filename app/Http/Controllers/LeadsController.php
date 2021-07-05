@@ -194,7 +194,7 @@ class LeadsController extends Controller
             ]
         );
 
-        return redirect()->route('leads.show', $lead)->with('toast_success', 'Lead created successfully');
+        return redirect()->route('leads.show', $lead)->with('toast_success', __('Deal created successfully'));
     }
 
     /**

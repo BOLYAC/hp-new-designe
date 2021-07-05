@@ -49,7 +49,7 @@ class PropertyController extends Controller
         ]);
 
         return redirect()->route('projects.edit', $project->id)
-            ->with('toast_danger', __("Successfully created new apartment"));
+            ->with('toast_danger', __('Successfully created new apartment'));
     }
 
     /**
@@ -94,7 +94,7 @@ class PropertyController extends Controller
         ]);
 
         return redirect()->route('projects.edit', $property->project->id)
-            ->with('toast_danger', __("Successfully created new apartment"));
+            ->with('toast_danger', __('Apartment updated successfully'));
     }
 
     /**

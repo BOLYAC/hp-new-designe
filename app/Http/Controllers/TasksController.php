@@ -121,7 +121,7 @@ class TasksController extends Controller
             ->editColumn('date', function ($tasks) {
                 return optional($tasks->date)->format('d-m-Y') ?? '';
             })
-            ->editColumn('title', function ($tasks) {
+            ->addColumn('title', function ($tasks) {
                 return $tasks->title ?? '';
             })
             ->editColumn('client_id', function ($tasks) {
@@ -218,7 +218,7 @@ class TasksController extends Controller
         Task::create($data);
 
         return redirect()->back()
-            ->with('toast_success', 'Task created successfully');
+            ->with('toast_success', __('Task created successfully'));
 
     }
 
@@ -260,7 +260,7 @@ class TasksController extends Controller
         $task->update($data);
 
         return redirect()->route('tasks.index')
-            ->with('toast_success', 'Task created successfully');
+            ->with('toast_success', __('Task updated successfully'));
     }
 
     /**
