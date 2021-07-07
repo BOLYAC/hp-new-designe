@@ -33,7 +33,8 @@ class Event extends Model implements Auditable
         'country' => 'array',
         'nationality' => 'array',
         'language' => 'array',
-        'lead_budget' => 'array'
+        'lead_budget' => 'array',
+        'lead_lang' => 'array'
     ];
 
     public function user()

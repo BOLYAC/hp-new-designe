@@ -1,7 +1,7 @@
 <?php $count = 0; ?>
 <?php $i = 1 ?>
 @foreach($subject->comments as $comment)
-    <div class="card">
+    <div class="card card-with-border">
         <div class="card-body">
             <div class="tablet__body tablet__tigthen">
                 <p class="smalltext"># {{$i++}}</p>
@@ -19,13 +19,16 @@
             </div>
         </div>
     </div>
-
 @endforeach
-<br/>
-<form action="{{  $subject->getCreateCommentEndpoint() }}" method="POST">
-    @csrf
-    <div class="form-group">
-        <textarea class="summernote" name="description"></textarea>
+
+<div class="card card-with-border">
+    <div class="card-body">
+        <form action="{{  $subject->getCreateCommentEndpoint() }}" method="POST">
+            @csrf
+            <div class="form-group">
+                <textarea class="summernote" name="description"></textarea>
+            </div>
+            <button type="submit" class="btn btn-outline-primary">{{ __('Add Comment') }}</button>
+        </form>
     </div>
-    <button type="submit" class="btn btn-outline-primary">{{ __('Add Comment') }}</button>
-</form>
+</div>

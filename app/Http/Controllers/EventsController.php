@@ -178,7 +178,6 @@ class EventsController extends Controller
             $data['sells_name'] = $u;
         }
 
-
         $event = Event::create($data);
 
         $link = route('events.edit', $event);

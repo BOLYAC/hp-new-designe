@@ -108,7 +108,6 @@
                         <div class="card-body p-2">
                             @if(auth()->user()->hasRole('Admin'))
                                 <div class="form-group mb-2">
-                                    <option value="">{{ __('Assigned') }}</option>
                                     <select name="user_filter" id="user_filter"
                                             class="custom-select custom-select-sm">
                                         <option value="">{{ __('Assigned') }}</option>
@@ -118,7 +117,6 @@
                                     </select>
                                 </div>
                                 <div class="form-group mb-2">
-                                    <option value="">{{ __('Department') }}</option>
                                     <select name="department_filter" id="department_filter"
                                             class="custom-select custom-select-sm">
                                         <option value="">{{ __('Department') }}</option>

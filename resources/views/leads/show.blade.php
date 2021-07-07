@@ -353,7 +353,7 @@
         <div class="row">
             <div class="col-md-8">
                 <div class="card card-with-border">
-                    <div class="card-header b-t-primary b-b-primary row">
+                    <div class="card-header b-t-primary b-b-primary row p-2">
                         <div class="col-md-4 col-lg-4">
                             @if($lead->invoice_id <> 0)
                                 <span class="badge badge-success">{{ __('Deal Won') }}</span>
@@ -625,27 +625,6 @@
                                     <option>#039BE5</option>
                                 </datalist>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="form-group input-group-sm col-md-2">
-                                <label for="currency">{{__('Currency')}}</label>
-                                <select class="form-control form-control-sm" id="currency" name="currency">
-                                    <option value="try">TRY</option>
-                                    <option value="usd">USD</option>
-                                    <option value="euro">EURO</option>
-                                </select>
-                            </div>
-                            <div class="form-group col-md-10">
-                                <div class="col-form-label pt-0">{{ __('Budget') }}</div>
-                                <select name="budget[]"
-                                        class="form-control form-control-sm digits js-budgets-all col"
-                                        multiple></select>
-                            </div>
-                        </div>
-                        <div class="mb-2">
-                            <div class="col-form-label">{{ __('Languages') }}</div>
-                            <select class="js-language-all custom-select col-12" multiple name="lang[]" id="lang">
-                            </select>
                         </div>
                         @can('share-appointment')
                             <div class="mb-2">
