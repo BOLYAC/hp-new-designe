@@ -646,6 +646,10 @@
                                                     value="14" {{ old('status', $client->status) == 14 ? 'selected' : '' }}>
                                                     {{ __('Unqualified') }}
                                                 </option>
+                                                <option
+                                                    value="15" {{ old('status', $client->status) == 15 ? 'selected' : '' }}>
+                                                    {{ __('Lost') }}
+                                                </option>
                                             </select>
                                         </div>
                                         <div class="form-group col-md-12 col-lg-6">

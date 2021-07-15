@@ -26,6 +26,7 @@ class CommentController extends Controller
             'task' => 'App\Models\Task',
             'lead' => 'App\Models\Lead',
             'project' => 'App\Models\Project',
+            'event' => 'App\Models\Event',
         ];
 
         if (!array_key_exists($request->type, $modelsMapping)) {
@@ -34,8 +35,13 @@ class CommentController extends Controller
             return redirect()->back();
         }
 
+
         $model = $modelsMapping[$request->type];
-        $source = $model::whereExternalId($request->external_id)->first();
+        if ($request->type === 'event'){
+            $source = $model::findOrFail($request->external_id);
+        } else {
+            $source = $model::whereExternalId($request->external_id)->first();
+        }
         $source->comments()->create(
             [
                 'description' => $request->description,

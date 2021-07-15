@@ -24,7 +24,7 @@
     @can('write-feedback')
         <div class="form-group">
             <label for="feedback">{{ __('Feedback') }}</label>
-            <textarea class="summernote" name="feedback"
+            <textarea name="feedback"
                       id="feedback">{{ old('feedback', $event->feedback) }}</textarea>
         </div>
     @endcan

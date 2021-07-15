@@ -26,7 +26,8 @@
         <form action="{{  $subject->getCreateCommentEndpoint() }}" method="POST">
             @csrf
             <div class="form-group">
-                <textarea class="summernote" name="description"></textarea>
+                <label for="summernote">{{ __('Add comment') }}</label>
+                <textarea name="description" id="summernote"></textarea>
             </div>
             <button type="submit" class="btn btn-outline-primary">{{ __('Add Comment') }}</button>
         </form>

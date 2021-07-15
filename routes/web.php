@@ -73,6 +73,8 @@ Route::group(
         Route::get('/create-report/{val}', 'EventsController@createReport')->name('generate.report');
         Route::post('/create-report/custom', 'EventsController@customReport')->name('generate.custom.report');
         Route::get('/events/duplicate/{event}', 'EventsController@replicate')->name('replicate.event');
+        Route::post('/events/apply-confirmation', 'EventsController@applyConfirmation')->name('events.apply.confirmation');
+
         Route::resource('events', 'EventsController');
 
         // Reports
@@ -112,6 +114,8 @@ Route::group(
 
         // Leads
         Route::get('/leads/data', 'LeadsController@anyData')->name('leads.data');
+        Route::post('/deals-report', 'LeadsController@dealReport')->name('generate.deal.report');
+        Route::get('/show-deals-report/{val}', 'LeadsController@generateReportDeal')->name('deals.view.report');
         Route::resource('leads', 'LeadsController');
 
         // Calls
@@ -171,3 +175,7 @@ Route::group(
         })->name('report_leads');
     }
 );
+
+Route::post('submit-form', function (\Illuminate\Http\Request $request){
+    $request->dd();
+});

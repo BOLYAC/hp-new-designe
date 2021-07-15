@@ -2,14 +2,15 @@
 
 namespace App\Http\Livewire;
 
+use AloTech\Click2;
 use App\Agency;
 use App\Models\Source;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Livewire\Component;
 
 class Client extends Component
 {
+
     public $mode, $client, $updateMode, $sources, $agencies;
 
     public $requirements_request = [
@@ -46,6 +47,7 @@ class Client extends Component
         $requirements_request_edit, $source_id_edit, $campaign_name_edit, $agency_id_edit,
         $appointment_date_edit, $duration_stay_edit = [];
 
+
     public function mount($client)
     {
         $this->mode = 'show';
@@ -78,15 +80,8 @@ class Client extends Component
         $this->mode = $mode;
     }
 
-    /**
-     * Write code on Method
-     *
-     * @return response()
-     */
     public function editLead()
     {
-        //$this->validate();
-
         $data = [
             'country' => $this->country_edit,
             'nationality' => $this->nationality_edit,
@@ -104,8 +99,6 @@ class Client extends Component
             'duration_stay' => $this->duration_stay_edit,
         ];
 
-        dd($data);
-
         if ($data) {
             $this->client->update($data);
             $this->updateMode('show');
@@ -113,5 +106,30 @@ class Client extends Component
         } else {
             $this->emit('alert', ['type' => 'danger', 'message' => 'There is something wrong!, Please try again.']);
         }
+    }
+
+    public function makeCall($phone)
+    {
+        if ($phone === 'ph1') {
+            $phone = $this->client->client_number;
+        } else {
+            $phone = $this->client->client_number_2;
+        }
+
+        if (session()->has('current_call')) {
+            $this->emit('alert', ['type' => 'danger', 'message' => 'Already in Call']);
+        }
+
+        $aloTech = Session::get('alotech');
+        $phoneNumber = $phone;
+        $click2 = new Click2($aloTech);
+        $res = $click2->call([
+            'phonenumber' => $phoneNumber,
+            'hangup_url' => 'http://crm.hashim.com.tr/',
+            'masked' => '1'
+        ]);
+        Session::put('current_call', $click2);
+
+        $this->emit('alert', ['type' => 'success', 'message' => 'Call started']);
     }
 }

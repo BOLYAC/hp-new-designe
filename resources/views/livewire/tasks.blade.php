@@ -14,7 +14,7 @@
                     <div class="todo-list-container">
                         <div class="todo-list-body">
                             <ul id="todo-list">
-                                @if($mode = 'show3')
+                                @if($mode = 'show')
                                     @foreach($tasks as $task)
                                         <li class="{{ $task->archive === true ? 'completed' : '' }} task">
                                             <div class="task-container">
@@ -64,7 +64,7 @@
             </button>
         </div>
         <div class="card-body">
-            <form wire:submit.prevent="editLead">
+            <form wire:submit.prevent="createTask">
                 @can('department-task')
                     <div class="form-group mb-4 m-checkbox-inline mb-0 custom-radio-ml">
                         <div class="radio radio-primary">

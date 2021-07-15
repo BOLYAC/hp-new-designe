@@ -35,7 +35,6 @@
         @can('client-edit')
             <a class="btn btn-sm btn-primary"
                href="{{ route('clients.show', $client->client_id) }}">{{ __('Show') }}</a>
-
         @endcan
     </div>
     <div class="card-body">
@@ -46,6 +45,26 @@
                     <tr>
                         <th scope="row">{{ __('Full Name') }}</th>
                         <td>{{ $client->lead_name }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">{{ __('Phone(s)') }}</th>
+                        <td>
+                            {{ $client->client->client_number ?? $client->lead_phone ?? ''}}
+                            <a href="javascript:void(0)"
+                               class="btn btn-xs btn-outline-primary float-right theme-setting ph1"><i
+                                    class="fa fa-phone"></i></a>
+                            <a href="https://wa.me/{{$client->client->client_number ?? $client->lead_phone_2 ?? '' }}" target="_blank"
+                               class="btn btn-xs btn-outline-success float-right mr-2"><i
+                                    class="fa fa-whatsapp"></i></a>
+                            <br>
+                            {{ $client->client->client_number_2 ??'' }}
+                            <a href="javascript:void(0)"
+                               class="btn btn-xs btn-outline-primary float-right theme-setting ph1"><i
+                                    class="fa fa-phone"></i></a>
+                            <a href="https://wa.me/{{$client->client->client_number_2 ??''}}" target="_blank"
+                               class="btn btn-xs btn-outline-success float-right mr-2"><i
+                                    class="fa fa-whatsapp"></i></a>
+                        </td>
                     </tr>
                     <tr>
                         <th scope="row">{{ __('Country') }}</th>

@@ -99,16 +99,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-footer">
-                    {!! $teams->render() !!}
-                </div>
             </div>
         </div>
         <!-- Zero config.table end -->
-    </div>
-    </div>
-    </div>
-    <!-- Page body end -->
     </div>
     <!-- Create modal start -->
     <div class="modal fade" id="createModal" tabindex="-1">

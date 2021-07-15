@@ -6,9 +6,9 @@ use App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 
-trait Multitenantable
+trait AgenciesTenantable
 {
-    protected static function bootMultitenantable()
+    protected static function bootAgenciesTenantable()
     {
         if (auth()->check()) {
 
@@ -21,11 +21,9 @@ trait Multitenantable
                 $model->updated_by = auth()->id();
             });
 
-            if (auth()->user()->hasPermissionTo('simple-user')) {
-                static::addGlobalScope('user_id', function (Builder $builder) {
-                    $builder->where('user_id', auth()->id());
-                });
-            }
+            /*static::addGlobalScope('departments', function (Builder $builder) {
+                $builder->orWhere('department_id', auth()->user()->department_id);
+            });*/
 
             if (auth()->user()->hasPermissionTo('team-manager')) {
                 if (auth()->user()->ownedTeams()->count() > 0) {
@@ -67,17 +65,12 @@ trait Multitenantable
             }
 
             if (auth()->user()->hasPermissionTo('desk-user')) {
-                $teams = Team::whereIn('id', ['4', '7', '15'])->get();
-                $users[] = User::where('id', '=', '5')->pluck('id');
-                foreach ($teams as $u) {
-                    foreach ($u->users as $ut) {
-                        $users[] .= $ut->id;
-                    }
-                }
                 static::addGlobalScope('user_id', function (Builder $builder) use ($users) {
                     $builder->whereIn('user_id', $users);
                 });
             }
+
         }
+
     }
 }

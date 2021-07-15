@@ -20,9 +20,61 @@
     <script src="{{ asset('assets/js/notify/notify-script.js') }}"></script>
 
     <script>
+        function notify(title, message, type, icon) {
+            $.notify({
+                    icon: icon,
+                    message: message
+                },
+                {
+                    type: type,
+                    allow_dismiss: false,
+                    newest_on_top: false,
+                    mouse_over: false,
+                    showProgressbar: false,
+                    spacing: 10,
+                    timer: 2000,
+                    placement: {
+                        from: 'top',
+                        align: 'right'
+                    },
+                    offset: {
+                        x: 30,
+                        y: 30
+                    },
+                    delay: 1000,
+                    z_index: 10000,
+                    animate: {
+                        enter: 'animated bounce',
+                        exit: 'animated bounce'
+                    },
+                });
+        }
+
         window.livewire.on('alert', param => {
-            notify(param['type'], param['message'], param['icon'])
+            notify(param['message'], param['type'])
         })
+
+        $('#trans-to-sales').on('submit', function (e) {
+            e.preventDefault();
+            user_id = $('#inCharge').val();
+            client_id = '{{ $client->id }}';
+
+            $.ajax({
+                url: "{{route('sales.share')}}",
+                type: "POST",
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    user_id: user_id,
+                    client_id: client_id,
+                },
+                success: function () {
+                    notify('Client transferred successfully', 'success');
+                },
+                error: function (response) {
+                    notify('already have been assigned to this user', 'danger');
+                },
+            });
+        });
     </script>
 @endsection
 @section('breadcrumb-items')
@@ -90,9 +142,27 @@
                                 </div>
                             </div>
                         </div>
+                        <hr>
+                        @can('share-client')
+                            <form id="trans-to-sales">
+                                @csrf
+                                <div class="form-group form-group-sm">
+                                    <select class="form-control form-control-sm" name="inCharge" id="inCharge">
+                                        @foreach($users as $user)
+                                            <option
+                                                value="{{ $user->id }}" {{ $client->user_id == $user->id ? 'selected' : '' }}>
+                                                {{ $user->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <button type="submit"
+                                        class="btn btn-sm btn-outline-primary form-control form-control-sm">
+                                    {{ __('Change') }} <i
+                                        class="icon-share-alt"></i></button>
+                            </form>
+                        @endcan
                     </div>
                 </div>
-
                 <!-- Transfer to Deal -->
                 @can('transfer-lead-to-deal')
                     <div class="card card-with-border">

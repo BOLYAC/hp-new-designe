@@ -38,9 +38,8 @@ class TeamController extends Controller
     public function index(Request $request)
     {
         $users = User::all();
-        $teams = Team::orderBy('id', 'DESC')->paginate(10);
-        return view('teams.index', compact('teams', 'users'))
-            ->with('i', ($request->input('page', 1) - 1) * 5);
+        $teams = Team::orderBy('id', 'DESC')->get();
+        return view('teams.index', compact('teams', 'users'));
     }
 
     /**

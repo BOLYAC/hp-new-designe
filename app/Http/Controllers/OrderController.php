@@ -73,8 +73,8 @@ class OrderController extends Controller
             ->editColumn('lead_name', function ($invoices) {
                 return '<a href="/invoices/' . $invoices->external_id . '" class="f-w-600">' . $invoices->client_name ?? $invoices->client->full_name ?? '' . '</a>';
             })
-            ->addColumn('project_id', function ($invoices) {
-                return '<span class="f-w-600">' . $invoices->project->project_name ?? $invoices->project_name . '</span>';
+            ->addColumn('project_name', function ($invoices) {
+                return '<span class="f-w-600">' . $invoices->project_name . '</span>';
             })
             ->addColumn(
                 'user',
@@ -82,6 +82,16 @@ class OrderController extends Controller
                     return '<span class="badge badge-success">' . optional($invoices->user)->name . '</span>';
                 }
             )
+            ->editColumn(
+                'sells_name',
+                function ($events) {
+                    $cou = '';
+                    $sellRep = collect($events->sells_name)->toArray();
+                    foreach ($sellRep as $name) {
+                        $cou .= '<span class="badge badge-dark">' . $name . '</span>';
+                    }
+                    return $cou;
+                })
             ->addColumn(
                 'action',
                 '<a href="{{ route(\'invoices.show\', $external_id) }}"
@@ -90,7 +100,7 @@ class OrderController extends Controller
                                             <a href="#!"
                                                class="m-r-15 text-muted f-18 delete"><i
                                                     class="icofont icofont-trash"></i></a>')
-            ->rawColumns(['lead_name', 'project_id', 'user', 'action'])
+            ->rawColumns(['lead_name', 'project_name', 'user', 'action', 'sells_name'])
             ->make(true);
     }
 
@@ -150,10 +160,6 @@ class OrderController extends Controller
      */
     public function update(Request $request, Invoice $invoice)
     {
-
-        $request->validate([
-            'project_id' => 'required',
-        ]);
 
         $data = $request->except('_token', 'files');
         //$m = $request->get('price') - $request->get('installment') - $invoice->payments()->sum('amount');

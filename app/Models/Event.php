@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
+use App\Services\Comment\Commentable;
 use App\Traits\DealsTenantable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
-class Event extends Model implements Auditable
+class Event extends Model implements Auditable, Commentable
 
 {
     use \OwenIt\Auditing\Auditable;
@@ -67,5 +69,15 @@ class Event extends Model implements Auditable
         static::creating(function ($event) { // On create() method call this
             $event->team_id = auth()->user()->currentTeam->id ?? '1';
         });
+    }
+
+    public function comments(): MorphMany
+    {
+        return $this->morphMany(Comment::class, 'source');
+    }
+
+    public function getCreateCommentEndpoint(): string
+    {
+        return route('comments.create', ['type' => 'event', 'external_id' => $this->id]);
     }
 }

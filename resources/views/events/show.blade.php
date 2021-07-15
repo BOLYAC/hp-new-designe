@@ -35,7 +35,58 @@
     <!-- Plugins JS start-->
     <script src="{{ asset('assets/js/editor/summernote/summernote.js') }}"></script>
     <script src="{{ asset('assets/js/editor/summernote/summernote.custom.js') }}"></script>
+    <!-- Notification -->
+    <script src="{{ asset('assets/js/notify/bootstrap-notify.min.js') }}"></script>
     <script>
+        $('#summernote').summernote({
+            tabsize: 2,
+            height: 200,
+            toolbar: [
+                ['style', ['style']],
+                ['font', ['bold', 'underline', 'clear']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+            ]
+        })
+
+        function notify(title, type) {
+            $.notify({
+                    title: title
+                },
+                {
+                    type: type,
+                    allow_dismiss: true,
+                    newest_on_top: true,
+                    mouse_over: true,
+                    spacing: 10,
+                    timer: 2000,
+                    placement: {
+                        from: 'top',
+                        align: 'right'
+                    },
+                    offset: {
+                        x: 30,
+                        y: 30
+                    },
+                    delay: 1000,
+                    z_index: 10000,
+                    animate: {
+                        enter: 'animated bounce',
+                        exit: 'animated bounce'
+                    }
+                });
+        }
+
+        $('#feedback').summernote({
+            tabsize: 2,
+            height: 200,
+            toolbar: [
+                ['style', ['style']],
+                ['font', ['bold', 'underline', 'clear']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+            ]
+        })
         $(function () {
             let budgetData = [
                 {id: 1, text: 'Less then 50K'},
@@ -57,7 +108,7 @@
             })
             $(".js-budgets-all").select2({
                 theme: 'classic'
-            }).val({!! json_encode($event->lead_budget) !!}).trigger('change.select2');
+            }).val({!! json_encode($event->budget_request) !!}).trigger('change.select2');
         });
 
         $('.js-client-all').select2({
@@ -82,7 +133,6 @@
         $(function () {
             if ($('#results').val() === '3') {
                 $('#negative-form').show();
-                alert($('#results').val())
                 console.log($('#results').val())
             } else {
                 $('#negative-form').hide();
@@ -96,6 +146,31 @@
                 }
             });
         });
+        $("#confirmation_stat").on('change', function (e) {
+            e.preventDefault();
+            if (confirm('Are you sure you want to confirm ?')) {
+                let statConfirm = $(this).val();
+                let event_id = '{{ $event->id }}';
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ route('events.apply.confirmation') }}',
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                        statConfirm,
+                        event_id: event_id
+                    },
+                    success: function (r) {
+                        $("#confirmation_stat").attr('disabled', true);
+                        notify('Appointment confirmed', 'success');
+                    }
+                    , error: function (error) {
+                        notify('Ops!! Something wrong', 'danger');
+                    }
+                });
+            } else {
+                return false;
+            }
+        })
     </script>
 
 @endsection
@@ -117,7 +192,7 @@
                         @csrf
                         @method('PUT')
                         <div class="card-body b-t-primary">
-                            @include('partials.lead-info', ['client' => $event])
+                            @include('events.partial.lead-info', ['client' => $event])
                             @include('events.partial.owner')
                             @can('share-lead')
                                 <div class="form-group input-group-sm">
@@ -155,10 +230,8 @@
                                     </select>
                                 </div>
                             @endcan
-
                             @include('events.partial.sells')
                         </div>
-
                         <div class="card-footer">
                             <button type="submit" class="btn btn-primary btn-sm waves-effect waves-light">
                                 save
@@ -168,6 +241,7 @@
                         </div>
                     </form>
                 </div>
+                @include('partials.comments', ['subject' => $event])
             </div>
             <div class="col-md-3">
                 <div class="card">
@@ -186,6 +260,19 @@
                                     <h6 class="font-primary">{{ $event->user->name }}</h6>
                                     <p>{{ $event->user->roles->first()->name }}</p>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer b-t-primary">
+                        <div class="form-group">
+                            <div class="checkbox checkbox-primary">
+                                <input id="confirmation_stat" type="checkbox"
+                                    {{ $event->confirmed == 1 ? 'checked' : '' }}
+                                    {{ $event->confirmed == 1 ? 'disabled' : '' }}
+                                >
+                                <label for="confirmation_stat">
+                                    {{ $event->confirmed == 1 ?  __('Appointment confirmed') :  __('Confirm the appointment') }}
+                                </label>
                             </div>
                         </div>
                     </div>

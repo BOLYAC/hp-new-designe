@@ -150,11 +150,35 @@
             <div class="col-sm-10">
                 @include('partials.flash-message')
                 <div class="card">
-                    <div class="card-header p-3 b-t-primary">
+                    <div class="card-header p-3 b-t-primary d-flex justify-content-between">
                         @can('lead-create')
-                            <a href="{{ route('leads.create') }}"
-                               class="btn btn-sm btn-outline-primary">{{__('New deal')}}<i class="icon-plus"></i></a>
+                            <div>
+                                <a href="{{ route('leads.create') }}"
+                                   class="btn btn-sm btn-outline-primary">{{__('New deal')}}<i
+                                        class="icon-plus"></i></a>
+                            </div>
                         @endcan
+                        <div class="col-md-10">
+                            <form action="{{ route('generate.deal.report') }}" method="post" role="form">
+                                @csrf
+                                <div class="row">
+                                    <div class="col-3 pr-1 pl-0">
+                                        <input type="date" name="from_date" id="from_date"
+                                               class="form-control form-control-sm"
+                                               placeholder="From Date" value="{{ now()->format('Y-m-d') }}" required>
+                                    </div>
+                                    <div class="col-3 pr-1 pl-1">
+                                        <input type="date" name="to_date" id="to_date"
+                                               class="form-control form-control-sm"
+                                               placeholder="To Date" value="{{ now()->format('Y-m-d') }}" required>
+                                    </div>
+                                    <div class="col pr-1 pl-1">
+                                        <button type="submit"
+                                                class="btn btn-primary btn-sm">{{ __('Generate') }}</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="order-history dt-ext table-responsive">
@@ -167,7 +191,7 @@
                                     <th data-priority="4">{{ __('Stage') }}</th>
                                     <th>{{ __('Assigned') }}</th>
                                     <th>{{ __('Sell representative') }}</th>
-                                    <th></th>
+                                    <th>{{ __('Stat') }}</th>
                                     <th data-priority="2">{{ __('Action') }}</th>
                                 </tr>
                                 </thead>
@@ -183,7 +207,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Delete deal</h5>
+                    <h5 class="modal-title">{{ __('Delete deal') }}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -192,11 +216,12 @@
                     @csrf
                     @method('DELETE')
                     <div class="modal-body p-b-0">
-                        <p>Are sur you want to delete this deal?</p>
+                        <p>{{ __('Are sur you want to delete this deal?') }}</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Delete <i class="ti-trash-alt"></i></button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">{{ __('Delete') }} <i class="ti-trash-alt"></i>
+                        </button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">{{ __('Cancel') }}</button>
                     </div>
                 </form>
             </div>

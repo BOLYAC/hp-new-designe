@@ -127,6 +127,9 @@ class HomeController extends Controller
                         case 14:
                             return '<span class="badge badge-danger" > ' . __('Unqualified') . ' </span > ';
                             break;
+                        case 15:
+                            return '<span class="badge badge-danger" > ' . __('Lost') . ' </span > ';
+                            break;
                     };
                 })
             ->addColumn('priority', function ($clients) {
@@ -149,7 +152,7 @@ class HomeController extends Controller
 
     public function agenciesAll()
     {
-        $agencies = Agency::with(['clients'])->select(['id', 'name', 'company_type', 'phone', 'created_at'])->get();
+        $agencies = Agency::select(['id', 'name', 'company_type', 'phone', 'created_at'])->get();
         return DataTables::of($agencies)
             ->editColumn('company_type', function ($agency) {
                 return $agency->company_type === 1 ? __('Company') : __('Freelance');

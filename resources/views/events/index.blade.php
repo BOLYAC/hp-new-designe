@@ -27,6 +27,7 @@
 
     <script>
         $(document).ready(function () {
+            $('input[name=daterange]').val('')
             // Start Edit record
             let table = $('#res-config').DataTable({
                 processing: true,
@@ -40,18 +41,20 @@
                         d.country = $('select[name=country_filter]').val();
                         d.team = $('select[name=team_filter]').val();
                         d.daterange = $('input[name=daterange]').val()
+                        d.confirmed = $('#confirmed').is(':checked');
                     }
                 },
                 columns: [
                     {data: 'id', name: 'id'},
                     {data: 'name', name: 'name'},
-                    {data: 'full_name', name: 'full_name'},
+                    {data: 'lead_name', name: 'lead_name'},
                     {data: 'event_date', name: 'event_date'},
-                    {data: 'place', name: 'place'},
                     {data: 'user', name: 'user'},
+                    {data: 'sells_name', name: 'sells_name', 'searchable': false, 'orderable': false},
+                    {data: 'confirmed', name: 'confirmed'},
                     {data: 'action', name: 'action'},
                 ],
-                order: [],
+                order: [[3, 'desc']],
                 lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]]
             });
             // Assigne user
@@ -61,6 +64,7 @@
                 $('select[name=department_filter]').val('');
                 $('select[name=team_filter]').val('');
                 $('input[name=daterange]').val('')
+                $('#confirmed').prop('checked', false);
                 table.DataTable().destroy();
             });
             // Search form
@@ -68,6 +72,7 @@
                 e.preventDefault();
                 table.draw();
             });
+
             @can('event-delete')
             table.on('click', '.delete', function () {
                 $tr = $(this).closest('tr');
@@ -150,6 +155,10 @@
                                     </select>
                                 </div>
                             @endif
+                            <div class="checkbox checkbox-primary">
+                                <input id="confirmed" type="checkbox">
+                                <label for="confirmed">{{ __('Confirmed') }}</label>
+                            </div>
                             <div class="theme-form mb-2">
                                 <input class="form-control form-control-sm digits" type="text" name="daterange"
                                        value="">
@@ -167,7 +176,7 @@
             <div class="col-sm-10">
                 @include('partials.flash-message')
                 <div class="card p-1">
-                    <div class="card-header card-no-border p-2  b-t-primary b-b-primary">
+                    <div class="card-header card-no-border p-2 b-t-primary b-b-primary">
                         @can('event-create')
                             <a href="{{ route('events.create') }}" class="btn btn-sm btn-outline-primary">
                                 {{ __('New Appointment') }} <i class="icon-plus"></i></a>
@@ -218,8 +227,9 @@
                                     <th>{{ __('Title') }}</th>
                                     <th>{{ __('Client') }}</th>
                                     <th>{{ __('Date') }}</th>
-                                    <th>{{ __('Place') }}</th>
                                     <th>{{ __('Assigned') }}</th>
+                                    <th>{{ __('Sell representative') }}</th>
+                                    <th>{{ __('Confirmed') }}</th>
                                     <th width="5%"></th>
                                 </tr>
                                 </thead>

@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Services\Document\Documentable;
 use App\Services\Note\Noteable;
 use App\Services\Task\Taskable;
+use App\Traits\AgenciesTenantable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -18,7 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Agency extends Model implements Documentable, Taskable, Noteable
 {
-    use SoftDeletes;
+    use SoftDeletes, AgenciesTenantable;
 
     protected $guarded = [];
 

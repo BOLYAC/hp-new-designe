@@ -38,8 +38,9 @@
                 columns: [
                     {data: 'id', name: 'id'},
                     {data: 'lead_name', name: 'lead_name'},
-                    {data: 'project_id', name: 'project_id'},
+                    {data: 'project_name', name: 'project_name'},
                     {data: 'user', name: 'user'},
+                    {data: 'sells_name', name: 'sells_name'},
                     {data: 'action', name: 'action'},
                 ],
                 order: [],
@@ -162,6 +163,7 @@
                                     <th>{{ __('Client') }}</th>
                                     <th>{{ __('Project') }}</th>
                                     <th>{{ __('Assigned') }}</th>
+                                    <th>{{ __('Sell representative') }}</th>
                                     <th></th>
                                 </tr>
                                 </thead>

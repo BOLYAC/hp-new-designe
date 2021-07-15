@@ -18,7 +18,7 @@ class Client extends Model implements Auditable, Documentable, Noteable, Taskabl
 {
     use \OwenIt\Auditing\Auditable;
     use SoftDeletes, Multitenantable;
-
+    public $timestamps = false;
     /**
      * @var array
      */

@@ -2,7 +2,7 @@
     <div>
         <div class="card-header b-t-primary b-b-primary p-2 d-flex justify-content-between">
             <h5 class="mr-auto mt-2">{{ __('Editing Lead') }}
-                : {{ $client->complete_name ?? $client->full_name ?? '' }}</h5>
+                : {{ $client->full_name ?? $client->complete_name ?? '' }}</h5>
             <button wire:click="updateMode('show')" class="btn btn-sm btn-warning mr-2"><i
                     class="icon-arrow-left"></i> {{ __('Back') }}</button>
         </div>
@@ -123,8 +123,9 @@
                                 </script>
                                 @php $clientLang = collect($lang_edit)->toArray() @endphp
                                 @foreach( $clientLang as $lang)
-                                    <option vlaue="{{ $lang }}"
-                                            selected> {{ $lang }} </option>
+                                    <option value="{{ $lang }}" selected>
+                                        {{ $lang }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
@@ -438,11 +439,12 @@
                                 </select>
                             </div>
                         </div>
+                        <button type="submit" class="btn btn-primary pull-right">
+                            {{ __('Submit') }}
+                            <i class="fa fa-save"></i>
+                        </button>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-outline-primary">
-                    {{ __('Submit') }}
-                </button>
             </form>
         </div>
     </div>
@@ -476,30 +478,43 @@
                         <tr>
                             <th scope="row">{{ __('Phone(s)') }}</th>
                             <td>
-                                {{ $client->client_number }}
+                                @if($client->created_at <= now()->subMonth())
+                                    {{ str_pad(substr($client->client_number, -4), strlen($client->client_number), '*', STR_PAD_LEFT) }}
+                                @else
+                                    {{ $client->client_number }}
+                                    <a href="https://wa.me/{{$client->client_number}}" target="_blank"
+                                       class="btn btn-xs btn-outline-success float-right mr-2"><i
+                                            class="fa fa-whatsapp"></i></a>
+                                @endif
                                 <a href="javascript:void(0)"
-                                   class="btn btn-xs btn-outline-primary float-right theme-setting ph1"><i
+                                   class="btn btn-xs btn-outline-primary float-right theme-setting" wire:click="makeCall('ph1')"><i
                                         class="fa fa-phone"></i></a>
-                                <a href="https://wa.me/{{$client->client_number}}" target="_blank"
-                                   class="btn btn-xs btn-outline-success float-right mr-2"><i
-                                        class="fa fa-whatsapp"></i></a>
                                 <br>
-                                {{ $client->client_number_2 }}
+                                @if($client->created_at <= now()->subMonth())
+                                    {{ str_pad(substr($client->client_number_2, -4), strlen($client->client_number_2), '*', STR_PAD_LEFT) }}
+                                @else
+                                    {{ $client->client_number }}
+                                    <a href="https://wa.me/{{$client->client_number_2}}" target="_blank"
+                                       class="btn btn-xs btn-outline-success float-right mr-2"><i
+                                            class="fa fa-whatsapp"></i></a>
+                                @endif
                                 <a href="javascript:void(0)"
-                                   class="btn btn-xs btn-outline-primary float-right theme-setting ph1"><i
+                                   class="btn btn-xs btn-outline-primary float-right theme-setting" wire:click="makeCall('ph2')"><i
                                         class="fa fa-phone"></i></a>
-                                <a href="https://wa.me/{{$client->client_number_2}}" target="_blank"
-                                   class="btn btn-xs btn-outline-success float-right mr-2"><i
-                                        class="fa fa-whatsapp"></i></a>
                             </td>
                         </tr>
                         <tr>
                             <th scope="row">{{ __('Email(s)') }}</th>
                             <td>
-                                <a href="{{ route('clients.compose.email', ['client' => $client]) }}"
+                                <a href="mailto:{{$client->client_email}}"
                                    class="btn btn-xs btn-outline-primary"><i
                                         class="icon-email"></i> {{ __('Send email') }}
                                 </a>
+                                <a href="mailto:{{$client->client_email_2}}"
+                                   class="btn btn-xs btn-outline-primary"><i
+                                        class="icon-email"></i> {{ __('Send email') }}
+                                </a>
+                            </td>
                         </tr>
                         <tr>
                             <th scope="row">{{ __('Country') }}</th>

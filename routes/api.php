@@ -2,21 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
-
-Route::middleware('auth:api')->get('/user', function (Request $request) {
+/*Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
-});
+});*/
 Route::get('/master-details', 'APIController@getMasterDetailsData')->name('api.master_details');
 Route::get('/sales-perormance', 'APIController@getSalesPerformance')->name('api.sales_performance');
 Route::get('/master-details/{id}', 'APIController@getMasterDetailsSingleData')->name('api.master_single_details');
@@ -36,3 +24,10 @@ Route::delete('members/{id}', 'ClientsController@deleteMember');
 
 Route::get('sources', 'SourcesController@listSource');
 Route::get('users', 'UsersController@listUser');
+
+
+// External wordpress website form
+//Route::get('submit-form','APIController@submitFormWordpress');
+Route::prefix('v2')->group(function () {
+    Route::post('propertyexpo/submit-form', 'APIController@getData');
+});

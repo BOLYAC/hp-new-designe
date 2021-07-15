@@ -193,15 +193,9 @@
                             <div class="row">
                                 <div class="form-group col-12">
                                     <label for="project_id">{{ __('Project name') }}</label>
-                                    <select class="form-control form-control-sm" name="project_id" id="project_id">
-                                        <option value="">{{ __('Select project') }}</option>
-                                        @foreach($projects as $project)
-                                            <option
-                                                value="{{ $project->id }}" {{ $invoice->project_id == $project->id ? 'selected' : '' }}>
-                                                {{ $project->project_name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                                    <input class="form-control form-control-sm" name="project_name"
+                                           id="project_name"
+                                           value="{{ old('project_name', $invoice->project_name) }}">
                                 </div>
                             </div>
                             <div class="row">
@@ -225,13 +219,13 @@
                             </div>
                             <div class="row">
                                 <div class="form-group col">
-                                    <label for="floor_number"></label>
+                                    <label for="floor_number">{{ __('Floor number') }}</label>
                                     <input class="form-control form-control-sm" name="floor_number"
                                            id="floor_number"
                                            value="{{ old('floor_number', $invoice->floor_number) }}">
                                 </div>
                                 <div class="form-group col">
-                                    <label for="gross_square">Gross M²</label>
+                                    <label for="gross_square">{{ __('Gross M²') }}</label>
                                     <input class="form-control form-control-sm" name="gross_square"
                                            id="gross_square"
                                            value="{{ old('gross_square', $invoice->gross_square) }}">
@@ -272,13 +266,32 @@
                             </div>
                             <div class="form-group">
                                 <label>{{ __('Cash/Installment') }}</label>
+                                <select name="payment_type" class="payment_type form-control form-control-sm">
+                                    <option value="">-- --</option>
+                                    <option
+                                        value="1" {{ old('payment_type', $invoice->payment_type) == 1 ? 'selected' : '' }}>{{ __('Cash') }}</option>
+                                    <option
+                                        value="2" {{ old('payment_type', $invoice->payment_type) == 2 ? 'selected' : '' }}>{{ __('Installment') }}</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>{{ __('Down Payment') }}</label>
                                 <div class="input-group">
                                     <input class="form-control" type="text"
-                                           placeholder="{{ __('Cash/Installment') }}"
-                                           name="installment"
-                                           id="installment" value="{{ old('installment', $invoice->installment) }}">
-                                    <div class="input-group-append"><span class="input-group-text currIco"
-                                                                          id="basic-addon3"></span></div>
+                                           placeholder="{{ __('Down Payment') }}"
+                                           name="down_payment"
+                                           id="down_payment" value="{{ old('down_payment', $invoice->down_payment) }}">
+                                    <div class="input-group-append"><span class="input-group-text currIco"></span></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>{{ __('Discount') }}</label>
+                                <div class="input-group">
+                                    <input class="form-control" type="text"
+                                           placeholder="{{ __('Discount') }}"
+                                           name="payment_discount"
+                                           id="payment_discount" value="{{ old('payment_discount', $invoice->payment_discount) }}">
+                                    <div class="input-group-append"><span class="input-group-text currIco"></span></div>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -317,7 +330,7 @@
                 <!-- Recent Searches card start -->
                 <div class="card job-right-header">
                     <div class="card-header b-b-primary">
-                        <h5 class="text-muted">Client information</h5>
+                        <h5 class="text-muted">{{ __('Client information') }}</h5>
                     </div>
                     <div class="card-body">
                         <div>

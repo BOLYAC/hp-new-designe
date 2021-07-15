@@ -39,7 +39,7 @@
                         @foreach($events as $event)
                     {
                         title: '{{ $event->lead_name  ?? $event->name ?? ''}}',
-                        url: '{{ route('events.edit', $event->id) }}',
+                        url: '{{ route('events.show', $event->id) }}',
                         start: '{{ $event->event_date }}',
                         color: '{{ $event->color }}'
                     },

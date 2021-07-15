@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Agency;
+use App\Imports\AgenciesImport;
 use App\Imports\ClientsImport;
 use App\Imports\LeadsImport;
 use App\Models\Client;
 
 use App\Models\Department;
+use App\Models\Lead;
 use App\Models\Source;
 use App\Models\Task;
 use App\Models\Team;
@@ -24,6 +26,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 use JsonException;
+use Maatwebsite\Excel\HeadingRowImport;
 use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
 
@@ -59,14 +62,34 @@ class ClientsController extends Controller
             return view('clients.index', compact('users', 'sources', 'agencies', 'departments', 'teams'));
         } elseif (\auth()->user()->hasPermissionTo('team-manager')) {
             if (auth()->user()->ownedTeams()->count() > 0) {
-                $teamUsers = auth()->user()->ownedTeams;
-                $teams = auth()->user()->allTeams();
-                foreach ($teamUsers as $u) {
+                $teams = auth()->user()->ownedTeams;
+                //$teams = auth()->user()->allTeams();
+                foreach ($teams as $u) {
                     foreach ($u->users as $ut) {
                         $users[] = $ut;
                     }
                 }
             }
+            return view('clients.index', compact('users', 'sources', 'agencies', 'teams'));
+        } elseif (\auth()->user()->hasPermissionTo('desk-manager')) {
+            $teams = Team::whereIn('id', ['4', '7', '15']);
+            foreach ($teams as $u) {
+                foreach ($u->users as $ut) {
+                    $users[] = $ut->id;
+                }
+            }
+            return view('clients.index', compact('users', 'sources', 'agencies', 'teams'));
+        } elseif (\auth()->user()->hasPermissionTo('multiple-department')) {
+            $teams = Team::whereIn('id', ['5', '4', '7', '15']);
+            foreach ($teams as $u) {
+                foreach ($u->users as $ut) {
+                    $users[] = $ut->id;
+                }
+            }
+            return view('clients.index', compact('users', 'sources', 'agencies', 'teams'));
+        } else {
+            $users = User::all();
+            $teams = Team::all();
             return view('clients.index', compact('users', 'sources', 'agencies', 'teams'));
         }
     }
@@ -138,7 +161,7 @@ class ClientsController extends Controller
             }
         }
         if ($request->phone_check === 'true') {
-            $d = $request->get('phone_check');
+            $d = $request->get('phone_type');
             switch ($d) {
                 case '1':
                     $clients->Where('client_number', 'LIKE', '%' . $request->get('phone') . '%')
@@ -217,7 +240,7 @@ class ClientsController extends Controller
                 return $clients->public_id ?? '';
             })
             ->editColumn('full_name', function ($clients) {
-                return '<a href="clients/' . $clients->id . '">' . $clients->full_name . '</a>';
+                return '<a href="clients/' . $clients->id . '">' . $clients->complete_name ?? $clients->full_name . '</a>';
             })
             ->editColumn('country', function ($clients) {
                 if (is_null($clients->country)) {
@@ -419,7 +442,8 @@ class ClientsController extends Controller
      */
     public function show(Client $client)
     {
-        return view('clients.show', compact('client'));
+        $users = User::all();
+        return view('clients.show', compact('client', 'users'));
     }
 
     /**
@@ -609,6 +633,7 @@ class ClientsController extends Controller
     public function importFromZoho(Request $request)
     {
 
+
         $validator = Validator::make(
             $request->all(),
             [
@@ -622,22 +647,20 @@ class ClientsController extends Controller
         );
 
         if ($request->hasFile('file')) {
-            $user = $request->get('user_id');
-            $u = User::findOrFail($user);
+            $user = User::findOrFail($request->get('user_id'));
             $source = $request->get('source_id');
-            $team = $u->currentTeam->id;
+            $team = $user->currentTeam->id;
             $file = $request->file('file');
-
+            //$import = new AgenciesImport($user, $source, $team);
+            /*$headings = (new HeadingRowImport)->toArray($file);
+            dd($headings);*/
             $import = new LeadsImport($user, $source, $team);
-
             $import->import($file);
-
-
             if ($import->failures()->isNotEmpty()) {
                 return back()->withFailures($import->failures());
             }
 
-            return redirect()->route('clients.index')->with('toast_success', __('File upload  successfully'));
+            return redirect()->route('clients.index')->with('toast_success', __('File upload successfully'));
         }
     }
 

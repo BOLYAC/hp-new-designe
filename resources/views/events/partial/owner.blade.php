@@ -50,7 +50,7 @@
     </div>
     <div class="form-group input-group-sm">
         <label for="place">{{ __('Place') }}</label>
-        <input class="form-control sm" type="text" name="place" id="place"
+        <input class="form-control form-control-sm" type="text" name="place" id="place"
                value="{{ old('place', $event->place) }}">
     </div>
 @else
@@ -73,7 +73,7 @@
                     </tr>
                     <tr>
                         <th scope="row">{{ __('Description') }}</th>
-                        <td>{!! $event->desciprtion !!}</td>
+                        <td>{!! $event->description !!}</td>
                     </tr>
                     </tbody>
                 </table>
@@ -90,7 +90,7 @@
                         <td>
                             @php $sellRep = collect($event->sells_name)->toArray() @endphp
                             @foreach( $sellRep as $name)
-                                <span class="label label-inverse">{{ $name }}</span>
+                                <span class="badge badge-dark">{{ $name }}</span>
                             @endforeach
                         </td>
                     </tr>

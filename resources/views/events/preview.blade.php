@@ -136,6 +136,7 @@
             @endswitch
             <td>{{ __('Previous Appointments Count') }}</td>
             <td>{{ __('Stage') }}</td>
+            <td>{{ __('Confirmed') }}</td>
         </tr>
         @foreach($events as $key => $event)
             <tr>
@@ -302,6 +303,9 @@
                         }
                     @endphp
                 </td>
+                <td>
+                    {{ $event->confirmed === 1 ? 'Yes' : 'No' }}
+                </td>
             </tr>
         @endforeach
         <tr class="item last">
@@ -310,6 +314,22 @@
             </td>
             <td>
                 {{ $events->count() }} Record(s)
+            </td>
+        </tr>
+        <tr class="item last">
+            <td>
+                {{ __('Appointment confirmed:') }}
+            </td>
+            <td>
+                {{ $confirmedEvents }} Record(s)
+            </td>
+        </tr>
+        <tr class="item last">
+            <td>
+                {{ __('Appointment not confirmed:') }}
+            </td>
+            <td>
+                {{ $notConfirmedEvents }} Record(s)
             </td>
         </tr>
         <tr class="total">

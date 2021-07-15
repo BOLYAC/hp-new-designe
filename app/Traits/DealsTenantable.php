@@ -22,21 +22,43 @@ trait DealsTenantable
 
             $l[] = json_encode(auth()->id());
 
-
             if (auth()->user()->hasPermissionTo('simple-user')) {
                 static::addGlobalScope('user_id', function (Builder $builder) use ($l) {
-                    $builder->whereJsonContains('sellers', $l)
-                        ->orWhere('user_id', auth()->id());
+                    $builder->orWhere('user_id', auth()->id())
+                        ->whereJsonContains('sellers', $l);
                 });
             }
 
             if (auth()->user()->hasPermissionTo('team-manager')) {
-                static::addGlobalScope('team_id', function (Builder $builder) {
-                    $builder->whereIn('team_id', auth()->user()->ownedTeams->pluck('id'))
-                        ->where('department_id', auth()->user()->department_id);;
-                });
+                if (auth()->user()->ownedTeams()->count() > 0) {
+                    $teamUsers = auth()->user()->ownedTeams;
+                    $teams = auth()->user()->allTeams();
+                    foreach ($teamUsers as $u) {
+                        foreach ($u->users as $ut) {
+                            $users[] = $ut->id;
+                        }
+                    }
+                    static::addGlobalScope('team_id', function (Builder $builder) use ($users) {
+                        $builder->whereIn('user_id', $users);
+                    });
+                }
             }
+
+            /*if (auth()->user()->hasPermissionTo('desk-manager')) {
+                if (auth()->user()->ownedTeams()->count() > 0) {
+                    $teamUsers = auth()->user()->ownedTeams;
+                    $teams = auth()->user()->allTeams();
+                    foreach ($teams as $u) {
+                        foreach ($u->users as $ut) {
+                            $users[] = $ut;
+                        }
+                    }
+                    static::addGlobalScope('team_id', function (Builder $builder) use ($users) {
+                        $builder->whereIn('user_id', $users);
+                    });
+                }
+            }*/
+
         }
     }
-
 }

@@ -271,6 +271,30 @@
                                         </select>
                                     </div>
                                 @endif
+                            @elseif(auth()->user()->hasPermissionTo('multiple-department'))
+                                @if(isset($teams))
+                                    <div class="form-group mb-2">
+                                        <select name="team_filter" id="team_filter"
+                                                class="custom-select custom-select-sm">
+                                            <option value="">{{ __('Team') }}</option>
+                                            @foreach($teams as $row)
+                                                <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endif
+                                @if(isset($users))
+                                    <div class="form-group mb-2">
+                                        <select name="user_filter" id="user_filter"
+                                                class="custom-select custom-select-sm">
+                                            <option value="">{{ __('Assigned') }}</option>
+                                            @foreach($users as $user)
+                                                <option
+                                                    value="{{ $user->id }}">{{ $user->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endif
                             @endif
                             <div class="form-group mb-2">
                                 <select class="custom-select custom-select-sm" id="status_filter"
@@ -288,6 +312,7 @@
                                     <option value="11">{{ __('Low budget') }}</option>
                                     <option value="9">{{ __('Wrong Number') }}</option>
                                     <option value="14">{{ __('Unqualified') }}</option>
+                                    <option value="15">{{ __('Lost') }}</option>
                                 </select>
                             </div>
                             <div class="form-group mb-2">

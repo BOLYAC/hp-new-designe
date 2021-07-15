@@ -44,6 +44,7 @@
             $('#output span:last-child').remove();
             count--;
         }
+
     }, false);
 
     $("#emptyField").on('click', function () {

@@ -254,7 +254,7 @@
                                         </div>
                                         <div class="col-6 mx-auto">
                                             <p class="legal">
-                                                {{ __('C.E.O') }}<br><b>ALPAY ÇEPNİ</b>
+                                                {{ __('Sales Manager') }}<br><b>REHA NURI TALU</b>
                                             </p>
                                         </div>
                                         <div class="col-12 mx-auto">
@@ -263,8 +263,6 @@
                                             </p>
                                         </div>
                                     </div>
-                                    <!-- End Invoice-->
-                                    <!-- End Invoice Holder-->
                                 </div>
                             </div>
                         </div>

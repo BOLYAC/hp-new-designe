@@ -38,6 +38,16 @@
     <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.bootstrap4.min.js')}}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
     <script>
+        $('#summernote').summernote({
+            tabsize: 2,
+            height: 200,
+            toolbar: [
+                ['style', ['style']],
+                ['font', ['bold', 'underline', 'clear']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+            ]
+        })
         let budgetData = [
             {id: 1, text: 'Less then 50K'},
             {id: 2, text: '50K <> 100K'},
@@ -112,58 +122,67 @@
                         '<div class="row">' +
                         '<div class="form-group col-md-6">' +
                         '<label> {{ __('Project name') }} </label>' +
-                        '<select id="project" name="project_id" class="project_id form-control form-control-sm">' +
-                        '<option value="">-- {{ __('Select Project') }} --</option>' +
-                        '@foreach($projects as $project)' +
-                        '<option value="{{ $project->id }}">{{ $project->project_name }}</option>' +
-                        '@endforeach' +
-                        '</select>' +
+                        '<input id="project" name="project_name" class="project_name form-control form-control-sm">' +
                         '</div>' +
                         '<div class="form-group col-md-6">' +
-                        '<label for="property">{{ __('Select Property:') }}</label>' +
-                        '<select name="property" class="property form-control form-control-sm">' +
-                        '<option value="">-- {{ __('Select Property') }} --</option>' +
-                        '</select>' +
-                        '</div>' +
-                        '<div class="form-group col-md-6">' +
-                        '<label> {{ __('Province/Country') }} </label>' +
-                        '<input type="text" class="country_province form-control form-control-sm" name="country_province" required/>' +
+                        '<label> {{ __('Country') }} </label>' +
+                        '<input type="text" class="country_province form-control form-control-sm" name="country_province"/>' +
                         '</div>' +
                         '<div class="form-group col-md-6">' +
                         '<label> {{ __('Flat Num') }} </label>' +
-                        '<input type="text" class="flat_num form-control form-control-sm" name="flat_num" required/>' +
+                        '<input type="text" class="flat_num form-control form-control-sm" name="flat_num"/>' +
                         '</div>' +
                         '<div class="form-group col-md-6">' +
                         '<label> {{ __('Gross M²') }} </label>' +
-                        '<input type="text" class="gross_square form-control form-control-sm" name="gross_square" required/>' +
+                        '<input type="text" class="gross_square form-control form-control-sm" name="gross_square"/>' +
                         '</div>' +
                         '<div class="form-group col-md-6">' +
                         '<label> {{ __('Section/Plot') }} </label>' +
-                        '<input type="text" class="section_plot form-control form-control-sm" name="section_plot" required/>' +
+                        '<input type="text" class="section_plot form-control form-control-sm" name="section_plot"/>' +
                         '</div>' +
                         '<div class="form-group col-md-6">' +
                         '<label> {{ __('Block Num') }} </label>' +
-                        '<input type="text" class="block_num form-control form-control-sm" name="block_num" required/>' +
+                        '<input type="text" class="block_num form-control form-control-sm" name="block_num"/>' +
                         '</div>' +
                         '<div class="form-group col-md-6">' +
                         '<label> {{ __('Floor Num') }} </label>' +
-                        '<input type="text" class="floor_number form-control form-control-sm" name="floor_number" required/>' +
+                        '<input type="text" class="floor_number form-control form-control-sm" name="floor_number"/>' +
                         '</div>' +
                         '<div class="form-group col-md-6">' +
                         '<label> {{ __('Num of Rooms') }} </label>' +
-                        '<input type="text" class="room_number form-control form-control-sm" name="room_number" required/>' +
+                        '<input type="text" class="room_number form-control form-control-sm" name="room_number"/>' +
                         '</div>' +
                         '<div class="form-group col-md-6">' +
                         '<label> {{ __('Reservation amount') }} </label>' +
-                        '<input type="text" class="reservation_amount form-control form-control-sm" name="reservation_amount" required/>' +
+                        '<input type="text" class="reservation_amount form-control form-control-sm" name="reservation_amount"/>' +
                         '</div>' +
                         '<div class="form-group col-md-6">' +
                         '<label> {{ __('Sale Price') }} </label>' +
-                        '<input type="text" class="sale_price form-control form-control-sm" name="sale_price" required/>' +
+                        '<input type="text" class="sale_price form-control form-control-sm" name="sale_price"/>' +
+                        '</div>' +
+                        '<div class="form-group col-md-6">' +
+                        '<label> {{ __('Down payment') }} </label>' +
+                        '<input type="text" class="down_payment form-control form-control-sm" name="down_payment"/>' +
+                        '</div>' +
+                        '<div class="form-group col-md-6">' +
+                        '<label> {{ __('Payment type') }} </label>' +
+                        '<select name="payment_type" class="payment_type form-control form-control-sm">' +
+                        '<option value="">--  --</option>' +
+                        '<option value="1">{{ __('Cash') }}</option>' +
+                        '<option value="2">{{ __('Installment') }}</option>' +
+                        '</select>' +
+                        '</div>' +
+                        '<div class="form-group col-md-6">' +
+                        '<label> {{ __('Discount') }} </label>' +
+                        '<input type="text" class="payment_discount form-control form-control-sm" name="payment_discount"/>' +
                         '</div>' +
                         '<div class="form-group col-md-6">' +
                         '<label> {{ __('File upload') }} </label>' +
-                        '<input type="file" class="file_path form-control form-control-sm" name="file_path" required/>' +
+                        '<input type="file" class="file_path form-control form-control-sm" name="file_path"/>' +
+                        '</div>' +
+                        '<div class="form-group col-md-12">' +
+                        '<label> {{ __('Note') }} </label>' +
+                        '<textarea type="text" class="excerpt form-control form-control-sm" name="excerpt"/></textarea>' +
                         '</div>' +
                         '</div>' +
                         '</form>',
@@ -172,15 +191,14 @@
                             text: 'Submit',
                             btnClass: 'btn-blue',
                             action: function () {
-                                var name = this.$content.find('.project_id').val();
+                                let name = this.$content.find('.project_name').val();
                                 if (!name) {
                                     $.alert('provide a valid Project name');
                                     return false;
                                 }
-                                let project_id = this.$content.find('.project_id').val();
-                                let project_name = this.$content.find('.project_id option:selected').val();
+                                let project_name = this.$content.find('.project_name').val();
                                 let country_province = this.$content.find('.country_province').val();
-                                let flat_num = this.$content.find('.flat_num').text();
+                                let flat_num = this.$content.find('.flat_num').val();
                                 let gross_square = this.$content.find('.gross_square').val();
                                 let section_plot = this.$content.find('.section_plot').val();
                                 let block_num = this.$content.find('.block_num').val();
@@ -189,6 +207,10 @@
                                 let reservation_amount = this.$content.find('.reservation_amount').val();
                                 let sale_price = this.$content.find('.sale_price').val();
                                 let file_path = this.$content.find('.file_path').val();
+                                let excerpt = this.$content.find('.excerpt').val();
+                                let down_payment = this.$content.find('.down_payment').val();
+                                let payment_type = this.$content.find('.payment_type').val();
+                                let payment_discount = this.$content.find('.payment_discount').val();
                                 let lead_id = '{{ $lead->id }}'
                                 $.ajax({
                                     url: "{{ route('deal.reservation.form') }}",
@@ -196,7 +218,6 @@
                                     data: {
                                         "_token": "{{ csrf_token() }}",
                                         lead_id,
-                                        project_id,
                                         project_name,
                                         country_province,
                                         flat_num,
@@ -207,7 +228,11 @@
                                         room_number,
                                         reservation_amount,
                                         sale_price,
-                                        file_path
+                                        file_path,
+                                        excerpt,
+                                        down_payment,
+                                        payment_type,
+                                        payment_discount
                                     },
                                     success: function () {
                                         location.href = "{{ route('leads.show', $lead) }}"

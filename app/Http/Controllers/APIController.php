@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Source;
 use App\Models\Task;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 use Yajra\Datatables\Datatables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -16,45 +17,45 @@ use phpseclib3\System\SSH\Agent;
 
 class APIController extends Controller
 {
-  public function getRowDetailsData()
-  {
-    $customers = Client::select(['id', 'full_name', 'client_email', 'created_at', 'updated_at']);
+    public function getRowDetailsData()
+    {
+        $customers = Client::select(['id', 'full_name', 'client_email', 'created_at', 'updated_at']);
 
-    return Datatables::of($customers)->make(true);
-  }
-
-  public function getMasterDetailsData(Request $request)
-  {    
-    $customers = Client::with(['source', 'user'])->select();
-    if ($request->get('user')) {
-      $customers->where('user_id', '=', $request->get('user'));
-    }
-    if ($request->get('source')) {
-      $customers->where('source_id', '=', $request->get('source'));
-    }
-    if ($request->get('status')) {
-      $customers->where('status', '=', $request->get('status'));
-    }
-    if ($request->get('priority')) {
-      $customers->where('priority', '=', $request->get('priority'));
-    }
-    if ($request->get('phone')) {
-      $customers->Where('client_number', 'LIKE', '%' . $request->get('phone') . '%')
-        ->orWhere('client_number_2', 'LIKE', '%' . $request->get('phone') . '%');
-    }
-    if ($request->get('country')) {
-      $customers->Where('country', 'LIKE', '%' . $request->get('country') . '%');
+        return Datatables::of($customers)->make(true);
     }
 
-    return Datatables::of($customers)
-      ->addColumn('details_url', function ($customer) {
-        return route('api.master_single_details', $customer->id);
-      })
-      ->editColumn('public_id', function ($customer) {
-        return '<a href="clients/' . $customer->id . '/edit">' . $customer->public_id . '</a>';
-      })
-      ->addColumn('details', '<span>Send Quota</span><p class="text-danger">{{ $client_email }}</p><p class="text-danger">{{ $client_number }}<br>{{ $client_number_2 }}</p><span>Originate Country</span><p class="text-bold"><b>{{ $country }}</b></p>')
-      ->addColumn('details_2', '
+    public function getMasterDetailsData(Request $request)
+    {
+        $customers = Client::with(['source', 'user'])->select();
+        if ($request->get('user')) {
+            $customers->where('user_id', '=', $request->get('user'));
+        }
+        if ($request->get('source')) {
+            $customers->where('source_id', '=', $request->get('source'));
+        }
+        if ($request->get('status')) {
+            $customers->where('status', '=', $request->get('status'));
+        }
+        if ($request->get('priority')) {
+            $customers->where('priority', '=', $request->get('priority'));
+        }
+        if ($request->get('phone')) {
+            $customers->Where('client_number', 'LIKE', '%' . $request->get('phone') . '%')
+                ->orWhere('client_number_2', 'LIKE', '%' . $request->get('phone') . '%');
+        }
+        if ($request->get('country')) {
+            $customers->Where('country', 'LIKE', '%' . $request->get('country') . '%');
+        }
+
+        return Datatables::of($customers)
+            ->addColumn('details_url', function ($customer) {
+                return route('api.master_single_details', $customer->id);
+            })
+            ->editColumn('public_id', function ($customer) {
+                return '<a href="clients/' . $customer->id . '/edit">' . $customer->public_id . '</a>';
+            })
+            ->addColumn('details', '<span>Send Quota</span><p class="text-danger">{{ $client_email }}</p><p class="text-danger">{{ $client_number }}<br>{{ $client_number_2 }}</p><span>Originate Country</span><p class="text-bold"><b>{{ $country }}</b></p>')
+            ->addColumn('details_2', '
       <div class="row mb-4">
         <div class="col">
           <p>{{ $full_name }}</p>
@@ -93,7 +94,7 @@ class APIController extends Controller
           </label>
         </div>
       </div>')
-      ->addColumn('status','
+            ->addColumn('status', '
                           <div class="form-group form-group-sm">
                           <label for="budget">Status</label>
                             <select name="status-{{ $id }}" class="form-control form-control-sm">
@@ -180,9 +181,9 @@ class APIController extends Controller
                               </option>
                             </select>
                           </div>'
-                          )
-      ->addColumn('calls', 
-      '
+            )
+            ->addColumn('calls',
+                '
       <div class="form-group form-group-sm">
         <label>Next Call</label>
         <input type="datetime-local" name="next_call-{{ $id }}"
@@ -197,22 +198,22 @@ class APIController extends Controller
           style="font:bold;">{{ Carbon\Carbon::parse($created_at)->format(\'Y-m-d H:i\') }}</span>
       </p>
       '
-      )
-      ->addColumn('assigne', function ($customer) {
-        $u = '<span class="badge badge-success">' . optional($customer->user)->name . '</span>';
-        $result = 
-        '<div class="form-group form-group-sm">
+            )
+            ->addColumn('assigne', function ($customer) {
+                $u = '<span class="badge badge-success">' . optional($customer->user)->name . '</span>';
+                $result =
+                    '<div class="form-group form-group-sm">
         <label for="priority">Priority</label>
         <select name="priority-' . $customer->id . '" class="form-control form-control-sm">
           <option value="0" selected disabled> Priority
           </option>
-          <option value="1"' . ( $customer->priority == '1' ? 'selected' : '') . '>
+          <option value="1"' . ($customer->priority == '1' ? 'selected' : '') . '>
             Low
           </option>
-          <option value="2"' . ( $customer->priority == '2' ? 'selected' : '') . '>
+          <option value="2"' . ($customer->priority == '2' ? 'selected' : '') . '>
             Medium
           </option>
-          <option value="3"' . ( $customer->priority == '3' ? 'selected' : '') . '>
+          <option value="3"' . ($customer->priority == '3' ? 'selected' : '') . '>
             High
           </option>
         </select>
@@ -227,81 +228,81 @@ class APIController extends Controller
           Apply changes
         </label>
       </div>';
-      return $result;
-      })
-      ->rawColumns(['details', 'details_2', 'status', 'calls', 'assigne', 'public_id'])
-      ->make(true);
-  }
+                return $result;
+            })
+            ->rawColumns(['details', 'details_2', 'status', 'calls', 'assigne', 'public_id'])
+            ->make(true);
+    }
 
-  public function getMasterDetailsSingleData($id)
-  {
-    $notes = Client::findOrFail($id)->notes;
-    $tasks = Client::findOrFail($id)->tasks;
+    public function getMasterDetailsSingleData($id)
+    {
+        $notes = Client::findOrFail($id)->notes;
+        $tasks = Client::findOrFail($id)->tasks;
 
-    $all = $notes->merge($tasks);
+        $all = $notes->merge($tasks);
 
-    return Datatables::of($all)
-      ->editColumn('body', '{!! $body !!}')
-      ->editColumn('tableName', function ($all) {
-        return '<span class="badge badge-primary">' .  $all->getTable() . '</span>';
-      })
-      ->addColumn(
-        'user_id',
-        function ($all) {
-          return '<span class="badge badge-success">' . optional($all->user)->name . '</span>';
+        return Datatables::of($all)
+            ->editColumn('body', '{!! $body !!}')
+            ->editColumn('tableName', function ($all) {
+                return '<span class="badge badge-primary">' . $all->getTable() . '</span>';
+            })
+            ->addColumn(
+                'user_id',
+                function ($all) {
+                    return '<span class="badge badge-success">' . optional($all->user)->name . '</span>';
+                }
+            )
+            ->editColumn('created_at', function ($customer) {
+                return $customer->date->format('Y/m/d');
+            })
+            ->rawColumns(['body', 'user_id', 'tableName'])
+            ->make(true);
+    }
+
+    public function getRowAttributesData()
+    {
+        $customers = Client::select(['id', 'full_name', 'email', 'created_at', 'updated_at']);
+
+        return Datatables::of($customers)
+            ->addColumn('action', function ($customer) {
+                return '<a href="#edit-' . $customer->id . '" class="btn btn-xs btn-primary"><i class="glyphicon glyphicon-edit"></i> Edit</a>';
+            })
+            ->editColumn('id', '{{$id}}')
+            ->removeColumn('updated_at')
+            ->setRowId('id')
+            ->setRowClass(function ($user) {
+                return $user->id % 2 == 0 ? 'alert-success' : 'alert-warning';
+            })
+            ->setRowData([
+                'id' => 'test',
+            ])
+            ->setRowAttr([
+                'color' => 'red',
+            ])
+            ->make(true);
+    }
+
+    public function getSalesPerformance(Request $request)
+    {
+        $users = User::withCount([
+            'clients',
+            'clients as calls_count' => function (Builder $query) {
+                $query->where('spoken', true);
+            },
+            'clients as spoken_count' => function (Builder $query) {
+                $query->where('called', true);
+            },
+        ])->get();
+        return datatables()->of($users)->make(true);
+    }
+
+    public function getReportDetailsData(Request $request)
+    {
+        $team = auth('api')->user()->currentTeam;
+        $q = User::query();
+        if (auth('api')->user()->hasRole('Manager')) {
+            $q->where('current_team_id', '=', $team->id)->get();
         }
-      )
-      ->editColumn('created_at', function ($customer) {
-        return $customer->date->format('Y/m/d');
-      })
-      ->rawColumns(['body', 'user_id', 'tableName'])
-      ->make(true);
-  }
-
-  public function getRowAttributesData()
-  {
-    $customers = Client::select(['id', 'full_name', 'email', 'created_at', 'updated_at']);
-
-    return Datatables::of($customers)
-      ->addColumn('action', function ($customer) {
-        return '<a href="#edit-' . $customer->id . '" class="btn btn-xs btn-primary"><i class="glyphicon glyphicon-edit"></i> Edit</a>';
-      })
-      ->editColumn('id', '{{$id}}')
-      ->removeColumn('updated_at')
-      ->setRowId('id')
-      ->setRowClass(function ($user) {
-        return $user->id % 2 == 0 ? 'alert-success' : 'alert-warning';
-      })
-      ->setRowData([
-        'id' => 'test',
-      ])
-      ->setRowAttr([
-        'color' => 'red',
-      ])
-      ->make(true);
-  }
-
-  public function getSalesPerformance(Request $request)
-  {
-    $users = User::withCount([
-      'clients',
-      'clients as calls_count' => function (Builder $query) {
-          $query->where('spoken', true);
-      },
-      'clients as spoken_count' => function (Builder $query) {
-          $query->where('called', true);
-      },
-    ])->get();
-  return datatables()->of($users)->make(true);
-  }
-
-  public function getReportDetailsData(Request $request)
-  {
-      $team = auth('api')->user()->currentTeam;
-      $q = User::query();
-      if (auth('api')->user()->hasRole('Manager')) {
-        $q->where('current_team_id' , '=', $team->id)->get();
-      }
 
         if ($request->ajax()) {
             if (!empty($request->from_date) && !empty($request->to_date)) {
@@ -345,109 +346,118 @@ class APIController extends Controller
             return datatables()->of($users)->make(true);
         }
         return view('statics.index');
-  }
-  public function getReportDetailsSingleData(Request $request, $id)
-  {
-    $from = $request->from_date;
-    $to = $request->to_date;
-    $from = Carbon::parse($from)
-                 ->startOfDay()        // 2018-09-29 00:00:00.000000
-                 ->toDateTimeString(); // 2018-09-29 00:00:00
+    }
 
-    $to = Carbon::parse($to)
-          ->endOfDay()          // 2018-09-29 23:59:59.000000
-          ->toDateTimeString(); // 2018-09-29 23:59:59
-    
-    $tasks = User::findOrFail($id)
-        ->tasks()
-        ->archive(true)
-        ->whereBetween('date', [new Carbon($from), new Carbon($to)])
-        ->get();
+    public function getReportDetailsSingleData(Request $request, $id)
+    {
+        $from = $request->from_date;
+        $to = $request->to_date;
+        $from = Carbon::parse($from)
+            ->startOfDay()        // 2018-09-29 00:00:00.000000
+            ->toDateTimeString(); // 2018-09-29 00:00:00
 
-    return Datatables::of($tasks)
-      ->editColumn('full_name', function($task){
-        return '<a href="clients/' . $task->client->id . '/edit">' . $task->client->full_name ?? '' . '</a>';
-      })->editColumn('date', function($task){
-        return $task->date->format('Y-m-d');
-      })
-      ->rawColumns(['full_name'])
-      ->make(true);
-  }
-  public function getAgencyDetailsSingleData($id)
-  {
-    $clients = Agency::findOrFail($id)->clients;
+        $to = Carbon::parse($to)
+            ->endOfDay()          // 2018-09-29 23:59:59.000000
+            ->toDateTimeString(); // 2018-09-29 23:59:59
 
-    return Datatables::of($clients)
-      ->editColumn('public_id', function ($client) {
-        return $client->public_id ?? '';
-      })
-      ->editColumn('full_name', function($client){
-        return '<a href="clients/' . $client->id . '/edit">' . $client->full_name ?? '' . '</a>';
-      })
-      ->editColumn(
-        'assigned',
-        function ($client) {
-          return '<span class="badge badge-success">' . optional($client->user)->name . '</span> <a href="#" class="assign"></a>';
-        }
-      )
-      ->editColumn('type', function ($clients) {
-        return $clients->type === true ? '<label class="label label-success">Yes</label>' : '<label class="label label-danger">No</label>';
-      })
-      ->editColumn(
-        'status',
-        function ($client) {
-          $i = $client->status;
-          switch ($i) {
-            case 1:
-              return '<span class="badge badge-default badge-sm">New Lead</span>';
-              break;
-            case 8:
-                return '<span class="badge badge-default badge-sm">No Answer</span>';
-                break;
-            case 12:
-                return '<span class="badge badge-default badge-sm">In progress</span>';
-                break;
-            case 3:
-                return '<span class="badge badge-default badge-sm">Potential
+        $tasks = User::findOrFail($id)
+            ->tasks()
+            ->archive(true)
+            ->whereBetween('date', [new Carbon($from), new Carbon($to)])
+            ->get();
+
+        return Datatables::of($tasks)
+            ->editColumn('full_name', function ($task) {
+                return '<a href="clients/' . $task->client->id . '/edit">' . $task->client->full_name ?? '' . '</a>';
+            })->editColumn('date', function ($task) {
+                return $task->date->format('Y-m-d');
+            })
+            ->rawColumns(['full_name'])
+            ->make(true);
+    }
+
+    public function getAgencyDetailsSingleData($id)
+    {
+        $clients = Agency::findOrFail($id)->clients;
+
+        return Datatables::of($clients)
+            ->editColumn('public_id', function ($client) {
+                return $client->public_id ?? '';
+            })
+            ->editColumn('full_name', function ($client) {
+                return '<a href="clients/' . $client->id . '/edit">' . $client->full_name ?? '' . '</a>';
+            })
+            ->editColumn(
+                'assigned',
+                function ($client) {
+                    return '<span class="badge badge-success">' . optional($client->user)->name . '</span> <a href="#" class="assign"></a>';
+                }
+            )
+            ->editColumn('type', function ($clients) {
+                return $clients->type === true ? '<label class="label label-success">Yes</label>' : '<label class="label label-danger">No</label>';
+            })
+            ->editColumn(
+                'status',
+                function ($client) {
+                    $i = $client->status;
+                    switch ($i) {
+                        case 1:
+                            return '<span class="badge badge-default badge-sm">New Lead</span>';
+                            break;
+                        case 8:
+                            return '<span class="badge badge-default badge-sm">No Answer</span>';
+                            break;
+                        case 12:
+                            return '<span class="badge badge-default badge-sm">In progress</span>';
+                            break;
+                        case 3:
+                            return '<span class="badge badge-default badge-sm">Potential
                 appointment</span>';
-                break;
-            case 4:
-                return '<span class="badge badge-default badge-sm">Appointment
+                            break;
+                        case 4:
+                            return '<span class="badge badge-default badge-sm">Appointment
                 set</span>';
-                break;
-            case 10:
-                return '<span class="badge badge-default badge-sm">Appointment
+                            break;
+                        case 10:
+                            return '<span class="badge badge-default badge-sm">Appointment
                 follow up</span>';
-                break;
-            case 5:
-                return '<span class="badge badge-default badge-sm">Sold</span>';
-                break;
-            case 13:
-                return '<span class="badge badge-default badge-sm">Unreachable</span>';
-                break;
-            case 7:
-                return '<span class="badge badge-default badge-sm">Not interested</span>';
-                break;
-            case 11:
-              return '<span class="badge badge-default badge-sm">Low budget</span>';
-              break;
-            case 9:
-              return '<span class="badge badge-default badge-sm">Wrong Number</span>';
-              break;
-            case 14:
-              return '<span class="badge badge-default badge-sm">Unqualified</span>';
-              break;
-          }
-        }
-      )
-      ->editColumn(
-        'source_id',
-        function ($client) {
-          return optional($client->source)->name;
-        }
-      )
-      ->rawColumns(['full_name','assigned','type', 'status'])
-      ->make(true);
-  }
+                            break;
+                        case 5:
+                            return '<span class="badge badge-default badge-sm">Sold</span>';
+                            break;
+                        case 13:
+                            return '<span class="badge badge-default badge-sm">Unreachable</span>';
+                            break;
+                        case 7:
+                            return '<span class="badge badge-default badge-sm">Not interested</span>';
+                            break;
+                        case 11:
+                            return '<span class="badge badge-default badge-sm">Low budget</span>';
+                            break;
+                        case 9:
+                            return '<span class="badge badge-default badge-sm">Wrong Number</span>';
+                            break;
+                        case 14:
+                            return '<span class="badge badge-default badge-sm">Unqualified</span>';
+                            break;
+                    }
+                }
+            )
+            ->editColumn(
+                'source_id',
+                function ($client) {
+                    return optional($client->source)->name;
+                }
+            )
+            ->rawColumns(['full_name', 'assigned', 'type', 'status'])
+            ->make(true);
+    }
+
+    public function getData(Request $request)
+    {
+        Log::debug($request->all());
+        $payload = $request->all();
+        return response()->json([ 'data' => $payload, 'status' => \Symfony\Component\HttpFoundation\Response::HTTP_OK]);
+    }
 }
 

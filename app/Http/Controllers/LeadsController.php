@@ -10,9 +10,11 @@ use App\Models\Project;
 use App\Models\StageLog;
 use App\Models\Team;
 use App\Models\User;
+use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Ramsey\Uuid\Uuid;
@@ -271,6 +273,10 @@ class LeadsController extends Controller
         $data['user_commission_rate'] = \auth()->user()->commission_rate;
         $data['sale_commission_rate'] = $sale->commission_rate;
 
+
+        $data['project_id'] = $lead->project_id;
+        $data['property_id'] = $lead->property_id;
+        $data['project_name'] = $lead->project_name;
         $data['country_province'] = $lead->country_province;
         $data['section_plot'] = $lead->section_plot;
         $data['block_num'] = $lead->block_num;
@@ -279,8 +285,11 @@ class LeadsController extends Controller
         $data['gross_square'] = $lead->gross_square;
         $data['flat_num'] = $lead->flat_num;
         $data['price'] = $lead->sale_price;
-        $data['project_id'] = $lead->project_id;
-        $data['property_id'] = $lead->property_id;
+
+        $data['down_payment'] = $lead->down_payment;
+        $data['payment_type'] = $lead->payment_type;
+        $data['payment_discount'] = $lead->payment_discount;
+        $data['note'] = $lead->excerpt;
 
         $invoice = Invoice::create($data);
         $lead->stage_id = 8;
@@ -396,5 +405,57 @@ class LeadsController extends Controller
         } catch (JsonException $e) {
             return back()->withError($e->getMessage())->withInput();
         }
+    }
+
+    public function dealReport(Request $request)
+    {
+        if (!empty($request->from_date) && !empty($request->to_date)) {
+            $from = $request->from_date;
+            $to = $request->to_date;
+        } else {
+            $from = now();
+            $to = now();
+        }
+
+        $from = Carbon::parse($from)
+            ->startOfDay()        // 2018-09-29 00:00:00.000000
+            ->toDateTimeString(); // 2018-09-29 00:00:00
+
+        $to = Carbon::parse($to)
+            ->endOfDay()          // 2018-09-29 23:59:59.000000
+            ->toDateTimeString(); // 2018-09-29 23:59:59
+
+        $deals = Lead::whereBetween('created_at', [$from, $to])
+            ->get();
+
+        if ($deals->isEmpty()) {
+            return back()->with('toast_error', __('There is no reservation on this date(s)'))->withInput();
+        }
+
+        $val = [$from, $to];
+
+        return view('leads.report', compact('deals', 'val'));
+
+    }
+
+    public function generateReportDeal(Request $request, $val = array())
+    {
+
+        $d = $request->all();
+        $t = array_keys($d);
+        $p = explode("_", $t[0]);
+        $to = $p[0] . ' ' . $p[1];
+        $from = $val;
+        $deals = Lead::whereBetween('created_at', [$from, $to])->get();
+
+
+        if ($deals->isEmpty()) {
+            return back()->with('toast_error', __('There is no deals in this date'))->withInput();
+        }
+
+        //return view('events.preview',compact('events'));
+        $pdf = PDF::loadView('leads.preview', compact('deals', 'val'));
+        $pdf->setPaper('Tabloid', 'landscape');
+        return $pdf->stream('crm_hashim_group_crm.pdf');
     }
 }

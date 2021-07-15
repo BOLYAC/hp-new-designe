@@ -18,7 +18,6 @@ class SalesController extends Controller
 {
     public function transfer(Request $request)
     {
-
         $l[] = json_encode(Auth::id());
         $n = Auth::user()->name;
         $s[] = $n;
@@ -78,26 +77,26 @@ class SalesController extends Controller
         $lead['sellers'] = $l;
         $lead['sell_rep'] = Auth::id();
         $lead['stage_id'] = 1;
-        $lead['lead_name'] = $client->full_name;
-        $lead['lead_email'] = $client->client_email;
-        $lead['lead_phone'] = $client->client_number;
+        $lead['lead_name'] = $client->full_name ?? '';
+        $lead['lead_email'] = $client->client_email ?? '';
+        $lead['lead_phone'] = $client->client_number ?? '';
         $lead['owner_name'] = auth()->user()->name;
         $lead['sells_names'] = $s;
-        $lead['description'] = $client->description;
-        $lead['country'] = $client->country;
-        $lead['nationality'] = $client->nationality;
-        $lead['language'] = $client->language;
-        $lead['priority'] = $client->priority;
-        $lead['status_id'] = $client->status;
-        $lead['status_name'] = $status;
-        $lead['source_name'] = $client->source->name;
-        $lead['source_id'] = $client->source_id;
-        $lead['agency_name'] = $client->agency->name;
-        $lead['agency_id'] = $client->agency_id;
+        $lead['description'] = $client->description ?? '';
+        $lead['country'] = $client->country ?? '';
+        $lead['nationality'] = $client->nationality ?? '';
+        $lead['language'] = $client->lang ?? '';
+        $lead['priority'] = $client->priority ?? '';
+        $lead['status_id'] = $client->status ?? 99;
+        $lead['status_name'] = $status ?? '';
+        $lead['source_name'] = $client->source->name ?? '';
+        $lead['source_id'] = $client->source_id ?? '';
+        $lead['agency_name'] = $client->agency->name ?? '';
+        $lead['agency_id'] = $client->agency_id ?? '';
 
-        $lead['budget_request'] = $client->budget_request;
-        $lead['rooms_request'] = $client->rooms_request;
-        $lead['requirement_request'] = $client->requirement_requests;
+        $lead['budget_request'] = $client->budget_request ?? '';
+        $lead['rooms_request'] = $client->rooms_request ?? '';
+        $lead['requirement_request'] = $client->requirements_request ?? '';
 
         $lead = Lead::create($lead);
         //$client->update(['lead_id' => $lead->id]);

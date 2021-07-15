@@ -52,6 +52,10 @@ class EventsController extends Controller
                 }
             }
             return view('events.index', compact('events', 'users', 'teams'));
+        } else {
+            $users = User::all();
+            $teams = Team::all();
+            return view('events.index', compact('events', 'users', 'teams'));
         }
     }
 
@@ -74,6 +78,9 @@ class EventsController extends Controller
         if ($request->get('team')) {
             $events->where('team_id', '=', $request->get('team'));
         }
+        if ($request->confirmed === 'true') {
+            $events->where('confirmed', '=', 1);
+        }
         if ($request->get('daterange')) {
             $date = explode('-', $request->get('daterange'));
             $from = $date[0];
@@ -90,15 +97,13 @@ class EventsController extends Controller
             $events->whereBetween('event_date', [$from, $to]);
         }
 
-        $events->OrderByDesc('created_at');
-
 
         return Datatables::of($events)
             ->setRowId('id')
             ->editColumn('name', function ($events) {
                 return '<a href="' . route('events.show', $events) . '">' . ($events->name ?? '') . '</a>';
             })
-            ->editColumn('full_name', function ($events) {
+            ->editColumn('lead_name', function ($events) {
                 return $events->lead_name ?? $events->client->full_name;
             })
             ->editColumn('event_date', function ($events) {
@@ -110,13 +115,26 @@ class EventsController extends Controller
             ->addColumn('user', function ($events) {
                 return '<span class="badge badge-success">' . optional($events->user)->name . '</span>';
             })
+            ->editColumn(
+                'sells_name',
+                function ($events) {
+                    $cou = '';
+                    $sellRep = collect($events->sells_name)->toArray();
+                    foreach ($sellRep as $name) {
+                        $cou .= '<span class="badge badge-dark">' . $name . '</span>';
+                    }
+                    return $cou;
+                })
+            ->addColumn('confirmed', function ($events) {
+                return $events->confirmed === 1 ? '<label class="badge badge-success">Yes</label>' : '<label class="badge badge-danger">No</label>';
+            })
             ->addColumn('action', '<a href="{{ route(\'events.show\', $id) }}"
                                                class="m-r-15 text-muted f-18"><i
                                                     class="icofont icofont-eye-alt"></i></a>
                                             <a href="#!"
                                                class="m-r-15 text-muted f-18 delete"><i
                                                     class="icofont icofont-trash"></i></a>')
-            ->rawColumns(['user', 'name', 'action'])
+            ->rawColumns(['user', 'name', 'action', 'confirmed', 'sells_name'])
             ->make(true);
     }
 
@@ -144,6 +162,8 @@ class EventsController extends Controller
 
         $this->validate($request, [
             'client_id' => 'required',
+            'name' => 'required',
+            'event_date' => 'required'
         ]);
 
 
@@ -152,6 +172,7 @@ class EventsController extends Controller
         $users = $request->get('share_with');
 
         $adminEmail = User::findOrFail(1);
+
         if ($request->has('share_with')) {
             $u = User::whereIn('id', $users)->pluck('name');
             $data['sellers'] = $users;
@@ -160,7 +181,8 @@ class EventsController extends Controller
             }
         }
 
-        $client = Client::findOrFail($request->get('client_id'));
+        //$client = Client::findOrFail($request->get('client_id'));
+        $lead = Lead::findOrfail($request->get('lead_id'));
         $user = User::find($request->user_id);
         $team = $user->current_team_id ?? 1;
 
@@ -168,10 +190,24 @@ class EventsController extends Controller
         $data['user_id'] = $request->user_id ?? Auth::id();
         $data['team_id'] = $team;
         $data['owner_name'] = Auth::user()->name;
-        $data['lead_name'] = $client->full_name;
-        $data['lead_number'] = $client->lead_email;
-        $data['lead_budget'] = $client->budget;
-        $data['lead_lang'] = $client->lang;
+        $data['country'] = $lead->country ?? $lead->client->country;
+        $data['nationality'] = $lead->nationality ?? $lead->client->nationality;
+        $data['language'] = $lead->language ?? $lead->client->lang;
+        $data['lead_name'] = $lead->lead_name ?? $lead->client->complete_name;
+        $data['lead_number'] = $lead->lead_phone ?? $lead->client->phone_number;
+        $data['lead_email'] = $lead->lead_email ?? $lead->client->client_email;
+        $data['budget_request'] = $lead->budget_request ?? '';
+        $data['rooms_request'] = $lead->rooms_request ?? $lead->client->rooms_request;
+        $data['requirement_request'] = $lead->requirements_request ?? $lead->client->requirements_request;
+        $data['lead_lang'] = $lead->language ?? $lead->client->lang;
+        $data['source_id'] = $lead->source_id ?? '';
+        $data['source_name'] = $lead->source_name ?? '';
+        $data['agency_id'] = $lead->agency_id ?? '';
+        $data['agency_name'] = $lead->agency_name ?? '';
+        $data['status_id'] = $lead->status_id ?? '';
+        $data['status_name'] = $lead->status_name ?? '';
+        $data['priority'] = $lead->priority ?? '';
+        $data['lead_description'] = $lead->description ?? '';
 
         if ($request->has('share_with')) {
             $data['sell_rep'] = $users[0];
@@ -184,7 +220,7 @@ class EventsController extends Controller
 
         $emailData = [
             'title' => $data['name'],
-            'client' => $client->full_name,
+            'client' => $data['lead_name'],
             'user' => $user->name,
             'date' => $request->get('event_date'),
             'place' => $data['place'],
@@ -250,17 +286,22 @@ class EventsController extends Controller
         if ($request->has('share_with')) {
             $u = User::whereIn('id', $users)->pluck('name');
         }
-        $user = User::find($request->user_id);
+
+        if ($request->has('user_id')) {
+            $user = User::find($request->user_id);
+        } else {
+            $user = User::find($event->user_id);
+        }
+
         $team = $user->current_team_id ?? 1;
 
         $data = $request->except('share_with', 'files');
 
-        $data['created_by'] = Auth::id();
-
-        $data['user_id'] = $request->user_id ?? Auth::id();
+        $data['user_id'] = $user->id;
         $data['sellers'] = $users;
         $data['team_id'] = $team;
         $data['owner_name'] = $user->name;
+
         if ($request->has('share_with')) {
             $data['sell_rep'] = $users[0];
             $data['sells_name'] = $u;
@@ -341,30 +382,82 @@ class EventsController extends Controller
     {
         if ($val === 'today') {
             $events = Event::whereDate('event_date', Carbon::today()->toDateString())->get();
+
+            $confirmedEvents = Event::where( function ($query) {
+                $query->where('confirmed', '=', '1')
+                    ->whereDate('event_date', Carbon::today()->toDateString());
+            })->count();
+
+            $notConfirmedEvents = Event::where( function ($query) {
+                $query->where('confirmed', '=', '0')
+                    ->whereDate('event_date', Carbon::today()->toDateString());
+            })->count();
         } elseif ($val === 'tomorrow') {
             $events = Event::whereDate('event_date', Carbon::tomorrow()->toDateString())->get();
+
+            $confirmedEvents = Event::where(function ($query) {
+                $query->where('confirmed', '=', '1')
+                    ->whereDate('event_date', Carbon::tomorrow()->toDateString());
+            })->count();
+
+            $notConfirmedEvents = Event::where(function ($query) {
+                $query->where('confirmed', '=', '0')
+                    ->whereDate('event_date', Carbon::tomorrow()->toDateString());
+            })->count();
         }
         if ($events->isEmpty()) {
             return back()->with('toast_error', __('There is no appointment in this date'))->withInput();
         }
 
-        return view('events.report', compact('events', 'val'));
+        return view('events.report', compact('events', 'val', 'confirmedEvents', 'notConfirmedEvents'));
     }
 
     public
     function createReport(Request $request, $val = array())
     {
         if ($val === 'today') {
+
             $events = Event::whereDate('event_date', Carbon::today()->toDateString())->get();
+
+            $confirmedEvents = Event::where('confirmed', '=', '1', function ($query) {
+                $query->whereDate('event_date', Carbon::today()->toDateString());
+            })->count();
+
+            $notConfirmedEvents = Event::where('confirmed', '=', '0', function ($query) {
+                $query->whereDate('event_date', Carbon::today()->toDateString());
+            })->count();
+
         } elseif ($val === 'tomorrow') {
+
             $events = Event::whereDate('event_date', Carbon::tomorrow()->toDateString())->get();
+
+            $confirmedEvents = Event::where('confirmed', '=', '1', function ($query) {
+                $query->whereDate('event_date', Carbon::tomorrow()->toDateString());
+            })->count();
+
+            $notConfirmedEvents = Event::where('confirmed', '=', '0', function ($query) {
+                $query->whereDate('event_date', Carbon::tomorrow()->toDateString());
+            })->count();
+
         } else {
+
             $d = $request->all();
             $t = array_keys($d);
             $p = explode("_", $t[0]);
             $to = $p[0] . ' ' . $p[1];
             $from = $val;
             $events = Event::whereBetween('event_date', [$from, $to])->get();
+
+            $confirmedEvents = Event::where(function ($query) use ($from, $to) {
+                $query->where('confirmed', '=', '1')
+                    ->whereBetween('event_date', [$from, $to]);
+            })->count();
+
+            $notConfirmedEvents = Event::where(function ($query) use ($from, $to) {
+                $query->where('confirmed', '=', '0')
+                    ->whereBetween('event_date', [$from, $to]);
+            })->count();
+
         }
 
         if ($events->isEmpty()) {
@@ -372,7 +465,7 @@ class EventsController extends Controller
         }
 
         //return view('events.preview',compact('events'));
-        $pdf = PDF::loadView('events.preview', compact('events', 'val'));
+        $pdf = PDF::loadView('events.preview', compact('events', 'confirmedEvents', 'notConfirmedEvents', 'val'));
         $pdf->setPaper('Tabloid', 'landscape');
         return $pdf->stream('test_pdf.pdf');
     }
@@ -394,18 +487,47 @@ class EventsController extends Controller
             ->endOfDay()          // 2018-09-29 23:59:59.000000
             ->toDateTimeString(); // 2018-09-29 23:59:59
 
-        $events = Event::whereBetween('created_at', [$from, $to])
+        $events = Event::whereBetween('event_date', [$from, $to])
             ->get();
+
+        $confirmedEvents = Event::where(function ($query) use ($from, $to) {
+            $query->where('confirmed', '=', '1')
+                ->whereBetween('event_date', [$from, $to]);
+        })->count();
+
+        $notConfirmedEvents = Event::where(function ($query) use ($from, $to) {
+            $query->where('confirmed', '=', '0')
+                ->whereBetween('event_date', [$from, $to]);
+        })->count();
 
         if ($events->isEmpty()) {
             return back()->with('toast_error', __('There is no appointment in this date'))->withInput();
         }
 
         $val = [$from, $to];
-        return view('events.report', compact('events', 'val'));
+
+        return view('events.report', compact('events', 'confirmedEvents', 'notConfirmedEvents', 'val'));
 
         /*$pdf = PDF::loadView('events.preview', compact('events', 'val'));
         $pdf->setPaper('Tabloid', 'landscape');
         return $pdf->stream('test_pdf.pdf');*/
     }
+
+    public function applyConfirmation()
+    {
+        $event = Event::findOrFail(\request()->get('event_id'));
+        $event->update([
+            'confirmed' => '1',
+            'confirmed_at' => now(),
+            'confirmed_by' => Auth::id()
+        ]);
+
+        try {
+            return json_encode($event, JSON_THROW_ON_ERROR);
+        } catch (JsonException $e) {
+            return back()->withError($e->getMessage())->withInput();
+        }
+
+    }
 }
+
