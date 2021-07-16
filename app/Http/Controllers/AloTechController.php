@@ -14,11 +14,7 @@ class AloTechController extends Controller
 {
     public function loginAloTech(Request $request)
     {
-        if (auth()->user()->hasRole('Admin')) {
 
-        } elseif (auth()->user()->department_id !== 2) {
-            return __('You can\'t access');
-        }
         $token = 'ahRzfm11c3RlcmktaGl6bWV0bGVyaXIfCxISVGVuYW50QXBwbGljYXRpb25zGICA5Ibn17YKDKIBGGhhc2hpbWdyb3VwLmFsby10ZWNoLmNvbQ';
         $userName = $request->email;
         if ($userName == auth()->user()->email) {

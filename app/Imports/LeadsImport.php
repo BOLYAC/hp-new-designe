@@ -45,9 +45,11 @@ class LeadsImport implements
     public function model(array $row)
     {
         return new Client([
+            'lead_id'               => $row['lead_id'],
             'public_id'             => $row['customer_id'],
             'last_name'             => $row['last_name'] ?? '',
             'first_name'            => $row['first_name'] ?? '',
+            'status'                => 1,
             'client_email'          => $row['email'],
             'client_number'         => $row['mobile'],
             'city'                  => $row['city'] ?? '',
@@ -74,7 +76,7 @@ class LeadsImport implements
             'team_id'               => $this->team,
             'created_by'            => Auth::id(),
             'updated_by'            => Auth::id(),
-            'description'           => 'Lead Owner: ' . $row['lead_owner'] . '<br><br>' . '<strong>Description:</strong> ' . $row['lead_status'],
+            'description'           => 'Lead Owner: ' . $row['lead_owner'] . '<br><br>' . '<strong>Description:</strong> ' . $row['description'],
             'imported_from_zoho'    => 1
         ]);
     }

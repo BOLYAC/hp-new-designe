@@ -132,7 +132,7 @@
             if ($($tr).hasClass('child')) {
                 $tr = $tr.prev('.parent');
             }
-            var data = table.row($tr).data();
+            let data = table.row($tr).data();
             $('#deleteForm').attr('action', 'agencies/' + data[0]);
             $('#deleteModal').modal('show');
         })

@@ -18,10 +18,19 @@ class SalesController extends Controller
 {
     public function transfer(Request $request)
     {
-        $l[] = json_encode(Auth::id());
-        $n = Auth::user()->name;
-        $s[] = $n;
         $client = Client::findOrFail($request->clientId);
+
+        if ($client->agency_id === 0 || $client->agency_id === null || $client->agency_id === '') {
+            return redirect()->back()->with('toast_error', __('This lead don\'t have Agency'));
+        }
+
+        if ($client->status === 0 || $client->status === null || $client->status === '') {
+            return redirect()->back()->with('toast_error', __('This lead must have a status'));
+        }
+
+        $l[] = json_encode($client->user_id);
+        $n = $client->user->name;
+        $s[] = $n;
         // Get status name
         $i = $client->status;
         switch ($i) {
@@ -68,19 +77,19 @@ class SalesController extends Controller
 
         $lead['client_id'] = $request->clientId;
         $lead['external_id'] = Uuid::uuid4()->toString();
-        $lead['created_by'] = Auth::id();
-        $lead['updated_by'] = Auth::id();
+        $lead['created_by'] = $client->user_id;
+        $lead['updated_by'] = $client->user_id;
         $lead['user_created_id'] = Auth::id();
-        $lead['user_assigned_id'] = Auth::id();
+        $lead['user_assigned_id'] = $client->user_id;
+        $lead['owner_name'] = $client->user->name;
+        $lead['user_id'] = $client->user_id;
+        $lead['sell_rep'] = $client->user_id;
         $lead['deadline'] = now();
-        $lead['user_id'] = Auth::id();
         $lead['sellers'] = $l;
-        $lead['sell_rep'] = Auth::id();
         $lead['stage_id'] = 1;
         $lead['lead_name'] = $client->full_name ?? '';
         $lead['lead_email'] = $client->client_email ?? '';
         $lead['lead_phone'] = $client->client_number ?? '';
-        $lead['owner_name'] = auth()->user()->name;
         $lead['sells_names'] = $s;
         $lead['description'] = $client->description ?? '';
         $lead['country'] = $client->country ?? '';

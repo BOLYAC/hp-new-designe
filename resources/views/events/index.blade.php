@@ -75,25 +75,13 @@
 
             @can('event-delete')
             table.on('click', '.delete', function () {
-                $tr = $(this).closest('tr');
-                if ($($tr).hasClass('child')) {
-                    $tr = $tr.prev('.parent');
-                }
-                let data = table.row($tr).data();
-                $('#deleteForm').attr('action', 'events/' + data[0]);
+                let tr = $(this).closest('tr');
+                let row = table.row(tr);
+                let tableId = row.data().id;
+                $('#deleteForm').attr('action', 'events/' + tableId);
                 $('#deleteModal').modal('show');
             })
             @endcan
-            table.on('click', '.delete', function () {
-                $tr = $(this).closest('tr');
-                if ($($tr).hasClass('child')) {
-                    $tr = $tr.prev('.parent');
-                }
-                let data = table.row($tr).data();
-                console.log(data)
-                $('#deleteForm').attr('action', 'events/' + data[0]);
-                $('#deleteModal').modal('show');
-            })
         });
     </script>
 

@@ -2,11 +2,12 @@
 
 namespace App\Traits;
 
+use App\Models\Team;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 
 trait DealsTenantable
 {
-
     protected static function bootDealsTenantable()
     {
         if (auth()->check()) {
@@ -44,20 +45,44 @@ trait DealsTenantable
                 }
             }
 
-            /*if (auth()->user()->hasPermissionTo('desk-manager')) {
-                if (auth()->user()->ownedTeams()->count() > 0) {
-                    $teamUsers = auth()->user()->ownedTeams;
-                    $teams = auth()->user()->allTeams();
-                    foreach ($teams as $u) {
-                        foreach ($u->users as $ut) {
-                            $users[] = $ut;
-                        }
+            if (auth()->user()->hasPermissionTo('desk-manager')) {
+                $teams = Team::whereIn('id', ['4', '7', '15'])->get();
+                foreach ($teams as $u) {
+                    foreach ($u->users as $ut) {
+                        $users[] = $ut->id;
                     }
-                    static::addGlobalScope('team_id', function (Builder $builder) use ($users) {
-                        $builder->whereIn('user_id', $users);
-                    });
                 }
-            }*/
+                static::addGlobalScope('user_id', function (Builder $builder) use ($users) {
+                    $builder->whereIn('user_id', $users)
+                        ->orWhereJsonContains('sellers', $users);
+                });
+            }
+
+            if (auth()->user()->hasPermissionTo('multiple-department')) {
+                $teams = Team::whereIn('id', ['5', '4', '7', '15'])->get();
+                $users[] = User::whereIn('id', ['5', '15'])->pluck('id');
+                foreach ($teams as $u) {
+                    foreach ($u->users as $ut) {
+                        $users[] .= $ut->id;
+                    }
+                }
+                static::addGlobalScope('user_id', function (Builder $builder) use ($users) {
+                    $builder->whereIn('user_id', $users);
+                });
+            }
+
+            if (auth()->user()->hasPermissionTo('desk-user')) {
+                $teams = Team::whereIn('id', ['4', '7', '15'])->get();
+                $users[] = User::where('id', '=', '5')->pluck('id');
+                foreach ($teams as $u) {
+                    foreach ($u->users as $ut) {
+                        $users[] .= $ut->id;
+                    }
+                }
+                static::addGlobalScope('user_id', function (Builder $builder) use ($users) {
+                    $builder->whereIn('user_id', $users);
+                });
+            }
 
         }
     }

@@ -1,7 +1,37 @@
-w@extends('layouts.vertical.master')
-@section('style')
+@extends('layouts.vertical.master')
+@section('style_before')
+    <!-- Notification.css -->
+    <link rel="stylesheet" href="{{ asset('assets/css/datatables.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/datatable-extension.css') }}">
+@endsection
+@section('script')
+    <script src="{{asset('assets/js/datatables/jquery.dataTables.min.js')}}"></script>
+    <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.buttons.min.js')}}"></script>
+    <script src="{{asset('assets/js/datatables/datatable-extension/buttons.bootstrap4.min.js')}}"></script>
 
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css">
+    <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.bootstrap4.min.js')}}"></script>
+    <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.responsive.min.js')}}"></script>
+    <script src="{{asset('assets/js/datatables/datatable-extension/responsive.bootstrap4.min.js')}}"></script>
+    <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.colReorder.min.js')}}"></script>
+    <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.rowReorder.min.js')}}"></script>
+    <script type="text/javascript">
+        $('#res-config').DataTable({
+            processing: true,
+            responsive: true,
+            ajax: {
+                url: '{{ route('audits.list') }}',
+            },
+            columns: [
+                {data: 'auditable_type', name: 'auditable_type'},
+                {data: 'event', name: 'event'},
+                {data: 'username', name: 'username'},
+                {data: 'created_at', name: 'created_at'},
+                {data: 'old_values', name:'old_values'},
+                {data: 'new_values', name:'new_values'}
+            ],
+            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]]
+        });
+    </script>
 @endsection
 @section('content')
     <div class="container-fluid">
@@ -31,34 +61,7 @@ w@extends('layouts.vertical.master')
                                     </tr>
                                     </thead>
                                     <tbody id="audits">
-                                    @foreach($audits as $audit)
-                                        <tr>
-                                            <td>{{ $audit->auditable_type }} (id: {{ $audit->auditable_id }})</td>
-                                            <td>{{ $audit->event }}</td>
-                                            <td>{{ $audit->user->name }}</td>
-                                            <td>{{ $audit->created_at }}</td>
-                                            <td>
-                                                <table class="table">
-                                                    @foreach($audit->old_values as $attribute => $value)
-                                                        <tr>
-                                                            <td><b>{{ $attribute }}</b></td>
-                                                            <td>{{ $value }}</td>
-                                                        </tr>
-                                                    @endforeach
-                                                </table>
-                                            </td>
-                                            <td>
-                                                <table class="table">
-                                                    @foreach($audit->new_values as $attribute => $value)
-                                                        <tr>
-                                                            <td><b>{{ $attribute }}</b></td>
-                                                            <td>{{ $value }}</td>
-                                                        </tr>
-                                                    @endforeach
-                                                </table>
-                                            </td>
-                                        </tr>
-                                    @endforeach
+
                                     </tbody>
                                 </table>
                             </div>
@@ -69,27 +72,4 @@ w@extends('layouts.vertical.master')
             <!-- Zero config.table end -->
         </div>
     </div>
-@endsection
-
-@section('script')
-
-    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            // Start Edit record
-            let table = $('#res-config').DataTable();
-            table.on('click', '.delete', function () {
-                $tr = $(this).closest('tr');
-                if ($($tr).hasClass('child')) {
-                    $tr = $tr.prev('.parent');
-                }
-                var data = table.row($tr).data();
-                console.log(data)
-                $('#deleteForm').attr('action', 'roles/' + data[0]);
-                $('#deleteModal').modal('show');
-            })
-        });
-    </script>
-
 @endsection

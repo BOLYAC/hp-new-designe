@@ -79,6 +79,14 @@ class ClientsController extends Controller
                 }
             }
             return view('clients.index', compact('users', 'sources', 'agencies', 'teams'));
+        } elseif (\auth()->user()->hasPermissionTo('desk-user')) {
+            $teams = Team::whereIn('id', ['3', '4', '7', '15'])->get();
+            foreach ($teams as $u) {
+                foreach ($u->users as $ut) {
+                    $users[] = $ut;
+                }
+            }
+            return view('clients.index', compact('users', 'sources', 'agencies', 'teams'));
         } elseif (\auth()->user()->hasPermissionTo('multiple-department')) {
             $teams = Team::whereIn('id', ['5', '4', '7', '15']);
             foreach ($teams as $u) {
@@ -362,7 +370,7 @@ class ClientsController extends Controller
             ->addColumn(
                 'created_at',
                 function ($clients) {
-                    return '<span class="text-semibold">' . $clients->created_at->format('Y/m/d') . '</span>';
+                    return '<span class="text-semibold">' . $clients->created_at->format('Y-m-d') . '</span>';
                 }
             )
             ->rawColumns(['check', 'client_number', 'client_email', 'full_name', 'country', 'status', 'priority', 'user_id', 'action', 'created_at'])

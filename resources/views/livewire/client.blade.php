@@ -157,7 +157,7 @@
                                 <label for="status">{{ __('Status') }}</label>
                                 <select wire:model="status_edit" id="status"
                                         class="custom-select custom-select-sm">
-                                    <option selected disabled> {{ __('-- Client status --') }}
+                                    <option value="" selected> {{ __('-- Client status --') }}
                                     </option>
                                     <option
                                         value="1" {{ old('status', $client->status) == 1 ? 'selected' : '' }}>
@@ -329,8 +329,7 @@
                                 <label for="source">{{ __('Agency') }}</label>
                                 <select wire:model="agency_id_edit" id="agency"
                                         class="custom-select custom-select-sm @error('agency_id') form-control-danger @enderror">
-                                    <option value="" selected
-                                            disabled> {{ __('-- Select agency --') }}
+                                    <option value="" selected> {{ __('-- Select agency --') }}
                                     </option>
                                     @foreach($agencies as $agency)
                                         <option value="{{ $agency->id }}"
@@ -478,7 +477,7 @@
                         <tr>
                             <th scope="row">{{ __('Phone(s)') }}</th>
                             <td>
-                                @if($client->created_at <= now()->subMonth())
+                                @if($client->created_at <= now()->subYear())
                                     {{ str_pad(substr($client->client_number, -4), strlen($client->client_number), '*', STR_PAD_LEFT) }}
                                 @else
                                     {{ $client->client_number }}
@@ -490,7 +489,7 @@
                                    class="btn btn-xs btn-outline-primary float-right theme-setting" wire:click="makeCall('ph1')"><i
                                         class="fa fa-phone"></i></a>
                                 <br>
-                                @if($client->created_at <= now()->subMonth())
+                                @if($client->created_at <= now()->subYear())
                                     {{ str_pad(substr($client->client_number_2, -4), strlen($client->client_number_2), '*', STR_PAD_LEFT) }}
                                 @else
                                     {{ $client->client_number }}
@@ -729,7 +728,6 @@
                         </tbody>
                     </table>
                 </div>
-                <!-- end of table col-lg-6 -->
             </div>
         </div>
     </div>

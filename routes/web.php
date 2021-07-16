@@ -149,7 +149,7 @@ Route::group(
         })->name('backupFiles');
 
         // Audit
-        Route::get('audits', 'AuditController@index');
+        Route::get('audits', 'AuditController@index')->name('audits.list');
 
         // Country and nationality & languages
         Route::get('select/country', 'HomeController@getCountry')->name('country.name');
@@ -176,6 +176,7 @@ Route::group(
     }
 );
 
-Route::post('submit-form', function (\Illuminate\Http\Request $request){
-    $request->dd();
+Route::prefix('v2')->group(function () {
+    //Route::post('propertyexpo/submit-form', 'APIController@getData');
+    Route::webhooks('propertyexpo/submit-form');
 });
