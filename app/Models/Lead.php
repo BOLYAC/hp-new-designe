@@ -115,6 +115,26 @@ class Lead extends Model implements Commentable
         return true;
     }
 
+    public function notes(): MorphMany
+    {
+        return $this->morphMany(Note::class, 'source');
+    }
+
+    public function getCreateNoteEndpoint(): string
+    {
+        // TODO: Implement getCreateNoteEndpoint() method.
+    }
+
+    public function tasks(): MorphMany
+    {
+        return $this->morphMany(Task::class, 'source');
+    }
+
+    public function getCreateTaskEndpoint(): string
+    {
+        // TODO: Implement getCreateTaskEndpoint() method.
+    }
+
     public static function boot()
     {
         parent::boot();

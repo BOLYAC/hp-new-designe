@@ -70,11 +70,7 @@ class AgencyController extends Controller
                     return $agency->company_type === 1 ? __('Company') : __('Freelance');
                 })
                 ->editColumn('name', function ($agency) {
-                    if (auth()->user()->hasPermissionTo('department-agencies-sell')) {
-                        return '<a href="/sales/agencies/' . $agency->id . '">' . $agency->name . '</a>';
-                    } else {
-                        return '<a href="/agencies/' . $agency->id . '/edit">' . $agency->name . '</a>';
-                    }
+                    return '<a href="' . route('agencies.show', $agency) . '">' . $agency->name . '</a>';
                 })
                 ->editColumn('phone', function ($agency) {
                     return $agency->phone;
@@ -88,12 +84,8 @@ class AgencyController extends Controller
               @can(\'agency-edit\')
                   <a class="dropdown-item pl-2" href="{{ route(\'agencies.edit\', $id) }}">
                   <i class="fa fa-edit"></i> {{ __(\'Edit agency\') }}</a>
-                  @can(\'department-agencies-sell\')
-                  <a class="dropdown-item pl-2" href="{{ route(\'agencies.sells-office-edit\', $id) }}">
-                  <i class="fa fa-edit"></i> {{ __(\'edit agency sells\') }}</a>
-                  @endcan
               @endcan
-              @can(\'client-delete\')
+              @can(\'agency-delete\')
                   <form
                       action="{{ route(\'agencies.destroy\', $id) }}"
                       method="post" role="form">
@@ -148,12 +140,14 @@ class AgencyController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param int $id
-     * @return void
+     * @param Agency $agency
+     * @return Application|Factory|\Illuminate\Contracts\View\View|void
      */
-    public function show($id): void
+    public function show(Agency $agency)
     {
-        //
+        $countries = Country::all();
+        $agency->with('clients')->get();
+        return view('agencies.show', compact('agency', 'countries'));
     }
 
     /**
@@ -164,9 +158,15 @@ class AgencyController extends Controller
      */
     public function edit(Agency $agency)
     {
-        $countries = Country::all();
-        $agency->with('clients')->get();
-        return view('agencies.edit', compact('agency', 'countries'));
+        if (auth()->user()->hasPermissionTo('department-agencies-sell')) {
+            $countries = Country::all();
+            $agency->with('clients')->get();
+            return view('agencies.sells-office-edit', compact('agency', 'countries'));
+        } else {
+            $countries = Country::all();
+            $agency->with('clients')->get();
+            return view('agencies.edit', compact('agency', 'countries'));
+        }
     }
 
     /**

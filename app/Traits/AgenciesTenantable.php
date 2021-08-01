@@ -10,7 +10,7 @@ trait AgenciesTenantable
 {
     protected static function bootAgenciesTenantable()
     {
-        if (auth()->check()) {
+        /*if (auth()->check()) {
 
             static::creating(function ($model) {
                 $model->created_by = auth()->id();
@@ -21,9 +21,6 @@ trait AgenciesTenantable
                 $model->updated_by = auth()->id();
             });
 
-            /*static::addGlobalScope('departments', function (Builder $builder) {
-                $builder->orWhere('department_id', auth()->user()->department_id);
-            });*/
 
             if (auth()->user()->hasPermissionTo('team-manager')) {
                 if (auth()->user()->ownedTeams()->count() > 0) {
@@ -70,7 +67,7 @@ trait AgenciesTenantable
                 });
             }
 
-        }
+        }*/
 
     }
 }

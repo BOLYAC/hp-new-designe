@@ -13,13 +13,7 @@ class Client extends Component
 
     public $mode, $client, $updateMode, $sources, $agencies;
 
-    public $requirements_request = [
-        ['id' => 1, 'text' => 'Investments'],
-        ['id' => 2, 'text' => 'Life style'],
-        ['id' => 3, 'text' => 'Investments + Life style'],
-        ['id' => 4, 'text' => 'Citizenship'],
-    ];
-    public $budget_request = [
+    public $budget_request_list = [
         ['id' => 1, 'text' => 'Less then 50K'],
         ['id' => 2, 'text' => '50K-100K'],
         ['id' => 3, 'text' => '100K-150K'],
@@ -32,7 +26,7 @@ class Client extends Component
         ['id' => 10, 'text' => '1M-2M'],
         ['id' => 11, 'text' => 'More then 2M'],
     ];
-    public $rooms_request = [
+    public $rooms_request_list = [
         ['id' => 1, 'text' => '0 + 1'],
         ['id' => 2, 'text' => '1 + 1'],
         ['id' => 3, 'text' => '2 + 1'],
@@ -41,11 +35,16 @@ class Client extends Component
         ['id' => 6, 'text' => '5 + 1'],
         ['id' => 7, 'text' => '6 + 1'],
     ];
-
+    public $requirements_request_list = [
+        ['id' => 1, 'text' => 'Investments'],
+        ['id' => 2, 'text' => 'Life style'],
+        ['id' => 3, 'text' => 'Investments + Life style'],
+        ['id' => 4, 'text' => 'Citizenship'],
+    ];
     public $country_edit, $nationality_edit, $lang_edit, $description_edit,
         $status_edit, $priority_edit, $budget_request_edit, $rooms_request_edit,
         $requirements_request_edit, $source_id_edit, $campaign_name_edit, $agency_id_edit,
-        $appointment_date_edit, $duration_stay_edit = [];
+        $appointment_date_edit, $duration_stay_edit = [], $phone_number_edit, $phone_number_2_edit;
 
 
     public function mount($client)
@@ -67,6 +66,8 @@ class Client extends Component
         $this->agency_id_edit = $client->agency_id;
         $this->appointment_date_edit = $client->appointment_date;
         $this->duration_stay_edit = $client->duration_stay;
+        $this->phone_number_edit = $client->client_number;
+        $this->phone_number_2_edit = $client->client_number_2;
     }
 
     public function render()
@@ -97,7 +98,11 @@ class Client extends Component
             'agency_id' => $this->agency_id_edit,
             'appointment_date' => $this->appointment_date_edit,
             'duration_stay' => $this->duration_stay_edit,
+            'client_number' => $this->phone_number_edit,
+            'client_number_2' => $this->phone_number_2_edit,
         ];
+
+
 
         if ($data) {
             $this->client->update($data);

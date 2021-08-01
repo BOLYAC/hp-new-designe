@@ -15,9 +15,15 @@
         </div>
         <div class="nav-right col pull-right right-menu">
             <ul class="nav-menus">
-                <li></li>
+                <li class="px-0">
+                    <form class="search-form looking-form">
+                        <input class="form-control-plaintext" id="search-value-header" placeholder="Search.....">
+                        <i class="close-search" data-feather="x"></i>
+                    </form>
+                    <span class="mobile-search"><i data-feather="search"></i></span>
+                </li>
                 @if(auth()->user()->department_id !== 2)
-                <li class="theme-setting"><i data-feather="phone-call"></i></li>
+                    <li class="theme-setting"><i data-feather="phone-call"></i></li>
                 @endif
                 <li class="onhover-dropdown px-0"><span class="media user-header"><img
                             class="mr-2 rounded-circle img-35"
@@ -34,7 +40,7 @@
                             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                 @csrf
                             </form>
-                            </li>
+                        </li>
                     </ul>
                 </li>
             </ul>

@@ -118,6 +118,30 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="searchModal" tabindex="-1">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ __('Result found:') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body p-b-0">
+                    <div class="card card-with-border connection">
+                        <div class="card-body p-0">
+                            <ul class="search-content-result">
+
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-warning" data-dismiss="modal">{{ __('Cancel') }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 @livewireScripts
 @include('layouts.vertical.script')

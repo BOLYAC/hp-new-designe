@@ -3,7 +3,7 @@
 namespace App\Imports;
 
 use App\Models\Client;
-use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\SkipsErrors;
@@ -35,6 +35,7 @@ class LeadsImport implements
         $this->user = $user;
         $this->source = $source;
         $this->team = $team;
+        set_time_limit(500000);
     }
 
     /**
@@ -45,11 +46,9 @@ class LeadsImport implements
     public function model(array $row)
     {
         return new Client([
-            'lead_id'               => $row['lead_id'],
-            'public_id'             => $row['customer_id'],
             'last_name'             => $row['last_name'] ?? '',
             'first_name'            => $row['first_name'] ?? '',
-            'status'                => 1,
+            'status'                => $row['lead_status'],
             'client_email'          => $row['email'],
             'client_number'         => $row['mobile'],
             'city'                  => $row['city'] ?? '',
@@ -71,13 +70,16 @@ class LeadsImport implements
             'reason_lost'           => $row['reason_lost'],
             'created_at'            => \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['created_time']),
             'updated_at'            => \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['modified_time']),
-            'user_id'               => $this->user->id ?? Auth::id(),
+            'user_id'               => $row['lead_owner'],
             'source_id'             => $this->source,
-            'team_id'               => $this->team,
-            'created_by'            => Auth::id(),
-            'updated_by'            => Auth::id(),
-            'description'           => 'Lead Owner: ' . $row['lead_owner'] . '<br><br>' . '<strong>Description:</strong> ' . $row['description'],
-            'imported_from_zoho'    => 1
+            'team_id'               => User::where('id', $row['lead_owner'])->value('current_team_id'),
+            'created_by'            => $row['created_by'],
+            'updated_by'            => $row['modified_by'],
+            'description'           => $row['description'],
+            'imported_from_zoho'    => 1,
+            'zoho_id'               => $row['lead_id'],
+            'department_id'         => User::where('id', $row['lead_owner'])->value('department_id'),
+            'customer_id'             => $row['customer_id'],
         ]);
     }
 
@@ -94,7 +96,7 @@ class LeadsImport implements
     public function rules(): array
     {
         return [
-            '*.email' => ['nullable', 'string', 'email', 'max:255', 'unique:clients,client_email,deleted_at'],
+            '*.email' => ['nullable', 'string', 'max:255', 'unique:clients,client_email,deleted_at'],
             '*.phone_number' => ['nullable', 'max:255', 'unique:clients,client_number,deleted_at'],
         ];
     }

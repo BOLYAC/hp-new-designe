@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Event;
 use App\Models\User;
 use App\Notifications\EventsDailyNotification;
 use Illuminate\Database\Eloquent\Builder;
@@ -41,19 +42,30 @@ class ReminderEmail extends Command
      */
     public function handle()
     {
-
-        $users = User::whereHas('events')->withCount([
-          'events',
-          'events as events_count' => function (Builder $query) {
-              $query->whereDate('event_date', Carbon::today());
-          }
+        /*$users = User::wherehas('sharedEvents')->orWhereHas('events')->wherehas('tasks')->withCount([
+            'events as events_count' => function (Builder $query) {
+                $query->whereDate('event_date', Carbon::tomorrow());
+            },
+            'tasks as tasks_count' => function (Builder $query) {
+                $query->whereDate('date', Carbon::tomorrow());
+            }
+        ])->get();*/
+        $users = User::withCount([
+            'sharedEvents as events_count' => function (Builder $query) {
+                $query->whereDate('event_date', Carbon::today());
+            },
+            'tasks as tasks_count' => function (builder $query) {
+                $query->whereDate('date', Carbon::today());
+            }
         ])->get();
-        foreach($users as $user){
-          if($user->events_count > 0)
-          {
-            $user->notify(new EventsDailyNotification($user));
-          }
-        }
+        //\Illuminate\Support\Facades\Log::info($users->count());
 
+        foreach ($users as $user) {
+            if ($user->tasks_count > 0 || $user->events_count > 0) {
+                $user->notify(new EventsDailyNotification($user));
+                sleep(30);
+                //\Illuminate\Support\Facades\Log::info($user);
+            }
+        }
     }
 }

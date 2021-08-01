@@ -25,9 +25,8 @@ Route::delete('members/{id}', 'ClientsController@deleteMember');
 Route::get('sources', 'SourcesController@listSource');
 Route::get('users', 'UsersController@listUser');
 
-
 // External wordpress website form
 //Route::get('submit-form','APIController@submitFormWordpress');
-Route::prefix('v2')->group(function () {
+/*Route::prefix('v2')->group(function () {
     Route::post('propertyexpo/submit-form', 'APIController@getData');
-});
+});*/

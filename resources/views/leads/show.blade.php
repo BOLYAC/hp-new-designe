@@ -3,6 +3,8 @@
 @section('style_before')
     <!-- Select 2 css -->
     <link rel="stylesheet" href="{{ asset('assets/css/select2.css') }}"/>
+    <!-- ToDo css -->
+    <link rel="stylesheet" href="{{ asset('assets/css/todo.css') }}">
     <!-- Plugins css start-->
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/summernote.css') }}">
     <!-- Datatables.css -->
@@ -581,6 +583,7 @@
                         </div>
                     </div>
                 @endcan
+                @include('leads.partials.task-note')
                 @if($lead->stageLog()->exists())
                     <div class="card card-with-border">
                         <div class="card-header">

@@ -18,6 +18,7 @@ class Client extends Model implements Auditable, Documentable, Noteable, Taskabl
 {
     use \OwenIt\Auditing\Auditable;
     use SoftDeletes, Multitenantable;
+
     //public $timestamps = false;
     /**
      * @var array
@@ -42,6 +43,13 @@ class Client extends Model implements Auditable, Documentable, Noteable, Taskabl
         'rooms_request' => 'array',
         'requirements_request' => 'array'
     ];
+
+
+    public function scopeRemoveGroupScope($query)
+    {
+        return $query->withoutGlobalScope('team_id')
+            ->withoutGlobalScope('user_id');
+    }
 
     public function getCompleteNameAttribute(): string
     {
@@ -144,7 +152,8 @@ class Client extends Model implements Auditable, Documentable, Noteable, Taskabl
     }
 
     // Get column names
-    public function getTableColumns() {
+    public function getTableColumns()
+    {
         return $this->getConnection()->getSchemaBuilder()->getColumnListing($this->getTable());
     }
 
@@ -162,7 +171,7 @@ class Client extends Model implements Auditable, Documentable, Noteable, Taskabl
 
         static::creating(function ($client) { // On create() method call this
             $client->public_id = strtoupper(substr(uniqid(mt_rand(), true), 16, 6));
-            $client->team_id = auth()->user()->currentTeam->id ?? '1';
+            //$client->team_id = auth()->user()->currentTeam->id ?? '1';
         });
     }
 }

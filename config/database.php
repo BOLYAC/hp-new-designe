@@ -57,7 +57,8 @@ return [
             'prefix' => '',
             'prefix_indexes' => true,
             'strict' => true,
-            'engine' => null,
+            'engine' => 'MyISAM',
+            'dump' => [ 'setDumpBinaryPath' => 'C:\\wamp64\\bin\\mysql\\mysql5.7.23\\bin' ],
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],

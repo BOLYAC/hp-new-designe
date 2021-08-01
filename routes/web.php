@@ -38,8 +38,6 @@ Route::group(
         Route::resource('sources', 'SourcesController');
         Route::resource('documents', 'DocumentController');
         Route::resource('payments', 'PaymentController');
-
-
         // Deals
         Route::post('/covert-to-order/{lead}', 'LeadsController@convertToOrder')->name('lead.convert.order');
         Route::post('/comments/{type}/{external_id}', 'CommentController@store')->name('comments.create');
@@ -175,8 +173,13 @@ Route::group(
         })->name('report_leads');
     }
 );
-
-Route::prefix('v2')->group(function () {
+//Route::get('forms-example', 'ExternalWebSiteController@getExample');
+Route::post('propertyexpo', 'ExternalWebSiteController@getExpoForm');
+/*Route::post('propertyexpo', function (\Illuminate\Http\Request $request) {
+    \Illuminate\Support\Facades\Log::info($request->all());
+    return response()->json(['success' => true, 'message' => 'Mesajınız gönderildi. Teşekkür ederiz']);
+});*/
+//Route::webhooks('propertyexpo');
+/*Route::prefix('v2')->group(function () {
     //Route::post('propertyexpo/submit-form', 'APIController@getData');
-    Route::webhooks('propertyexpo/submit-form');
-});
+});*/

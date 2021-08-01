@@ -29,6 +29,8 @@ class AddFieldFromZohoToClientsTable extends Migration
             $table->string('ad_name')->nullable();
             $table->string('reason_lost')->nullable();
             $table->tinyInteger('imported_from_zoho')->nullable();
+            $table->string('zoho_id')->nullable();
+            $table->string('customer_id')->nullable();
         });
     }
 
@@ -44,7 +46,7 @@ class AddFieldFromZohoToClientsTable extends Migration
                 'lead_source', 'lead_status', 'last_activity_time', 'social_media_source',
                 'ad_network', 'search_partner_network', 'ad_campaign_name', 'adgroup_name',
                 'ad_click_date', 'ad', 'adset_name', 'form_name', 'ad_name', 'reason_lost',
-                'imported_from_zoho'
+                'imported_from_zoho', 'zoho_id', 'customer_id'
             ]);
         });
     }

@@ -4,12 +4,12 @@ namespace App\Imports;
 
 use App\Models\Client;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\SkipsErrors;
 use Maatwebsite\Excel\Concerns\SkipsFailures;
 use Maatwebsite\Excel\Concerns\SkipsOnError;
 use Maatwebsite\Excel\Concerns\SkipsOnFailure;
-use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
@@ -17,13 +17,13 @@ use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Events\AfterImport;
 use Throwable;
 
-class ClientsImport implements 
-  ToModel, 
+class ClientsImport implements
+  ToModel,
   WithHeadingRow,
   WithBatchInserts,
-  WithChunkReading, 
-  WithValidation, 
-  SkipsOnError, 
+  WithChunkReading,
+  WithValidation,
+  SkipsOnError,
   SkipsOnFailure
 
 {
@@ -57,7 +57,7 @@ class ClientsImport implements
             'client_number'  => $row['phone_number'],
             'city'           => $row['city'] ?? '',
             'country'        => $row['country'] ?? '',
-            'campaigne_name' => $row['campaigne_name'] ?? '', 
+            'campaigne_name' => $row['campaigne_name'] ?? '',
             'user_id'        => $this->user ?? Auth::id(),
             'source_id'      => $this->source,
             'team_id'        => $this->team,

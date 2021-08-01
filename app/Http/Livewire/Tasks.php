@@ -4,6 +4,7 @@ namespace App\Http\Livewire;
 
 use App\Agency;
 use App\Models\Client;
+use App\Models\Lead;
 use App\Models\Task;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -38,12 +39,15 @@ class Tasks extends Component
 
         $this->tasks = Task::whereHasMorph(
             'Taskable',
-            [Agency::class, Client::class],
+            [Agency::class, Client::class, Lead::class],
             function ($query, $type) use ($client) {
                 if ($type === Agency::class) {
                     $query->where('id', $client);
                 }
                 if ($type === Client::class) {
+                    $query->where('id', $client);
+                }
+                if ($type === Lead::class) {
                     $query->where('id', $client);
                 }
             }
@@ -76,7 +80,8 @@ class Tasks extends Component
 
         $modelsMapping = [
             'agency' => 'App\Agency',
-            'client' => 'App\Models\Client'
+            'client' => 'App\Models\Client',
+            'lead' => 'App\Models\Lead'
         ];
 
         if (!array_key_exists($this->type, $modelsMapping)) {
@@ -102,6 +107,9 @@ class Tasks extends Component
         }
         if ($this->type == 'client') {
             $task['client_id'] = $this->client;
+        }
+        if ($this->type == 'lead') {
+            $task['lead_id'] = $this->client;
         }
 
         $task = $source->tasks()->create($task);

@@ -27,7 +27,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
 
         $schedule->command('remainder:email')->dailyAt('9:00');
-        $schedule->command('backup:run')->hourly();
+        //$schedule->command('backup:run --only-db')->everyMinute();
     }
 
     /**

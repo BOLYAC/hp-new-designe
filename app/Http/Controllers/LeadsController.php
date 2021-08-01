@@ -42,8 +42,10 @@ class LeadsController extends Controller
             }
             return view('leads.index', compact('users', 'teams'));
         } else {
-            return view('leads.index');
+            return \view('leads.index');
         }
+
+
     }
 
     /**
@@ -56,17 +58,19 @@ class LeadsController extends Controller
     {
         $leads = Lead::with(['client', 'user']);
 
+
         if ($request->get('stage')) {
-            $leads->where('stage_id', '=', $request->get('stage'));
+            $leads->whereIn('stage_id', $request->get('stage'));
         }
         if ($request->get('user')) {
-            $leads->where('user_id', '=', $request->get('user'));
+            $leads->whereIn('user_id', $request->get('user'))
+                ->orWhereIn('sellers', $request->user);
         }
         if ($request->get('department')) {
-            $leads->where('department_id', '=', $request->get('department'));
+            $leads->whereIn('department_id', $request->get('department'));
         }
         if ($request->get('team')) {
-            $leads->where('team_id', '=', $request->get('team'));
+            $leads->whereIn('team_id', $request->get('team'));
         }
 
         $leads->OrderByDesc('created_at');

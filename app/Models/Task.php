@@ -83,6 +83,11 @@ class Task extends Model implements Auditable
         return $this->belongsTo(Agency::class, 'agency_id')->withDefault();
     }
 
+    public function lead(): BelongsTo
+    {
+        return $this->belongsTo(Agency::class, 'lead_id')->withDefault();
+    }
+
     public static function boot()
     {
         parent::boot();

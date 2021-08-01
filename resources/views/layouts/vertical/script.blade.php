@@ -125,7 +125,28 @@
         });
 
     })
+    document.getElementById('search-value-header').addEventListener('keypress', function (event) {
+        if (event.keyCode == 13) {
+            let input = this.value
+            $.ajax({
+                type: "POST",
+                url: '{{ route('autocomplete.fetch') }}',
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    client_search: input
+                },
+                success: function (res) {
+                    let data = $.parseJSON(res);
+                    $('#searchModal').modal('show');
+                    $(".search-content-result").html('');
+                    $('.search-content-result').append(data);
+                }
+            });
+            event.preventDefault();
+        }
+    })
 </script>
+
 <!-- Plugin used -->
 @yield('script_after')
 @include('sweetalert::alert')

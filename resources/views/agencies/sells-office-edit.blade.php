@@ -466,7 +466,7 @@
                                                                     @endswitch
                                                                 </td>
                                                                 <td><span
-                                                                        class="badge badge-success">{{ $client->user->name }}</span>
+                                                                        class="badge badge-success">{{ $client->user->name ?? '' }}</span>
                                                                 </td>
                                                                 <td>{{ optional($client->source)->name }}</td>
                                                             </tr>
@@ -498,8 +498,8 @@
                                          alt="">
                                 </div>
                                 <div class="media-body">
-                                    <h6 class="font-primary">{{ $agency->user->name }}</h6>
-                                    <p>{{ $agency->user->roles->first()->name }}</p>
+                                    <h6 class="font-primary">{{ $agency->user->name ?? '' }}</h6>
+{{--                                    <p>{{ $agency->user->roles->first()->name ?? ''}}</p>--}}
                                 </div>
                             </div>
                         </div>

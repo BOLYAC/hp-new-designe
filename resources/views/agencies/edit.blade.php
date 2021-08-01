@@ -269,7 +269,7 @@
                                             @endswitch
                                         </td>
                                         <td><span
-                                                class="badge badge-success">{{ $client->user->name }}</span>
+                                                class="badge badge-success">{{ $client->user->name ?? '' }}</span>
                                         </td>
                                         <td>{{ optional($client->source)->name }}</td>
                                     </tr>

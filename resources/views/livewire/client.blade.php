@@ -10,6 +10,22 @@
             <form wire:submit.prevent="editLead">
                 <div class="row">
                     <div class="col-md">
+                        @if(is_null($phone_number_edit))
+                            <div class="form-group">
+                                <label for="">{{ __('Phone number') }}</label>
+                                <input type="text" class="form-control form-control-sm"
+                                       wire:model="phone_number_edit"
+                                       value="{{ $phone_number_edit }}">
+                            </div>
+                        @endif
+                        @if(is_null($client->phone_number_2_edit))
+                            <div class="form-group">
+                                <label for="">{{ __('Phone number 2') }}</label>
+                                <input type="text" class="form-control form-control-sm"
+                                       wire:model="phone_number_2_edit"
+                                       value="{{ $client->phone_number_2_edit }}">
+                            </div>
+                        @endif
                         <div class="form-group input-group-sm" wire:ignore>
                             <label for="country">{{ __('Country') }}</label>
                             <select class="js-country-all custom-select custom-select-sm"
@@ -217,7 +233,7 @@
                                 <label for="priority">{{ __('Priority') }}</label>
                                 <select wire:model="priority_edit" id="priority"
                                         class="custom-select custom-select-sm">
-                                    <option value="" selected disabled> {{ __('-- Priority --') }}
+                                    <option value="" selected> {{ __('-- Priority --') }}
                                     </option>
                                     <option
                                         value="1" {{ $client->priority == '1' ? 'selected' : '' }}>
@@ -236,68 +252,69 @@
                         </div>
                         <div class="form-group" wire:ignore>
                             <label for="budget_request">{{ __('Budget') }}</label>
-                            <select wire:model="budget_request_edit" id="budget_request"
-                                    class="js-budgets-all custom-select custom-select-sm"
-                                    multiple>
+                            <select class="js-budgets-all custom-select custom-select-sm"
+                                    multiple
+                                    wire:model="budget_request_edit">
+
+                                <script>
+                                    $('.js-budgets-all').select2({
+                                        theme: 'classic',
+                                    })
+                                    $('.js-budgets-all').on('change', function (e) {
+                                        let data = $('.js-budgets-all').select2("val");
+                                    @this.set('budget_request_edit', data);
+                                    });
+                                </script>
                                 @php $r = collect($budget_request_edit)->toArray() @endphp
-                                @foreach($budget_request as $item)
+                                @foreach($budget_request_list as $item)
                                     <option value="{{ $item['id'] }}" {{ in_array($item['id'], $r) ? 'selected' : ''}}>
                                         {{$item['text']}}
                                     </option>
                                 @endforeach
                             </select>
-                            <script>
-                                $('.js-budgets-all').select2({
-                                    theme: 'classic',
-                                })
-                                $('.js-budgets-all').on('change', function (e) {
-                                    let data = $('.js-budgets-all').select2("val");
-                                @this.set('budget_request_edit', data);
-                                });
-                            </script>
                         </div>
                         <div class="form-group" wire:ignore>
                             <label for="rooms_request">{{ __('Request') }}</label>
                             <select class="js-rooms-all custom-select custom-select-sm"
-                                    wire:model="rooms_request_edit" id="rooms_request" multiple>*
+                                    wire:model="rooms_request_edit" multiple>
+                                <script>
+                                    $('.js-rooms-all').select2({
+                                        theme: 'classic',
+                                    })
+                                    $('.js-rooms-all').on('change', function (e) {
+                                        let data = $('.js-rooms-all').select2("val");
+                                    @this.set('rooms_request_edit', data);
+                                    });
+                                </script>
                                 @php $r = collect($rooms_request_edit)->toArray() @endphp
-                                @foreach($rooms_request as $item)
+                                @foreach($rooms_request_list as $item)
                                     <option value="{{ $item['id'] }}" {{ in_array($item['id'], $r) ? 'selected' : ''}}>
                                         {{$item['text']}}
                                     </option>
                                 @endforeach
                             </select>
-                            <script>
-                                $('.js-rooms-all').select2({
-                                    theme: 'classic',
-                                })
-                                $('.js-rooms-all').on('change', function (e) {
-                                    let data = $('.js-budgets-all').select2("val");
-                                @this.set('rooms_request_edit', data);
-                                });
-                            </script>
                         </div>
                         <div class="form-group" wire:ignore>
                             <label for="requirements_request">{{ __('Requirement') }}</label>
-                            <select wire:model="requirements_request_edit" id="requirements_request"
-                                    class="js-requirements-all custom-select custom-select-sm"
-                                    multiple>
-                                @php $r = collect($client->requirements_request_edit)->toArray() @endphp
-                                @foreach($requirements_request as $item)
+                            <select class="js-requirements-all custom-select custom-select-sm"
+                                    multiple id="requirements_request"
+                                    wire:model="requirements_request_edit">
+                                <script>
+                                    $('.js-requirements-all').select2({
+                                        theme: 'classic',
+                                    })
+                                    $('.js-requirements-all').on('change', function (e) {
+                                        let data = $('.js-requirements-all').select2("val");
+                                    @this.set('requirements_request_edit', data);
+                                    });
+                                </script>
+                                @php $r = collect($requirements_request_edit)->toArray() @endphp
+                                @foreach($requirements_request_list as $item)
                                     <option value="{{ $item['id'] }}" {{ in_array($item['id'], $r) ? 'selected' : ''}}>
                                         {{$item['text']}}
                                     </option>
                                 @endforeach
                             </select>
-                            <script>
-                                $('.js-requirements-all').select2({
-                                    theme: 'classic',
-                                })
-                                $('.js-requirements-all').on('change', function (e) {
-                                    let data = $('.js-budgets-all').select2("val");
-                                @this.set('requirements_request_edit', data);
-                                });
-                            </script>
                         </div>
                         <div class="form-group">
                             <label for="source">{{ __('Source') }}</label>
@@ -486,19 +503,21 @@
                                             class="fa fa-whatsapp"></i></a>
                                 @endif
                                 <a href="javascript:void(0)"
-                                   class="btn btn-xs btn-outline-primary float-right theme-setting" wire:click="makeCall('ph1')"><i
+                                   class="btn btn-xs btn-outline-primary float-right theme-setting"
+                                   wire:click="makeCall('ph1')"><i
                                         class="fa fa-phone"></i></a>
                                 <br>
                                 @if($client->created_at <= now()->subYear())
                                     {{ str_pad(substr($client->client_number_2, -4), strlen($client->client_number_2), '*', STR_PAD_LEFT) }}
                                 @else
-                                    {{ $client->client_number }}
+                                    {{ $client->client_number_2 }}
                                     <a href="https://wa.me/{{$client->client_number_2}}" target="_blank"
                                        class="btn btn-xs btn-outline-success float-right mr-2"><i
                                             class="fa fa-whatsapp"></i></a>
                                 @endif
                                 <a href="javascript:void(0)"
-                                   class="btn btn-xs btn-outline-primary float-right theme-setting" wire:click="makeCall('ph2')"><i
+                                   class="btn btn-xs btn-outline-primary float-right theme-setting"
+                                   wire:click="makeCall('ph2')"><i
                                         class="fa fa-phone"></i></a>
                             </td>
                         </tr>
@@ -651,12 +670,12 @@
                             <th scope="row">{{ __('Budget') }}</th>
                             <td>
                                 @php
-                                    if (is_null($client->budget_request)) {
+                                    if (is_null($budget_request_edit)) {
                                         echo $client->getRawOriginal('budget_request') ?? '';
                                     } else {
                                         $cou = '';
-                                        $budgets = collect($client->budget_request)->toArray();
-                                        $newArr = array_filter($budget_request, function($var) use ($budgets){
+                                        $budgets = collect($budget_request_edit)->toArray();
+                                        $newArr = array_filter($budget_request_list, function($var) use ($budgets){
                                             return in_array($var['id'], $budgets);
                                         });
                                         foreach ($newArr as $val) {
@@ -671,12 +690,12 @@
                             <th scope="row">{{ __('Rooms Request') }}</th>
                             <td>
                                 @php
-                                    if (is_null($client->rooms_request)) {
+                                    if (is_null($rooms_request_edit)) {
                                         echo $client->getRawOriginal('rooms_request') ?? '';
                                     } else {
                                         $cou = '';
-                                        $rooms = collect($client->rooms_request)->toArray();
-                                        $newArr = array_filter($rooms_request, function($var) use ($rooms){
+                                        $rooms = collect($rooms_request_edit)->toArray();
+                                        $newArr = array_filter($rooms_request_list, function($var) use ($rooms){
                                             return in_array($var['id'], $rooms);
                                         });
                                         foreach ($newArr as $val) {
@@ -691,12 +710,12 @@
                             <th scope="row">{{ __('Requirement') }}</th>
                             <td>
                                 @php
-                                    if (is_null($client->requirements_request)) {
+                                    if (is_null($requirements_request_edit)) {
                                         echo $client->getRawOriginal('requirements_request') ?? '';
                                     } else {
                                         $cou = '';
-                                        $requirements = collect($client->requirements_request)->toArray();
-                                        $newArr = array_filter($requirements_request, function($var) use ($requirements){
+                                        $requirements = collect($requirements_request_edit)->toArray();
+                                        $newArr = array_filter($requirements_request_list, function($var) use ($requirements){
                                             return in_array($var['id'], $requirements);
                                         });
                                         foreach ($newArr as $val) {

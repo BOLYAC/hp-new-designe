@@ -657,13 +657,15 @@ class ClientsController extends Controller
         if ($request->hasFile('file')) {
             $user = User::findOrFail($request->get('user_id'));
             $source = $request->get('source_id');
-            $team = $user->currentTeam->id;
+            $team = $user->current_team_id;
             $file = $request->file('file');
             //$import = new AgenciesImport($user, $source, $team);
             /*$headings = (new HeadingRowImport)->toArray($file);
             dd($headings);*/
             $import = new LeadsImport($user, $source, $team);
+
             $import->import($file);
+
             if ($import->failures()->isNotEmpty()) {
                 return back()->withFailures($import->failures());
             }
@@ -675,9 +677,8 @@ class ClientsController extends Controller
     public function fetch(Request $request)
     {
         $key = $request->get('client_search');
-
         if ($key) {
-            $resultClient = Client::where(function ($query) use ($key) {
+            $resultClient = Client::RemoveGroupScope()->where(function ($query) use ($key) {
                 $query->where('full_name', 'like', '%' . $key . '%')
                     ->orWhere('public_id', 'LIKE', '%' . $key . '%')
                     ->orWhere('client_number', 'LIKE', '%' . $key . '%')
@@ -685,9 +686,20 @@ class ClientsController extends Controller
                     ->orWhere('client_email', 'like', '%' . $key . '%')
                     ->orWhere('first_name', 'like', '%' . $key . '%')
                     ->orWhere('last_name', 'like', '%' . $key . '%');
-            })->get(['full_name', 'client_email', 'client_number', 'client_number_2', 'id']);
+            })->get();
 
-            $data = $resultClient;
+
+            $data = [];
+            foreach ($resultClient as $key => $indent) {
+                $data[] .= '<li>' .
+                    '<div class="media" ><img class="img-40 m-r-15 rounded-circle" src = "' . asset('assets/images/user/2.png') . '" alt = "" >' .
+                    '<div class="media-body" ><span class="f-w-600" >' . ($indent->full_name ?? $indent->complete_name) . '</span>' .
+                    '<p class="f-w-600">'. __('Owned by:') .'<span class="font-success ml-1 mr-2">' . $indent->user->name . '</span>' .
+                    __('Phone:') . '<span class="ml-2">' . str_pad(substr($indent->client_number, -4), strlen($indent->client_number), '*', STR_PAD_LEFT) .'</span>'.
+                    '<span class="ml-2>' . str_pad(substr($indent->client_number_2, -4), strlen($indent->client_number_2), '*', STR_PAD_LEFT) .'</span>'.
+                    '</p>' .
+                    '</div></div><li/>';
+            }
 
             try {
                 return json_encode($data, JSON_THROW_ON_ERROR);
@@ -725,7 +737,7 @@ class ClientsController extends Controller
         $sources = Source::all();
         $clients = Client::all();
         //dd($clients);
-        return view('clients.example-2', compact('clients', 'users', 'sources'));
+        return view('clients . example - 2', compact('clients', 'users', 'sources'));
     }
 
 
@@ -733,7 +745,7 @@ class ClientsController extends Controller
     {
 
         $validator = \Validator::make($request->all(), [
-            'update' => 'present|array',
+            'update' => 'present | array',
         ]);
 
         if ($validator->fails()) {
@@ -743,14 +755,14 @@ class ClientsController extends Controller
 
         foreach ($request['update'] as $updateid) {
             $data = [
-                'called' => $request->has('call-' . $updateid) ? 1 : 0,
-                'spoken' => $request->has('speak-' . $updateid) ? 1 : 0,
-                //'source_id' => $request['source_id-' . $updateid],
-                'status' => $request['status-' . $updateid],
-                'budget' => $request['budget-' . $updateid],
-                'next_call' => $request['next_call-' . $updateid],
-                'priority' => $request['priority-' . $updateid],
-                //'user_id' => $request['inCharge-' . $updateid],
+                'called' => $request->has('call - ' . $updateid) ? 1 : 0,
+                'spoken' => $request->has('speak - ' . $updateid) ? 1 : 0,
+                //'source_id' => $request['source_id - ' . $updateid],
+                'status' => $request['status - ' . $updateid],
+                'budget' => $request['budget - ' . $updateid],
+                'next_call' => $request['next_call - ' . $updateid],
+                'priority' => $request['priority - ' . $updateid],
+                //'user_id' => $request['inCharge - ' . $updateid],
             ];
             DB::beginTransaction();
             try {
@@ -768,7 +780,7 @@ class ClientsController extends Controller
 
     public function composeEmail($email, Client $client)
     {
-        return \view('inbox.compose', compact('email', 'client'));
+        return \view('inbox . compose', compact('email', 'client'));
     }
 
     public function getFieldReport()
@@ -834,7 +846,7 @@ class ClientsController extends Controller
             return !in_array($value, $remove);
         });
 
-        return \view('clients.field-report', compact('newArr', 'sources', 'agencies', 'users', 'teams', 'departments'));
+        return \view('clients . field - report', compact('newArr', 'sources', 'agencies', 'users', 'teams', 'departments'));
     }
 
     public function postFieldReport(Request $request)
@@ -857,64 +869,64 @@ class ClientsController extends Controller
         $leads = $leads->with(['source', 'user', 'tasks', 'agency', 'notes']);
 
         if ($request->get('status')) {
-            $leads->where('status', '=', $request->get('status'));
+            $leads->where('status', ' = ', $request->get('status'));
         }
         if ($request->get('source')) {
-            $leads->where('source_id', '=', $request->get('source'));
+            $leads->where('source_id', ' = ', $request->get('source'));
         }
         if ($request->get('priority')) {
-            $leads->where('priority', '=', $request->get('priority'));
+            $leads->where('priority', ' = ', $request->get('priority'));
         }
         if ($request->get('agency')) {
-            $leads->where('agency_id', '=', $request->get('agency'));
+            $leads->where('agency_id', ' = ', $request->get('agency'));
         }
         if ($request->get('user')) {
-            $leads->where('user_id', '=', $request->get('user'));
+            $leads->where('user_id', ' = ', $request->get('user'));
         }
         if ($request->get('team')) {
-            $leads->where('team_id', '=', $request->get('team'));
+            $leads->where('team_id', ' = ', $request->get('team'));
         }
         if ($request->get('department')) {
-            $leads->where('department_id', '=', $request->get('department'));
+            $leads->where('department_id', ' = ', $request->get('department'));
         }
         if ($request->get('daysActif')) {
-            $leads->where('updated_at', '<=', \Carbon\Carbon::today()->subDays($request->get('daysActif')));
+            $leads->where('updated_at', ' <= ', \Carbon\Carbon::today()->subDays($request->get('daysActif')));
         }
 
         if ($request->country_check === 'true') {
             $d = $request->get('country_type');
             switch ($d) {
                 case '1':
-                    $leads->Where('country', 'LIKE', '%' . $request->get('country') . '%')
+                    $leads->Where('country', 'LIKE', ' % ' . $request->get('country') . ' % ')
                         ->orWhereJsonContains('country', $request->get('country'));
                     break;
                 case '2':
-                    $leads->Where('country', 'not like', '%' . $request->get('country') . '%')
+                    $leads->Where('country', 'not like', ' % ' . $request->get('country') . ' % ')
                         ->orWhereJsonDoesntContain('country', $request->get('country'));
                     break;
                 case '3':
-                    $leads->Where('country', 'sounds like', '%' . $request->get('country') . '%');
+                    $leads->Where('country', 'sounds like', ' % ' . $request->get('country') . ' % ');
                     break;
                 case '4':
-                    $leads->Where('country', 'not sounds like', '%' . $request->get('country') . '%');
+                    $leads->Where('country', 'not sounds like', ' % ' . $request->get('country') . ' % ');
                     break;
                 case '5':
-                    $leads->Where('country', 'like', $request->get('country') . '%');
+                    $leads->Where('country', 'like', $request->get('country') . ' % ');
                     break;
                 case '6':
-                    $leads->Where('country', 'like', '%' . $request->get('country'));
+                    $leads->Where('country', 'like', ' % ' . $request->get('country'));
                     break;
                 case '7':
-                    $leads->whereNull('country')->orWhere('country', '=', '');
+                    $leads->whereNull('country')->orWhere('country', ' = ', '');
                     break;
                 case '8':
-                    $leads->whereNotNull('country')->orWhere('country', '<>', '');
+                    $leads->whereNotNull('country')->orWhere('country', ' <> ', '');
                     break;
             }
         }
 
         if ($request->filterDateBase !== 'none') {
-            $date = explode('-', $request->get('daterange'));
+            $date = explode(' - ', $request->get('daterange'));
             $from = $date[0];
             $to = $date[1];
 
@@ -942,20 +954,20 @@ class ClientsController extends Controller
 
         if ($request->lastUpdate === 'true') {
             $leads->whereHas('tasks', function ($query) {
-                $query->where('archive', '=', 0);
-            }, '=', 0)
+                $query->where('archive', ' = ', 0);
+            }, ' = ', 0)
                 ->WhereDoesntHave('tasks');
         }
 
         $leads = $leads->get();
 
         $fields = $request->fields;
-        return \View::make('clients.partials._table-report', compact('fields', 'leads'));
+        return \View::make('clients . partials . _table - report', compact('fields', 'leads'));
 
     }
 
     public function postViewReport()
     {
-        return view('clients.report', compact('clients'));
+        return view('clients . report', compact('clients'));
     }
 }

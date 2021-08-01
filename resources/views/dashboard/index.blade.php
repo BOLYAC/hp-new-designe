@@ -22,14 +22,11 @@
     <script>
         $(document).ready(function () {
             $('#lead-table').DataTable({
-                destroy: true,
-                stateSave: false,
                 order: [[0, 'asc']],
                 processing: true,
                 responsive: true,
-                ajax: {
-                    url: '{!! route('dashboard.data') !!}'
-                },
+                serverSide: true,
+                ajax: '{!! route('dashboard.data') !!}',
                 columns: [
                     {data: 'created_at', name: 'created_at',},
                     {data: 'full_name', name: 'full_name',},
@@ -40,14 +37,11 @@
                 ],
             });
             $('#agency-table').DataTable({
-                destroy: true,
-                stateSave: false,
-                order: [[0, 'asc']],
+                order: [[0, 'desc']],
                 processing: true,
                 responsive: true,
-                ajax: {
-                    url: '{!! route('dashboard.agencies.data') !!}'
-                },
+                serverSide: true,
+                ajax: '{!! route('dashboard.agencies.data') !!}',
                 columns: [
                     {data: 'created_at', name: 'created_at',},
                     {data: 'company_type', name: 'company_type',},
@@ -56,59 +50,63 @@
                 ],
             });
             $('#today-table').DataTable({
+                order: [[4, 'desc']],
                 processing: true,
                 responsive: true,
-                ajax: {
-                    url: '{!! route('dashboard.task_today') !!}'
-                },
+                serverSide: true,
+                ajax: '{!! route('dashboard.task_today') !!}',
                 columns: [
+                    {data: 'source_type', name: 'source_type',},
                     {data: 'title', name: 'title',},
                     {data: 'name', name: 'name',},
-                    {data: 'country', name: 'country'},
-                    {data: 'nationality', name: 'nationality'},
+                    {data: 'country', name: 'country', orderable: false},
+                    {data: 'nationality', name: 'nationality', orderable: false},
                     {data: 'date', name: 'date'},
                 ],
             });
             $('#tomorrow-table').DataTable({
+                order: [[4, 'desc']],
                 processing: true,
                 responsive: true,
-                ajax: {
-                    url: '{!! route('dashboard.task_tomorrow') !!}'
-                },
+                serverSide: true,
+                ajax: '{!! route('dashboard.task_tomorrow') !!}',
                 columns: [
+                    {data: 'source_type', name: 'source_type'},
                     {data: 'title', name: 'title',},
                     {data: 'name', name: 'name',},
-                    {data: 'country', name: 'country'},
-                    {data: 'nationality', name: 'nationality'},
+                    {data: 'country', name: 'country', orderable: false},
+                    {data: 'nationality', name: 'nationality', orderable: false},
                     {data: 'date', name: 'date'},
                 ],
             });
             $('#pending-table').DataTable({
+                order: [[4, 'desc']],
                 processing: true,
                 responsive: true,
-                ajax: {
-                    url: '{!! route('dashboard.task_pending') !!}'
-                },
+                serverSide: true,
+                ajax: '{!! route('dashboard.task_pending') !!}',
                 columns: [
+                    {data: 'source_type', name: 'source_type'},
                     {data: 'title', name: 'title',},
                     {data: 'name', name: 'name',},
-                    {data: 'country', name: 'country'},
-                    {data: 'nationality', name: 'nationality'},
+                    {data: 'country', name: 'client.country', orderable: false},
+                    {data: 'nationality', name: 'client.nationality', orderable: false},
                     {data: 'date', name: 'date'},
                 ],
             });
             $('#completed-table').DataTable({
+                order: [[4, 'desc']],
                 processing: true,
                 responsive: true,
-                ajax: {
-                    url: '{!! route('dashboard.task_completed') !!}'
-                },
+                serverSide: true,
+                ajax: '{!! route('dashboard.task_completed') !!}',
                 columns: [
                     {data: 'checked', name: 'checked',},
+                    {data: 'source_type', name: 'source_type'},
                     {data: 'title', name: 'title',},
                     {data: 'name', name: 'name',},
-                    {data: 'country', name: 'country'},
-                    {data: 'nationality', name: 'nationality'},
+                    {data: 'country', name: 'client.country', orderable: false},
+                    {data: 'nationality', name: 'client.nationality', orderable: false},
                     {data: 'date', name: 'date'},
                     {data: 'updated_at', name: 'updated_at'},
                 ],
@@ -231,6 +229,7 @@
                                 <table class="display" id="today-table">
                                     <thead>
                                     <tr>
+                                        <th>{{ __('Type') }}</th>
                                         <th>{{ __('Title') }}</th>
                                         <th>{{ __('Client name') }}</th>
                                         <th>{{ __('Country') }}</th>
@@ -246,6 +245,7 @@
                                 <table class="display" id="tomorrow-table">
                                     <thead>
                                     <tr>
+                                        <th>{{ __('Type') }}</th>
                                         <th>{{ __('Title') }}</th>
                                         <th>{{ __('Client name') }}</th>
                                         <th>{{ __('Country') }}</th>
@@ -261,6 +261,7 @@
                                 <table class="display" id="pending-table">
                                     <thead>
                                     <tr>
+                                        <th>{{ __('Type') }}</th>
                                         <th>{{ __('Title') }}</th>
                                         <th>{{ __('Client name') }}</th>
                                         <th>{{ __('Country') }}</th>
@@ -279,6 +280,7 @@
                                     <thead>
                                     <tr>
                                         <th width="5%">{{ __('Stat') }}</th>
+                                        <th>{{ __('Type') }}</th>
                                         <th>{{ __('Title') }}</th>
                                         <th>{{ __('Client') }}</th>
                                         <th>{{ __('Country') }}</th>

@@ -2,6 +2,7 @@
 setTimeout(function(){
         (function($) {
             "use strict";
+            $(".js-example-placeholder-multiple option").addClass("font-size-4")
             // Single Search Select
             $(".js-example-basic-single").select2();
             $(".js-example-disabled-results").select2();
@@ -11,7 +12,7 @@ setTimeout(function(){
 
             // With Placeholder
             $(".js-example-placeholder-multiple").select2({
-                placeholder: "Select Your Name"
+                placeholder: ""
             });
 
             //Limited Numbers

@@ -18,16 +18,14 @@
         $('#res-config').DataTable({
             processing: true,
             responsive: true,
-            ajax: {
-                url: '{{ route('audits.list') }}',
-            },
+            ajax: '{{ route('audits.list') }}',
             columns: [
                 {data: 'auditable_type', name: 'auditable_type'},
                 {data: 'event', name: 'event'},
                 {data: 'username', name: 'username'},
-                {data: 'created_at', name: 'created_at'},
-                {data: 'old_values', name:'old_values'},
-                {data: 'new_values', name:'new_values'}
+                {data: 'created_at', name: 'created_at',searchable: false},
+                {data: 'old_values', name:'old_values',orderable: false, searchable: false},
+                {data: 'new_values', name:'new_values',orderable: false, searchable: false}
             ],
             lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]]
         });

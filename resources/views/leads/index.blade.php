@@ -5,13 +5,27 @@
     <!-- Notification.css -->
     <link rel="stylesheet" href="{{ asset('assets/css/datatables.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/datatable-extension.css') }}">
+    <!-- Plugins css start-->
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/select2.css') }}">
+    <style>
+        .select2-container {
+            width: 100% !important;
+            padding: 0;
+        }
+
+        .font-size-4 {
+            font-size: 4px;
+        }
+    </style>
 @endsection
 
 @section('script')
 
     <script src="{{asset('assets/js/datatables/jquery.dataTables.min.js')}}"></script>
     <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.buttons.min.js')}}"></script>
-    <script src="{{asset('assets/js/datatables/datatable-extension/buttons.bootstrap4.min.js')}}"></script>
+    <script src="{{asset('assets/js/datatables/dat
+
+atable-extension/buttons.bootstrap4.min.js')}}"></script>
 
     <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.bootstrap4.min.js')}}"></script>
     <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.responsive.min.js')}}"></script>
@@ -19,8 +33,20 @@
     <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.colReorder.min.js')}}"></script>
     <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.rowReorder.min.js')}}"></script>
 
+    <!-- Plugins JS start-->
+    <script src="{{ asset('assets/js/select2/select2.full.min.js') }}"></script>
+    <script src="{{ asset('assets/js/select2/select2-custom.js') }}"></script>
+
     <script>
         $(document).ready(function () {
+            function get_filter(class_name) {
+                let filter = [];
+                $('.' + class_name + ':checked').each(function () {
+                    filter.push($(this).val());
+                });
+                return filter;
+            }
+
             let table = $('#res-config').DataTable({
                 processing: true,
                 serverSide: true,
@@ -28,7 +54,7 @@
                 ajax: {
                     url: '{{ route('leads.data') }}',
                     data: function (d) {
-                        d.stage = $('select[name=status_filter]').val();
+                        d.stage = get_filter('field_stages');
                         d.user = $('select[name=user_filter]').val();
                         d.department = $('select[name=department_filter]').val();
                         d.country = $('select[name=country_filter]').val();
@@ -88,54 +114,80 @@
                         <h6 class="m-0">{{ __('Filter deal by:') }}</h6>
                     </div>
                     <form id="search-form">
-                        <div class="card-body p-2">
-                            <div class="form-group mb-2">
-                                <select class="custom-select custom-select-sm" id="status_filter"
-                                        name="status_filter">
-                                    <option value="">{{ __('Select stage') }}</option>
-                                    <option value="1">{{ __('In contact') }}</option>
-                                    <option value="2">{{ __('Appointment Set') }}</option>
-                                    <option value="3">{{ __('Follow up') }}</option>
-                                    <option value="4">{{ __('Reservation') }}</option>
-                                    <option value="5">{{ __('contract signed') }}</option>
-                                    <option value="6">{{ __('Down payment') }}</option>
-                                    <option value="7">{{ __('Developer invoice') }}</option>
-                                    <option value="8">{{ __('Won Deal') }}</option>
-                                    <option value="9">{{ __('Lost') }}</option>
-                                </select>
+                        <div class="card-body filter-cards-view animate-chk p-2">
+                            <label>{{ __('Stage:') }}</label>
+                            <div class="checkbox-animated">
+                                <label class="d-block" for="chk-ani">
+                                    <input class="checkbox_animated field_stages" id="chk-ani" type="checkbox"
+                                           name="status_filter[]" value="1"> {{ __('In contact') }}
+                                </label>
+                                <label class="d-block" for="chk-ani1">
+                                    <input class="checkbox_animated field_stages" id="chk-ani1" type="checkbox"
+                                           name="status_filter[]" value="2"> {{ __('Appointment Set') }}
+                                </label>
+                                <label class="d-block" for="chk-ani2">
+                                    <input class="checkbox_animated field_stages" id="chk-ani2" type="checkbox"
+                                           name="status_filter[]" value="3"> {{ __('Follow up') }}
+                                </label>
+                                <label class="d-block" for="chk-ani3">
+                                    <input class="checkbox_animated field_stages" id="chk-ani3" type="checkbox"
+                                           name="status_filter[]" value="4"> {{ __('Reservation') }}
+                                </label>
+                                <label class="d-block" for="chk-ani4">
+                                    <input class="checkbox_animated field_stages" id="chk-ani4" type="checkbox"
+                                           name="status_filter[]" value="5"> {{ __('contract signed') }}
+                                </label>
+                                <label class="d-block" for="chk-ani5">
+                                    <input class="checkbox_animated field_stages" id="chk-ani5" type="checkbox"
+                                           name="status_filter[]" value="6"> {{ __('Down payment') }}
+                                </label>
+                                <label class="d-block" for="chk-ani6">
+                                    <input class="checkbox_animated field_stages" id="chk-ani6" type="checkbox"
+                                           name="status_filter[]" value="7"> {{ __('Developer invoice') }}
+                                </label>
+                                <label class="d-block" for="chk-ani7">
+                                    <input class="checkbox_animated field_stages" id="chk-ani7" type="checkbox"
+                                           name="status_filter[]" value="8"> {{ __('Won Deal') }}
+                                </label>
+                                <label class="d-block" for="chk-ani8">
+                                    <input class="checkbox_animated field_stages" id="chk-ani8" type="checkbox"
+                                           name="status_filter[]" value="9"> {{ __('Lost') }}
+                                </label>
                             </div>
-                            @if(auth()->user()->hasRole('Admin') || auth()->user()->hasPermissionTo('team-manager'))
+                            @if(isset($departments))
                                 <div class="form-group mb-2">
-                                    <select name="user_filter" id="user_filter"
-                                            class="custom-select custom-select-sm">
-                                        <option value="">{{ __('Assigned') }}</option>
+                                    <div class="col-form-label">{{ __('Departments') }}</div>
+                                    <select name="department_filter" id="department_filter"
+                                            class="js-example-placeholder-multiple col-sm-12" multiple>
+                                        <option value="">{{ __('Department') }}</option>
+                                        @foreach($departments as $row)
+                                            <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            @endif
+                            @if(isset($teams))
+                                <div class="form-group mb-2">
+                                    <div class="col-form-label">{{ __('Team') }}</div>
+                                    <select name="team_filter" id="team_filter"
+                                            class="js-example-placeholder-multiple col-sm-12" multiple>
+                                        <option value="">{{ __('Team') }}</option>
+                                        @foreach($teams as $row)
+                                            <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            @endif
+                            @if(isset($users))
+                                <div class="form-group mb-2">
+                                    <div class="col-form-label">{{ __('Assigned') }}</div>
+                                    <select class="js-example-placeholder-multiple col-sm-12" name="user_filter"
+                                            id="user_filter" multiple="multiple">
                                         @foreach($users as $row)
                                             <option value="{{ $row->id }}">{{ $row->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
-                                @if(isset($departments))
-                                    <div class="form-group mb-2">
-                                        <select name="department_filter" id="department_filter"
-                                                class="custom-select custom-select-sm">
-                                            <option value="">{{ __('Department') }}</option>
-                                            @foreach($departments as $row)
-                                                <option value="{{ $row->id }}">{{ $row->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                @endif
-                                @if(isset($teams))
-                                    <div class="form-group mb-2">
-                                        <select name="team_filter" id="team_filter"
-                                                class="custom-select custom-select-sm">
-                                            <option value="">{{ __('Team') }}</option>
-                                            @foreach($teams as $row)
-                                                <option value="{{ $row->id }}">{{ $row->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                @endif
                             @endif
                         </div>
                         <div class="card-footer p-2">
@@ -151,34 +203,30 @@
                 @include('partials.flash-message')
                 <div class="card">
                     <div class="card-header p-3 b-t-primary d-flex justify-content-between">
-                        @can('lead-create')
-                            <div>
-                                <a href="{{ route('leads.create') }}"
-                                   class="btn btn-sm btn-outline-primary">{{__('New deal')}}<i
-                                        class="icon-plus"></i></a>
+                        @can('deal-report')
+                            <div class="col-md-10">
+                                <form action="{{ route('generate.deal.report') }}" method="post" role="form">
+                                    @csrf
+                                    <div class="row">
+                                        <div class="col-3 pr-1 pl-0">
+                                            <input type="date" name="from_date" id="from_date"
+                                                   class="form-control form-control-sm"
+                                                   placeholder="From Date" value="{{ now()->format('Y-m-d') }}"
+                                                   required>
+                                        </div>
+                                        <div class="col-3 pr-1 pl-1">
+                                            <input type="date" name="to_date" id="to_date"
+                                                   class="form-control form-control-sm"
+                                                   placeholder="To Date" value="{{ now()->format('Y-m-d') }}" required>
+                                        </div>
+                                        <div class="col pr-1 pl-1">
+                                            <button type="submit"
+                                                    class="btn btn-primary btn-sm">{{ __('Generate') }}</button>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
                         @endcan
-                        <div class="col-md-10">
-                            <form action="{{ route('generate.deal.report') }}" method="post" role="form">
-                                @csrf
-                                <div class="row">
-                                    <div class="col-3 pr-1 pl-0">
-                                        <input type="date" name="from_date" id="from_date"
-                                               class="form-control form-control-sm"
-                                               placeholder="From Date" value="{{ now()->format('Y-m-d') }}" required>
-                                    </div>
-                                    <div class="col-3 pr-1 pl-1">
-                                        <input type="date" name="to_date" id="to_date"
-                                               class="form-control form-control-sm"
-                                               placeholder="To Date" value="{{ now()->format('Y-m-d') }}" required>
-                                    </div>
-                                    <div class="col pr-1 pl-1">
-                                        <button type="submit"
-                                                class="btn btn-primary btn-sm">{{ __('Generate') }}</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
                     </div>
                     <div class="card-body">
                         <div class="order-history dt-ext table-responsive">

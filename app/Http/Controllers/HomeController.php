@@ -152,7 +152,7 @@ class HomeController extends Controller
 
     public function agenciesAll()
     {
-        $agencies = Agency::select(['id', 'name', 'company_type', 'phone', 'created_at'])->get();
+        $agencies = Agency::select(['id', 'name', 'company_type', 'phone', 'created_at']);
         return DataTables::of($agencies)
             ->editColumn('company_type', function ($agency) {
                 return $agency->company_type === 1 ? __('Company') : __('Freelance');
@@ -162,7 +162,6 @@ class HomeController extends Controller
                     return '<div class="product-name" ><a href = "agencies/' . $agency->id . '" > ' . $agency->name . '</a ></div > ';
                 } else {
                     return '<div class="product-name" ><a href = "agencies/' . $agency->id . '/edit" > ' . $agency->name . '</a ></div > ';
-
                 }
             })
             ->addColumn('created_at',
@@ -178,12 +177,25 @@ class HomeController extends Controller
 
     public function todayTask()
     {
-        $todayTasks = Task::with(['agency', 'client'])->archive(false)->whereDate('date', Carbon::today());
+        $todayTasks = Task::with(['agency', 'lead', 'client'])->archive(false)->whereDate('date', Carbon::today());
         return Datatables::of($todayTasks)
             ->setRowId('id')
+            ->addColumn('source_type', function ($todayTask) {
+                $modelsMapping = [
+                    'App\Agency' => 'Agency',
+                    'App\Models\Client' => 'Lead',
+                    'App\Models\Lead' => 'Deal'
+                ];
+                if (!array_key_exists($todayTask->source_type, $modelsMapping)) {
+                    return "Client";
+                }
+                return $modelsMapping[$todayTask->source_type];
+            })
             ->editColumn('title', function ($todayTask) {
                 if ($todayTask->source_type === 'App\Agency') {
                     return '<a href="' . route('agencies.edit', ['agency' => $todayTask->agency->id]) . '" class="email-name" >' . $todayTask->title ?? '' . '</a>';
+                } elseif ($todayTask->source_type === 'App\Models\Lead') {
+                    return '<a href="' . route('leads.show', ['lead' => $todayTask->source_id]) . '"class="email-name" >' . $todayTask->title ?? '' . '</a>';
                 } else {
                     return '<a href="' . route('clients.show', ['client' => $todayTask->client_id]) . '"class="email-name" >' . $todayTask->title ?? '' . '</a>';
                 }
@@ -191,7 +203,7 @@ class HomeController extends Controller
             ->editColumn('name', function ($todayTask) {
                 return $todayTask->client->full_name ?? $todayTask->agency->title ?? '';
             })
-            ->editColumn('country', function ($todayTask) {
+            ->addColumn('country', function ($todayTask) {
                 if (is_null($todayTask->client->country)) {
                     return '<div class="col-form-label">' . $todayTask->client->getRawOriginal('country') ?? '' . '</div>';
                 } else {
@@ -203,7 +215,7 @@ class HomeController extends Controller
                     return $cou;
                 }
             })
-            ->editColumn('nationality', function ($todayTask) {
+            ->addColumn('nationality', function ($todayTask) {
                 if (is_null($todayTask->client->nationality)) {
                     return $todayTask->client->getRawOriginal('nationality') ?? '';
                 } else {
@@ -226,12 +238,25 @@ class HomeController extends Controller
 
     public function tomorrowTasks()
     {
-        $tomorrowTasks = Task::with(['agency', 'client'])->archive(false)->whereDate('date', Carbon::tomorrow());
+        $tomorrowTasks = Task::with(['agency', 'lead', 'client'])->archive(false)->whereDate('date', Carbon::tomorrow());
         return Datatables::of($tomorrowTasks)
             ->setRowId('id')
+            ->addColumn('source_type', function ($tomorrowTask) {
+                $modelsMapping = [
+                    'App\Agency' => 'Agency',
+                    'App\Models\Client' => 'Lead',
+                    'App\Models\Lead' => 'Deal'
+                ];
+                if (!array_key_exists($tomorrowTask->source_type, $modelsMapping)) {
+                    return "Client";
+                }
+                return $modelsMapping[$tomorrowTask->source_type];
+            })
             ->editColumn('title', function ($tomorrowTask) {
                 if ($tomorrowTask->source_type === 'App\Agency') {
                     return '<a href="' . route('agencies.edit', ['agency' => $tomorrowTask->agency->id]) . '" class="email-name" >' . $tomorrowTask->title ?? '' . '</a>';
+                } elseif ($tomorrowTask->source_type === 'App\Models\Lead') {
+                    return '<a href="' . route('leads.show', ['lead' => $tomorrowTask->source_id]) . '"class="email-name" >' . $tomorrowTask->title ?? '' . '</a>';
                 } else {
                     return '<a href="' . route('clients.show', ['client' => $tomorrowTask->client_id]) . '"class="email-name" >' . $tomorrowTask->title ?? '' . '</a>';
                 }
@@ -239,7 +264,7 @@ class HomeController extends Controller
             ->editColumn('name', function ($tomorrowTask) {
                 return $tomorrowTask->client->full_name ?? $tomorrowTask->agency->title ?? '';
             })
-            ->editColumn('country', function ($tomorrowTask) {
+            ->addColumn('country', function ($tomorrowTask) {
                 if (is_null($tomorrowTask->client->country)) {
                     return '<div class="col-form-label">' . $tomorrowTask->client->getRawOriginal('country') ?? '' . '</div>';
                 } else {
@@ -251,7 +276,7 @@ class HomeController extends Controller
                     return $cou;
                 }
             })
-            ->editColumn('nationality', function ($tomorrowTask) {
+            ->addColumn('nationality', function ($tomorrowTask) {
                 if (is_null($tomorrowTask->client->nationality)) {
                     return $tomorrowTask->client->getRawOriginal('nationality') ?? '';
                 } else {
@@ -273,20 +298,33 @@ class HomeController extends Controller
 
     public function pendingTasks()
     {
-        $pendingTasks = Task::with(['agency', 'client'])->archive(false)->whereDate('date', '<', Carbon::today());
+        $pendingTasks = Task::with(['agency', 'lead', 'client'])->archive(false)->whereDate('date', '<', Carbon::today());
         return Datatables::of($pendingTasks)
             ->setRowId('id')
+            ->addColumn('source_type', function ($pendingTasks) {
+                $modelsMapping = [
+                    'App\Agency' => 'Agency',
+                    'App\Models\Client' => 'Lead',
+                    'App\Models\Lead' => 'Deal'
+                ];
+                if (!array_key_exists($pendingTasks->source_type, $modelsMapping)) {
+                    return "Client";
+                }
+                return $modelsMapping[$pendingTasks->source_type];
+            })
             ->editColumn('title', function ($pendingTasks) {
                 if ($pendingTasks->source_type === 'App\Agency') {
                     return '<a href="' . route('agencies.edit', ['agency' => $pendingTasks->agency->id]) . '" class="email-name" >' . $pendingTasks->title ?? '' . '</a>';
+                } elseif ($pendingTasks->source_type === 'App\Models\Lead') {
+                    return '<a href="' . route('leads.show', ['lead' => $pendingTasks->source_id]) . '"class="email-name" >' . $pendingTasks->title ?? '' . '</a>';
                 } else {
                     return '<a href="' . route('clients.show', ['client' => $pendingTasks->client_id]) . '"class="email-name" >' . $pendingTasks->title ?? '' . '</a>';
                 }
             })
-            ->editColumn('name', function ($pendingTasks) {
+            ->addColumn('name', function ($pendingTasks) {
                 return $pendingTasks->client->full_name ?? $pendingTasks->agency->title ?? '';
             })
-            ->editColumn('country', function ($pendingTasks) {
+            ->addColumn('country', function ($pendingTasks) {
                 if (is_null($pendingTasks->client->country)) {
                     return '<div class="col-form-label">' . $pendingTasks->client->getRawOriginal('country') ?? '' . '</div>';
                 } else {
@@ -298,7 +336,7 @@ class HomeController extends Controller
                     return $cou;
                 }
             })
-            ->editColumn('nationality', function ($pendingTasks) {
+            ->addColumn('nationality', function ($pendingTasks) {
                 if (is_null($pendingTasks->client->nationality)) {
                     return $pendingTasks->client->getRawOriginal('nationality') ?? '';
                 } else {
@@ -310,7 +348,7 @@ class HomeController extends Controller
                     return $cou;
                 }
             })
-            ->addColumn('date',
+            ->editColumn('date',
                 function ($pendingTasks) {
                     return optional($pendingTasks->date)->format('d-m-Y') ?? '';
                 })
@@ -320,13 +358,28 @@ class HomeController extends Controller
 
     public function completedTasks()
     {
-        $completedTasks = Task::with(['agency', 'client'])->archive(true);
+
+        $completedTasks = Task::with(['agency', 'lead', 'client'])->archive(true);
+
         return Datatables::of($completedTasks)
             ->setRowId('id')
+            ->addColumn('source_type', function ($completedTask) {
+                $modelsMapping = [
+                    'App\Agency' => 'Agency',
+                    'App\Models\Client' => 'Lead',
+                    'App\Models\Lead' => 'Deal'
+                ];
+                if (!array_key_exists($completedTask->source_type, $modelsMapping)) {
+                    return "Client";
+                }
+                return $modelsMapping[$completedTask->source_type];
+            })
             ->addColumn('checked', '<div class="round-product"><i class="icofont icofont-check"></i></div>')
             ->editColumn('title', function ($completedTask) {
                 if ($completedTask->source_type === 'App\Agency') {
                     return '<a href="' . route('agencies.edit', ['agency' => $completedTask->agency->id]) . '" class="email-name" >' . $completedTask->title ?? '' . '</a>';
+                } elseif ($completedTask->source_type === 'App\Models\Lead') {
+                    return '<a href="' . route('leads.show', ['lead' => $completedTask->source_id]) . '"class="email-name" >' . $completedTask->title ?? '' . '</a>';
                 } else {
                     return '<a href="' . route('clients.show', ['client' => $completedTask->client_id]) . '"class="email-name" >' . $completedTask->title ?? '' . '</a>';
                 }
@@ -334,7 +387,7 @@ class HomeController extends Controller
             ->editColumn('name', function ($completedTask) {
                 return $completedTask->client->full_name ?? $completedTask->agency->title ?? '';
             })
-            ->editColumn('country', function ($completedTask) {
+            ->addColumn('country', function ($completedTask) {
                 if (is_null($completedTask->client->country)) {
                     return '<div class="col-form-label">' . $completedTask->client->getRawOriginal('country') ?? '' . '</div>';
                 } else {
@@ -346,7 +399,7 @@ class HomeController extends Controller
                     return $cou;
                 }
             })
-            ->editColumn('nationality', function ($completedTask) {
+            ->addColumn('nationality', function ($completedTask) {
                 if (is_null($completedTask->client->nationality)) {
                     return $completedTask->client->getRawOriginal('nationality') ?? '';
                 } else {

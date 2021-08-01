@@ -75,6 +75,7 @@
                 },
             });
         });
+
     </script>
 @endsection
 @section('breadcrumb-items')

@@ -48,12 +48,6 @@ class User extends Authenticatable implements Auditable
         'departments_ids' => 'array'
     ];
 
-
-    public function notes(): HasMany
-    {
-        return $this->hasMany(Note::class);
-    }
-
     public function department()
     {
         return $this->belongsTo(Department::class)->withDefault();
@@ -86,10 +80,6 @@ class User extends Authenticatable implements Auditable
             ->as('sharedEvents');
     }
 
-    public function tasks(): HasMany
-    {
-        return $this->hasMany(Task::class);
-    }
 
     public function child(): HasMany
     {
@@ -101,6 +91,16 @@ class User extends Authenticatable implements Auditable
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function tasks(): HasMany
+    {
+        return $this->hasMany(Task::class);
+    }
+
+    public function notes(): HasMany
+    {
+        return $this->hasMany(Note::class);
+    }
+
     public function events(): HasMany
     {
         return $this->hasMany(Event::class);
@@ -108,7 +108,7 @@ class User extends Authenticatable implements Auditable
 
     public function leads(): HasMany
     {
-        return $this->hasMany(Lead::class, 'user_id');
+        return $this->hasMany(Lead::class);
     }
 
     public function invoices(): HasMany

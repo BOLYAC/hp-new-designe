@@ -40,8 +40,8 @@ class EventsDailyNotification extends Notification
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail($notifiable)
-    {        
-        return (new MailMessage)->markdown('mail.remainder.events', compact('notifiable'));
+    {
+        return (new MailMessage)->markdown('emails.remainder', compact('notifiable'));
     }
 
     /**
