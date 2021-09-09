@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 Auth::routes();
 Route::group(['prefix' => 'clients', 'middleware' => 'auth'], function () {
     Route::get('data', 'ClientsController@anyData')->name('clients.data');
+    Route::get('newLeadList', 'ClientsController@newLeadList')->name('clients.newLeadList');
     Route::get('importExportView', 'ClientsController@importExportView')->name('importExport');
     Route::get('importExportViewZoho', 'ClientsController@importExportViewZoho')->name('importExportZoho');
     Route::post('import', 'ClientsController@import')->name('import');
@@ -19,6 +20,10 @@ Route::group(['prefix' => 'clients', 'middleware' => 'auth'], function () {
     Route::get('/fields-select', 'ClientsController@getFieldReport')->name('clients.field.report');
     Route::post('/fields-select', 'ClientsController@postFieldReport')->name('clients.field.report.post');
     Route::post('/clients/reports', 'ClientsController@postViewReport')->name('clients.report');
+    Route::delete('/singleDelete/{id}', 'ClientsController@singleDelete')->name('clients.singleDelete');
+    Route::delete('/mass-lead-delete', 'ClientsController@massDelete')->name('clients.massDelete');
+    Route::post('/share-client-with', 'SalesController@shareClient')->name('client.shareClient');
+    Route::post('/mass-share-client-with', 'SalesController@massShareClient')->name('client.massShareClient');
 });
 Route::group(
     ['middleware' => ['auth']],
@@ -174,7 +179,9 @@ Route::group(
     }
 );
 //Route::get('forms-example', 'ExternalWebSiteController@getExample');
-Route::post('propertyexpo', 'ExternalWebSiteController@getExpoForm');
+Route::post('web-hook/ssproperty', 'ExternalWebSiteController@getSSForm');
+Route::post('web-hook/propertyexpo', 'ExternalWebSiteController@getExpoForm');
+Route::post('web-hook/hashimpoperty', 'ExternalWebSiteController@getHashimForm');
 /*Route::post('propertyexpo', function (\Illuminate\Http\Request $request) {
     \Illuminate\Support\Facades\Log::info($request->all());
     return response()->json(['success' => true, 'message' => 'Mesajınız gönderildi. Teşekkür ederiz']);

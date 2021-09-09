@@ -50,6 +50,7 @@
                 });
         }
 
+        $('.js-select-share').select2();
         window.livewire.on('alert', param => {
             notify(param['message'], param['type'])
         })
@@ -124,11 +125,11 @@
                 @include('clients.task-note')
             </div>
             <div class="col-md-3 col-lg-2">
-                <div class="card card-with-border">
+                <div class="card card-with-border p-2">
                     <div class="card-header b-b-info">
                         <h5 class="text-muted">{{ __('Owned by') }}</h5>
                     </div>
-                    <div class="card-body pl-2 pr-2 pt-4">
+                    <div class="card-body p-2">
                         <div class="inbox">
                             <div class="media active">
                                 <div class="media-size-email">
@@ -164,10 +165,45 @@
                         @endcan
                     </div>
                 </div>
-                <!-- Transfer to Deal -->
+            @can('share-client-with')
+                <!-- Start Share lead with card -->
+                    <div class="card card-with-border">
+                        <div class="card-header b-b-info p-4">
+                            <h5 class="text-muted">{{ __('Share with') }}</h5>
+                        </div>
+                        <div class="card-body p-2">
+                            <form action="{{route('client.shareClient')}}" method="POST" id="share_lead_with">
+                                @csrf
+                                <div class="form-group">
+                                    <input type="hidden" name="lead_id" value="{{ $client->id }}">
+                                    <div class="form-group">
+                                        <select class="js-select-share form-control form-control-sm"
+                                                name="share_with[]" id="share_with"
+                                                multiple>
+                                            @foreach($users as $user)
+                                                @if($client->shareClientWith->contains($user))
+                                                    <option value="{{ $user->id }}"
+                                                            selected>{{ $user->name ?? '' }}</option>
+                                                @else
+                                                    <option value="{{ $user->id }}">{{ $user->name ?? ''}}</option>
+                                                @endif
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <button type="submit"
+                                        class="btn btn-sm btn-outline-primary form-control form-control-sm">{{ __('Share') }}
+                                    <i
+                                        class="icon-share"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- End share with card -->
+            @endcan
+            <!-- Transfer to Deal -->
                 @can('transfer-lead-to-deal')
                     <div class="card card-with-border">
-                        <div class="card-header b-b-info">
+                        <div class="card-header b-b-info p-4">
                             <h5 class="text-muted">{{ __('Transfer to deal') }}</h5>
                         </div>
                         <div class="card-body">
@@ -183,7 +219,7 @@
                 @endcan
                 @if($client->leads()->exists())
                     <div class="card card-with-border">
-                        <div class="card-header">
+                        <div class="card-header p-4">
                             <h5 class="d-inline-block">{{ __('Deals history') }}</h5>
                         </div>
                         <div class="card-body activity-social">

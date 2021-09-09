@@ -6,9 +6,9 @@ use App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 
-trait Multitenantable
+trait InvoicesTenantable
 {
-    protected static function bootMultitenantable()
+    protected static function bootInvoicesTenantable()
     {
         if (auth()->check()) {
 
@@ -21,24 +21,22 @@ trait Multitenantable
                 $model->updated_by = auth()->id();
             });
 
-            $l[] = json_encode(auth()->id());
-
             if (auth()->user()->hasPermissionTo('simple-user')) {
-                static::addGlobalScope('user_id', function (Builder $builder) use ($l) {
-                    $builder->orWhere('user_id', auth()->id())
-                        ->whereJsonContains('sellers', $l);
+                static::addGlobalScope('user_id', function (Builder $builder) {
+                    $builder->Where('user_id', auth()->id());
                 });
             }
 
             if (auth()->user()->hasPermissionTo('team-manager')) {
                 if (auth()->user()->ownedTeams()->count() > 0) {
                     $teamUsers = auth()->user()->ownedTeams;
+                    $teams = auth()->user()->allTeams();
                     foreach ($teamUsers as $u) {
                         foreach ($u->users as $ut) {
                             $users[] = $ut->id;
                         }
                     }
-                    static::addGlobalScope('user_id', function (Builder $builder) use ($users) {
+                    static::addGlobalScope('team_id', function (Builder $builder) use ($users) {
                         $builder->whereIn('user_id', $users);
                     });
                 }
@@ -52,12 +50,13 @@ trait Multitenantable
                     }
                 }
                 static::addGlobalScope('user_id', function (Builder $builder) use ($users) {
-                    $builder->whereIn('user_id', $users);
+                    $builder->whereIn('user_id', $users)
+                        ->orWhereJsonContains('sellers', $users);
                 });
             }
 
             if (auth()->user()->hasPermissionTo('multiple-department')) {
-                $teams = Team::whereIn('id', ['5', '3', '4', '7', '15'])->get();
+                $teams = Team::whereIn('id', ['5', '4', '7', '15'])->get();
                 $users[] = User::whereIn('id', ['5', '15'])->pluck('id');
                 foreach ($teams as $u) {
                     foreach ($u->users as $ut) {
@@ -71,7 +70,7 @@ trait Multitenantable
 
             if (auth()->user()->hasPermissionTo('desk-user')) {
                 $teams = Team::whereIn('id', ['4', '7', '15'])->get();
-                $users[] = auth()->id();
+                $users[] = User::where('id', '=', '5')->pluck('id');
                 foreach ($teams as $u) {
                     foreach ($u->users as $ut) {
                         $users[] .= $ut->id;
@@ -83,30 +82,12 @@ trait Multitenantable
             }
 
             if (auth()->user()->hasRole('Call center HP')) {
-                $teams = Team::where('id', '=', '3')->get();
-                $users[] = User::where('id', '=', '11')->pluck('id');
-                foreach ($teams as $u) {
-                    foreach ($u->users as $ut) {
-                        $users[] .= $ut->id;
-                    }
-                }
-                static::addGlobalScope('user_id', function (Builder $builder) use ($users) {
-                    $builder->whereIn('user_id', $users);
+                static::addGlobalScope('user_id', function (Builder $builder) use ($l) {
+                    $builder->orWhere('user_id', auth()->id())
+                        ->whereJsonContains('sellers', $l);
                 });
             }
 
-            if (auth()->user()->hasPermissionTo('xp-xp-call-center')) {
-                $teams = Team::where('id', '=', '17')->get();
-                $users[] = auth()->id();
-                foreach ($teams as $u) {
-                    foreach ($u->users as $ut) {
-                        $users[] .= $ut->id;
-                    }
-                }
-                static::addGlobalScope('user_id', function (Builder $builder) use ($users) {
-                    $builder->whereIn('user_id', $users);
-                });
-            }
         }
     }
 }

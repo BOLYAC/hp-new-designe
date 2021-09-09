@@ -42,6 +42,7 @@
                         d.team = $('select[name=team_filter]').val();
                         d.daterange = $('input[name=daterange]').val()
                         d.confirmed = $('#confirmed').is(':checked');
+                        d.val = $("input[name=radio]:checked").val();
                     }
                 },
                 columns: [
@@ -64,6 +65,7 @@
                 $('select[name=department_filter]').val('');
                 $('select[name=team_filter]').val('');
                 $('input[name=daterange]').val('')
+                $('input[type="radio"]').filter('[value=all]').prop('checked', true);
                 $('#confirmed').prop('checked', false);
                 table.DataTable().destroy();
             });
@@ -147,6 +149,22 @@
                                 <input id="confirmed" type="checkbox">
                                 <label for="confirmed">{{ __('Confirmed') }}</label>
                             </div>
+
+                            <div class="form-group m-t-15 custom-radio-ml">
+                                <div class="radio radio-primary">
+                                    <input id="radio1" type="radio" name="radio" value="all" checked>
+                                    <label for="radio1">{{ __('All') }}</label>
+                                </div>
+                                <div class="radio radio-primary">
+                                    <input id="radio2" type="radio" name="radio" value="event-date">
+                                    <label for="radio2">{{ __('Appointment') }}</label>
+                                </div>
+                                <div class="radio radio-primary">
+                                    <input id="radio3" type="radio" name="radio" value="zoom-meeting">
+                                    <label for="radio3">{{ __('Zoom meeting') }}</label>
+                                </div>
+                            </div>
+
                             <div class="theme-form mb-2">
                                 <input class="form-control form-control-sm digits" type="text" name="daterange"
                                        value="">

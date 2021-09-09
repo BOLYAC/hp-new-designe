@@ -36,10 +36,15 @@ class Tasks extends Component
     public function render()
     {
         $client = $this->client;
-
+        $modelsMapping = [
+            'agency' => 'App\Agency',
+            'client' => 'App\Models\Client',
+            'lead' => 'App\Models\Lead'
+        ];
+        $model = $modelsMapping[$this->type];
         $this->tasks = Task::whereHasMorph(
             'Taskable',
-            [Agency::class, Client::class, Lead::class],
+            [$model],
             function ($query, $type) use ($client) {
                 if ($type === Agency::class) {
                     $query->where('id', $client);

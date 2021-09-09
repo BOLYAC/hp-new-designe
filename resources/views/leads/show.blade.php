@@ -640,6 +640,13 @@
                                        required/>
                             </div>
                         </div>
+                        <div class="form-group">
+                            <label class="d-block" for="chk-ani">
+                                <input class="checkbox_animated" id="chk-ani" type="checkbox" checked=""
+                                       name="zoom_meeting">
+                                Zoom meeting
+                            </label>
+                        </div>
                         <div class="form-group input-group-sm">
                             <label for="color">{{ __('Colors') }}</label>
                             <div>

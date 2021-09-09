@@ -37,10 +37,10 @@ class HomeController extends Controller
     public function index()
     {
         $allClients = Client::count();
-        $todayTasks = Task::with(['agency', 'client'])->archive(false)->whereDate('date', Carbon::today())->count();
-        $olderTask = Task::with(['agency', 'client'])->archive(true)->whereDate('date', '<', Carbon::today())->count();
-        $tomorrowTasks = Task::with(['agency', 'client'])->archive(false)->whereDate('date', Carbon::tomorrow())->count();
-        $completedTasks = Task::with(['agency', 'client'])->archive(true)->count();
+        $todayTasks = Task::with(['agency', 'client', 'lead'])->archive(false)->whereDate('date', Carbon::today())->count();
+        $olderTask = Task::with(['agency', 'client', 'lead'])->archive(true)->whereDate('date', '<', Carbon::today())->count();
+        $tomorrowTasks = Task::with(['agency', 'client', 'lead'])->archive(false)->whereDate('date', Carbon::tomorrow())->count();
+        $completedTasks = Task::with(['agency', 'client', 'lead'])->archive(true)->count();
         $events = Event::whereDate('event_date', Carbon::today())->count();
 
         return view('dashboard.index',

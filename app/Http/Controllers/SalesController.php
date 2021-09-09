@@ -107,6 +107,8 @@ class SalesController extends Controller
         $lead['rooms_request'] = $client->rooms_request ?? '';
         $lead['requirement_request'] = $client->requirements_request ?? '';
 
+        $lead['companies_name'] = $client->campaigne_name ?? '';
+
         $lead = Lead::create($lead);
         //$client->update(['lead_id' => $lead->id]);
         $lead->ShareWithSelles()->attach($l, ['added_by' => Auth::id(), 'user_name' => Auth::user()->name]);
@@ -256,5 +258,63 @@ class SalesController extends Controller
 
         return redirect()->back()->with('toast_success', __('Sellers updated successfully'));
 
+    }
+
+    public function shareClient(Request $request)
+    {
+        // Form validation
+        $this->validate($request, [
+            "share_with" => "required|array|min:1",
+            "share_with.*" => "required|string|distinct|min:1",
+        ]);
+
+        $users = $request->get('share_with');
+        $u = User::whereIn('id', $users)->pluck('name');
+        $lead = Client::find($request->get('lead_id'));
+        $lead->update([
+            'sellers' => $users,
+            'sells_names' => $u,
+        ]);
+
+        $lead->shareClientWith()->detach();
+        $lead->shareClientWith()->attach($users, ['added_by' => Auth::id(), 'user_name' => Auth::user()->name]);
+
+        $link = route('clients.show', $lead);
+
+        $data = [
+            'full_name' => $lead->full_name,
+            'assigned_by' => Auth::user()->name,
+            'email' => $lead->user->email,
+            'link' => $link
+        ];
+
+        //AssignedClientEmailJob::dispatch($data);
+
+        return redirect()->back()->with('toast_success', __('Client shared successfully'));
+    }
+
+    public function massShareClient(Request $request)
+    {
+        // Form validation
+        $this->validate($request, [
+            "users_ids" => "required|array|min:1",
+            "users_ids.*" => "required|string|distinct|min:1",
+        ]);
+
+        $users = $request->get('users_ids');
+        $u = User::whereIn('id', $users)->pluck('name');
+        $leads = Client::whereIn('id', $request->get('clients'))->get();
+
+        foreach ($leads as $lead) {
+            $lead->update([
+                'sellers' => $users,
+                'sells_names' => $u,
+            ]);
+            $lead->shareClientWith()->detach();
+            $lead->shareClientWith()->attach($users, ['added_by' => Auth::id(), 'user_name' => Auth::user()->name]);
+        }
+        //AssignedClientEmailJob::dispatch($data);
+
+        return redirect()->back()->with('toast_success', __('Client shared successfully'));
     }
 }

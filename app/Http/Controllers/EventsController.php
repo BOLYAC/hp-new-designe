@@ -81,6 +81,16 @@ class EventsController extends Controller
         if ($request->confirmed === 'true') {
             $events->where('confirmed', '=', 1);
         }
+
+        switch ($request->get('val')) {
+            case 'event-date':
+                $events->where('zoom_meeting', false);
+                break;
+            case 'zoom-meeting':
+                $events->where('zoom_meeting', true);
+                break;
+        }
+
         if ($request->get('daterange')) {
             $date = explode('-', $request->get('daterange'));
             $from = $date[0];
@@ -208,6 +218,7 @@ class EventsController extends Controller
         $data['status_name'] = $lead->status_name ?? '';
         $data['priority'] = $lead->priority ?? '';
         $data['lead_description'] = $lead->description ?? '';
+        $data['zoom_meeting'] = $request->has('zoom_meeting') ? 1 : 0;
 
         if ($request->has('share_with')) {
             $data['sell_rep'] = $users[0];
@@ -265,11 +276,8 @@ class EventsController extends Controller
     function edit(Event $event)
     {
         $users = User::all();
-        if ($event->user_id === \auth()->id()) {
-            return view('events.edit', compact('event', 'users'));
-        } else {
-            return view('events.edit', compact('event', 'users'));
-        }
+
+        return view('events.edit', compact('event', 'users'));
     }
 
     /**
@@ -301,6 +309,7 @@ class EventsController extends Controller
         $data['sellers'] = $users;
         $data['team_id'] = $team;
         $data['owner_name'] = $user->name;
+        $data['zoom_meeting'] = $request->has('zoom_meeting') ? 1 : 0;
 
         if ($request->has('share_with')) {
             $data['sell_rep'] = $users[0];
@@ -383,12 +392,12 @@ class EventsController extends Controller
         if ($val === 'today') {
             $events = Event::whereDate('event_date', Carbon::today()->toDateString())->get();
 
-            $confirmedEvents = Event::where( function ($query) {
+            $confirmedEvents = Event::where(function ($query) {
                 $query->where('confirmed', '=', '1')
                     ->whereDate('event_date', Carbon::today()->toDateString());
             })->count();
 
-            $notConfirmedEvents = Event::where( function ($query) {
+            $notConfirmedEvents = Event::where(function ($query) {
                 $query->where('confirmed', '=', '0')
                     ->whereDate('event_date', Carbon::today()->toDateString());
             })->count();

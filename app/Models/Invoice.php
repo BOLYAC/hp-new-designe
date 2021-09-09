@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Traits\Multitenantable;
+use App\Traits\InvoicesTenantable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Invoice extends Model
 {
-    use  SoftDeletes, Multitenantable;
+    use  SoftDeletes, InvoicesTenantable;
 
     const STATUS_SENT = "sent";
 

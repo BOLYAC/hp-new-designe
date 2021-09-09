@@ -1,8 +1,10 @@
 @if($mode === 'edit')
     <div>
         <div class="card-header b-t-primary b-b-primary p-2 d-flex justify-content-between">
-            <h5 class="mr-auto mt-2">{{ __('Editing Lead') }}
-                : {{ $client->full_name ?? $client->complete_name ?? '' }}</h5>
+            @if($client->id === auth()->id())
+                <h5 class="mr-auto mt-2">{{ __('Editing Lead') }}
+                    : {{ $client->full_name ?? $client->complete_name ?? '' }}</h5>
+            @endif
             <button wire:click="updateMode('show')" class="btn btn-sm btn-warning mr-2"><i
                     class="icon-arrow-left"></i> {{ __('Back') }}</button>
         </div>
@@ -124,7 +126,7 @@
                                                     results: $.map(data, function (item) {
                                                         return {
                                                             text: item.name,
-                                                            id: item.id
+                                                            id: item.name
                                                         }
                                                     })
                                                 };
@@ -503,7 +505,7 @@
                                             class="fa fa-whatsapp"></i></a>
                                 @endif
                                 <a href="javascript:void(0)"
-                                   class="btn btn-xs btn-outline-primary float-right theme-setting"
+                                   class="btn btn-xs btn-outline-primary float-right"
                                    wire:click="makeCall('ph1')"><i
                                         class="fa fa-phone"></i></a>
                                 <br>
@@ -516,7 +518,7 @@
                                             class="fa fa-whatsapp"></i></a>
                                 @endif
                                 <a href="javascript:void(0)"
-                                   class="btn btn-xs btn-outline-primary float-right theme-setting"
+                                   class="btn btn-xs btn-outline-primary float-right"
                                    wire:click="makeCall('ph2')"><i
                                         class="fa fa-phone"></i></a>
                             </td>
@@ -586,7 +588,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <th>{{ __('Desciption') }}</th>
+                            <th>{{ __('Description') }}</th>
                             <td>
                                 {!! $client->description ?? '' !!}
                             </td>

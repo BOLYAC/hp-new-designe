@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>A simple, clean, and responsive HTML invoice template</title>
+    <title>{{ __('Event report') }}</title>
 
     <style>
 
@@ -123,7 +123,7 @@
             <td>{{ __('Language') }}</td>
             <td>{{ __('Customer’s Location') }}</td>
             <td>{{ __('Lead Owner’s Notes') }}</td>
-            <td>{{ __('Lead Owner') }}</td>
+            <td>{{ __('Made by') }}</td>
             @switch($val)
                 @case('tomorrow')
 
@@ -136,7 +136,11 @@
             @endswitch
             <td>{{ __('Previous Appointments Count') }}</td>
             <td>{{ __('Stage') }}</td>
+            <td>{{ __('Lead Owner') }}</td>
+            <th>{{ __('Type') }}</th>
             <td>{{ __('Confirmed') }}</td>
+            <td>{{ __('Confirmed By') }}</td>
+            <td>{{ __('Conformation date') }}</td>
         </tr>
         @foreach($events as $key => $event)
             <tr>
@@ -304,7 +308,19 @@
                     @endphp
                 </td>
                 <td>
+                    {{ $event->client->user->name ?? '' }}
+                </td>
+                <td>
+                    {{ $event->zoom_meting === 1 ? 'Zoom' : 'Appointment' }}
+                </td>
+                <td>
                     {{ $event->confirmed === 1 ? 'Yes' : 'No' }}
+                </td>
+                <td>
+                    {{ $event->confirmed_by ?? '' }}
+                </td>
+                <td>
+                    {{ Carbon\Carbon::parse($event->confirmed_at)->format('Y-m-d H:i') }}
                 </td>
             </tr>
         @endforeach

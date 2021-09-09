@@ -28,7 +28,7 @@
                 if ($($tr).hasClass('child')) {
                     $tr = $tr.prev('.parent');
                 }
-                var data = table.row($tr).data();
+                let data = table.row($tr).data();
                 console.log(data)
                 $('#deleteForm').attr('action', 'roles/' + data[0]);
                 $('#deleteModal').modal('show');
@@ -52,8 +52,9 @@
                 <div class="card">
                     <div class="card-header b-b-primary b-t-primary">
                         @can('role-create')
-                            <a href="{{ route('roles.create') }}" class="btn btn-sm btn-outline-primary">{{ __('New
-                                role') }} <i class="icon-plus"></i></a>
+                            <a href="{{ route('roles.create') }}" class="btn btn-sm btn-outline-primary">
+                                {{ __('New role') }} <i class="icon-plus"></i>
+                            </a>
                         @endcan
                     </div>
                     <div class="card-body">
@@ -71,7 +72,7 @@
                                 <tbody>
                                 @foreach($roles as $key => $role)
                                     <tr>
-                                        <td>{{ ++$i }}</td>
+                                        <td>{{ ++$key }}</td>
                                         <td>{{ $role->name ?? '' }}</td>
                                         <td class="action-icon">
                                             @can('role-edit')

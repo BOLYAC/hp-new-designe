@@ -5,6 +5,7 @@ namespace App\Http\Livewire;
 use AloTech\Click2;
 use App\Agency;
 use App\Models\Source;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Livewire\Component;
 
@@ -102,8 +103,6 @@ class Client extends Component
             'client_number_2' => $this->phone_number_2_edit,
         ];
 
-
-
         if ($data) {
             $this->client->update($data);
             $this->updateMode('show');
@@ -115,6 +114,7 @@ class Client extends Component
 
     public function makeCall($phone)
     {
+
         if ($phone === 'ph1') {
             $phone = $this->client->client_number;
         } else {
@@ -123,18 +123,26 @@ class Client extends Component
 
         if (session()->has('current_call')) {
             $this->emit('alert', ['type' => 'danger', 'message' => 'Already in Call']);
+            return;
         }
 
         $aloTech = Session::get('alotech');
         $phoneNumber = $phone;
         $click2 = new Click2($aloTech);
+
         $res = $click2->call([
             'phonenumber' => $phoneNumber,
             'hangup_url' => 'http://crm.hashim.com.tr/',
             'masked' => '1'
         ]);
+
         Session::put('current_call', $click2);
+        Session::put('client_called_id', $this->client->id);
 
         $this->emit('alert', ['type' => 'success', 'message' => 'Call started']);
+        $this->dispatchBrowserEvent('radial-status', [
+            'radialStatus' => 'open', 'leadNameRadial' => ($this->client->complete_name ?? $this->client->full_name)
+        ]);
+
     }
 }

@@ -84,6 +84,13 @@ trait DealsTenantable
                 });
             }
 
+            if (auth()->user()->hasRole('Call center HP')) {
+                static::addGlobalScope('user_id', function (Builder $builder) use ($l) {
+                    $builder->orWhere('user_id', auth()->id())
+                        ->whereJsonContains('sellers', $l);
+                });
+            }
+
         }
     }
 }

@@ -7,6 +7,50 @@
     <!-- Notification.css -->
     <link rel="stylesheet" href="{{ asset('assets/css/datatables.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/datatable-extension.css') }}">
+    <!-- Plugins css start-->
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/select2.css') }}">
+    <style>
+        .select2-container {
+            width: 100% !important;
+            padding: 0;
+        }
+
+        .select2-search input {
+            font-size: 12px;
+        }
+
+        .select2-results {
+            font-size: 12px;
+        }
+
+        .select2-results__option--highlighted {
+            font-size: 12px;
+        }
+
+        .select2-results__option[aria-selected=true] {
+            font-size: 12px;
+        }
+
+        .select2-results__options {
+            font-size: 12px !important;
+        }
+
+        .select2-selection__rendered {
+            font-size: 12px;
+        }
+
+        .select2-selection__rendered {
+            line-height: 16px !important;
+        }
+
+        .select2-container .select2-selection--single {
+            height: 16px !important;
+        }
+
+        .select2-selection__arrow {
+            height: 16px !important;
+        }
+    </style>
 @endsection
 
 @section('script')
@@ -28,6 +72,9 @@
     <script src="{{ asset('assets/js/datatables/datatable-extension/dataTables.bootstrap4.min.js')}}"></script>
     <script src="{{ asset('assets/js/datatables/datatable-extension/dataTables.responsive.min.js')}}"></script>
     <script src="{{ asset('assets/js/datatables/datatable-extension/responsive.bootstrap4.min.js')}}"></script>
+    <!-- Plugins JS start-->
+    <script src="{{ asset('assets/js/select2/select2.full.min.js') }}"></script>
+    <script src="{{ asset('assets/js/select2/select2-custom.js') }}"></script>
     <!-- Notify -->
     <script src="{{ asset('assets/js/notify/bootstrap-notify.min.js') }}"></script>
     <script>
@@ -92,12 +139,21 @@
                 return filter;
             }
 
+            function get_filter_status(class_name) {
+                let filter = [];
+                $('.' + class_name + ':checked').each(function () {
+                    filter.push($(this).val());
+                });
+                return filter;
+            }
+
+
             $.ajax({
                 url: "{{ route('clients.field.report.post') }}",
                 headers: {'X-CSRF-TOKEN': "{{ csrf_token() }}"},
                 type: "POST",
                 data: {
-                    status: $('select[name=status_filter]').val(),
+                    status: get_filter_status('status_filter'),
                     source: $('select[name=source_filter]').val(),
                     priority: $('select[name=priority_filter]').val(),
                     agency: $('select[name=agency_filter]').val(),
@@ -192,113 +248,75 @@
                         <h6 class="m-0">{{ __('Filter leads by:') }}</h6>
                     </div>
                     <form id="search-form">
-                        <div class="card-body p-2">
-                            <div class="form-group mb-2">
-                                <select class="form-control form-control-sm digits" id="status_filter"
-                                        name="status_filter">
-                                    <option value="">{{ __('Status') }}</option>
-                                    <option value="1">{{ __('New Lead') }}</option>
-                                    <option value="8">{{ __('No Answer') }}</option>
-                                    <option value="12">{{ __('In progress') }}</option>
-                                    <option value="3">{{ __('Potential appointment') }}</option>
-                                    <option value="4">{{ __('Appointment set') }}</option>
-                                    <option value="10">{{ __('Appointment follow up') }}</option>
-                                    <option value="5">{{ __('Sold') }}</option>
-                                    <option value="13">{{ __('Unreachable') }}</option>
-                                    <option value="7">{{ __('Not interested') }}</option>
-                                    <option value="11">{{ __('Low budget') }}</option>
-                                    <option value="9">{{ __('Wrong Number') }}</option>
-                                    <option value="14">{{ __('Unqualified') }}</option>
-                                </select>
+                        <div class="card-body filter-cards-view animate-chk p-2">
+                            <div class="checkbox-animated">
+                                <div class="mb-2">{{ __('Status:') }}</div>
+                                <label class="d-block" for="chk-ani">
+                                    <input class="checkbox_animated status_filter" id="chk-ani" type="checkbox"
+                                           name="status_filter[]" value="1"> {{ __('New Lead') }}
+                                </label>
+                                <label class="d-block" for="chk-ani1">
+                                    <input class="checkbox_animated status_filter" id="chk-ani1" type="checkbox"
+                                           name="status_filter[]" value="8"> {{ __('No Answer') }}
+                                </label>
+                                <label class="d-block" for="chk-ani2">
+                                    <input class="checkbox_animated status_filter" id="chk-ani2" type="checkbox"
+                                           name="status_filter[]" value="12"> {{ __('In progress') }}
+                                </label>
+                                <label class="d-block" for="chk-ani3">
+                                    <input class="checkbox_animated status_filter" id="chk-ani3" type="checkbox"
+                                           name="status_filter[]" value="3"> {{ __('Potential appointment') }}
+                                </label>
+                                <label class="d-block" for="chk-ani4">
+                                    <input class="checkbox_animated status_filter" id="chk-ani4" type="checkbox"
+                                           name="status_filter[]" value="4"> {{ __('Appointment set') }}
+                                </label>
+                                <label class="d-block" for="chk-ani5">
+                                    <input class="checkbox_animated status_filter" id="chk-ani5" type="checkbox"
+                                           name="status_filter[]" value="10"> {{ __('Appointment follow up') }}
+                                </label>
+                                <label class="d-block" for="chk-ani6">
+                                    <input class="checkbox_animated status_filter" id="chk-ani6" type="checkbox"
+                                           name="status_filter[]" value="5"> {{ __('Sold') }}
+                                </label>
+                                <label class="d-block" for="chk-ani7">
+                                    <input class="checkbox_animated status_filter" id="chk-ani7" type="checkbox"
+                                           name="status_filter[]" value="13"> {{ __('Unreachable') }}
+                                </label>
+                                <label class="d-block" for="chk-ani8">
+                                    <input class="checkbox_animated status_filter" id="chk-ani8" type="checkbox"
+                                           name="status_filter[]" value="7"> {{ __('Not interested') }}
+                                </label>
+                                <label class="d-block" for="chk-ani8">
+                                    <input class="checkbox_animated status_filter" id="chk-ani8" type="checkbox"
+                                           name="status_filter[]" value="11"> {{ __('Low budget') }}
+                                </label>
+                                <label class="d-block" for="chk-ani8">
+                                    <input class="checkbox_animated status_filter" id="chk-ani8" type="checkbox"
+                                           name="status_filter[]" value="9"> {{ __('Wrong Number') }}
+                                </label>
+                                <label class="d-block" for="chk-ani8">
+                                    <input class="checkbox_animated status_filter" id="chk-ani8" type="checkbox"
+                                           name="status_filter[]" value="14"> {{ __('Unqualified') }}
+                                </label>
                             </div>
-                            <div class="form-group mb-2">
-                                <select class="form-control form-control-sm digits" id="source_filter"
-                                        name="source_filter">
-                                    <option value="">{{ __('Source') }}</option>
-                                    @foreach($sources as $row)
-                                        <option value="{{ $row->id }}">{{ $row->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="form-group mb-2">
-                                <select class="form-control form-control-sm digits" id="priority_filter"
-                                        name="priority_filter">
-                                    <option value="">{{ __('Priority') }}</option>
-                                    <option value="1">{{ __('Low') }}</option>
-                                    <option value="2">{{ __('Medium') }}</option>
-                                    <option value="3">{{ __('High') }}</option>
-                                </select>
-                            </div>
-                            <div class="form-group mb-2">
-                                <select class="form-control form-control-sm digits" id="agency_filter"
-                                        name="agency_filter">
-                                    <option value="">{{ __('Agency') }}</option>
-                                    @foreach($agencies as $row)
-                                        <option value="{{ $row->id }}">{{ $row->name }}</option>
-                                    @endforeach
-
-                                </select>
-                            </div>
-                            <div class="checkbox checkbox-primary">
-                                <input id="country_check" type="checkbox"
-                                       onclick="valueChanged()">
-                                <label for="country_check">{{ __('Country') }}</label>
-                            </div>
-                            <div class="form-group mb-2 ml-2" id="cts_select">
-                                <select class="form-control form-control-sm digits mb-1" id="country_type"
-                                        name="country_type">
-                                    <option value="1">{{ __('is') }}</option>
-                                    <option value="2">{{ __('isn\'t') }}</option>
-                                    <option value="3">{{ __('contains') }}</option>
-                                    <option value="4">{{ __('dosen\'t contain') }}</option>
-                                    <option value="5">{{ __('start with') }}</option>
-                                    <option value="6">{{ __('ends with') }}</option>
-                                    <option value="7">{{ __('is empty') }}</option>
-                                    <option value="8">{{ __('is note empty') }}</option>
-                                </select>
-                                <input type="text" class="form-control form-control-sm"
-                                       placeholder="{{ __('Type here') }}"
-                                       id="country_field" name="country_field">
-                            </div>
-                            @if(auth()->user()->hasRole('Admin'))
+                            @if(isset($departments))
                                 <div class="form-group mb-2">
-                                    <option value="">{{ __('Assigned') }}</option>
-                                    <select name="user_filter" id="user_filter"
-                                            class="custom-select custom-select-sm">
-                                        <option value="">{{ __('Assigned') }}</option>
-                                        @foreach($users as $row)
-                                            <option value="{{ $row->id }}">{{ $row->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="form-group mb-2">
-                                    <option value="">{{ __('Department') }}</option>
+                                    <div class="col-form-label">{{ __('Departments') }}</div>
                                     <select name="department_filter" id="department_filter"
-                                            class="custom-select custom-select-sm">
+                                            class="js-example-placeholder-multiple col-sm-12" multiple>
                                         <option value="">{{ __('Department') }}</option>
                                         @foreach($departments as $row)
                                             <option value="{{ $row->id }}">{{ $row->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
-                            @elseif(auth()->user()->hasPermissionTo('team-manager'))
-                                @if(isset($users))
-                                    <div class="form-group mb-2">
-                                        <select name="user_filter" id="user_filter"
-                                                class="custom-select custom-select-sm">
-                                            <option value="">{{ __('Assigned') }}</option>
-                                            @foreach($users as $user)
-                                                <option
-                                                    value="{{ $user->id }}">{{ $user->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                @endif
                             @endif
                             @if(isset($teams))
                                 <div class="form-group mb-2">
+                                    <div class="col-form-label">{{ __('Team') }}</div>
                                     <select name="team_filter" id="team_filter"
-                                            class="custom-select custom-select-sm">
+                                            class="js-example-placeholder-multiple col-sm-12" multiple>
                                         <option value="">{{ __('Team') }}</option>
                                         @foreach($teams as $row)
                                             <option value="{{ $row->id }}">{{ $row->name }}</option>
@@ -306,83 +324,144 @@
                                     </select>
                                 </div>
                             @endif
-                            <div class="form-group mb-2">
-                                <input type="text" class="form-control form-control-sm"
-                                       placeholder="{{ __('Last active') }}"
-                                       id="last_active" name="last_active">
-                            </div>
-                            <div class="checkbox checkbox-primary">
-                                <input id="no_tasks" type="checkbox">
-                                <label for="no_tasks" nonce="no_tasks">{{ __('No tasks') }}</label>
-                            </div>
-                            <div class="theme-form mb-2">
-                                <input class="form-control form-control-sm digits" type="text" name="daterange"
-                                       value="">
-                            </div>
-                            <div class="form-group">
-                                <label class="d-block" for="edo-ani">
-                                    <input class="radio_animated" id="edo-ani" type="radio" name="rdo-ani"
-                                           value="creation"> {{ __('Creation') }}
-                                </label>
-                                <label class="d-block" for="edo-ani1">
-                                    <input class="radio_animated" id="edo-ani1" type="radio" name="rdo-ani"
-                                           value="modification"> {{ __('Modification') }}
-                                </label>
-                                <label class="d-block" for="edo-ani2">
-                                    <input class="radio_animated" id="edo-ani2" type="radio" name="rdo-ani"
-                                           value="arrival"> {{ __('Arrival') }}
-                                </label>
-                                <label class="d-block" for="edo-ani13">
-                                    <input class="radio_animated" id="edo-ani13" type="radio" name="rdo-ani" checked
-                                           value="none"> {{ __('None') }}
-                                </label>
-                            </div>
-                        </div>
-                        <div class="card-footer p-2">
-                            <div class="btn-group" role="group" aria-label="Basic example">
-                                <button class="btn btn-primary" type="submit">{{ __('Filter') }}</button>
-                                <button class="btn btn-light" type="button" id="refresh">{{ __('Clear') }}</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="col-sm-10">
-                <div class="card">
-                    <div class="card-header b-t-primary b-b-primary">
-                        <div class="row">
-                            @foreach($newArr as $k => $value)
-                                <div class="col-2" data-aos="fade-right" data-aos-duration="2000">
-                                    <label>
-                                        <input type="checkbox" name="fields[]"
-                                               value="{{ $value }}" class="field">
-                                        {{ __('leads-report.' . $value) }}
-                                    </label>
+                            @if(isset($users))
+                                <div class="form-group mb-2">
+                                    <div class="col-form-label">{{ __('Assigned') }}</div>
+                                    <select class="js-example-placeholder-multiple col-sm-12" name="user_filter"
+                                            id="user_filter" multiple="multiple">
+                                        @foreach($users as $row)
+                                            <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
-                            @endforeach
-                            <div class="col-2" data-aos="fade-right" data-aos-duration="2000">
-                                <label>
-                                    <input type="checkbox" name="fields[]"
-                                           value="tasks" class="field"> {{ __('Tasks') }} </label>
-                            </div>
-                            <div class="col-2" data-aos="fade-right" data-aos-duration="2000">
-                                <label>
-                                    <input type="checkbox" name="fields[]"
-                                           value="notes" class="field"> {{ __('Notes') }} </label>
-                            </div>
+                            @endif
                         </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="custom-table">
+                        <div class="form-group mb-2">
+                            <div>{{ __('Source') }}</div>
+                            <select class="js-example-placeholder-multiple col-sm-12" id="source_filter"
+                                    name="source_filter" multiple>
+                                @foreach($sources as $row)
+                                    <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group mb-2">
+                            <div>{{ __('Priority') }}</div>
+                            <select class="js-example-placeholder-multiple col-sm-12" id="priority_filter"
+                                    name="priority_filter" multiple>
+                                <option value="1">{{ __('Low') }}</option>
+                                <option value="2">{{ __('Medium') }}</option>
+                                <option value="3">{{ __('High') }}</option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-2">
+                            <div value="">{{ __('Agency') }}</div>
+                            <select class="js-example-placeholder-multiple col-sm-12" id="agency_filter"
+                                    name="agency_filter" multiple>
+                                @foreach($agencies as $row)
+                                    <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                @endforeach
 
+                            </select>
+                        </div>
+                        <div class="checkbox checkbox-primary">
+                            <input id="country_check" type="checkbox"
+                                   onclick="valueChanged()">
+                            <label for="country_check">{{ __('Country') }}</label>
+                        </div>
+                        <div class="form-group mb-2 ml-2" id="cts_select">
+                            <select class="form-control form-control-sm digits mb-1" id="country_type"
+                                    name="country_type">
+                                <option value="1">{{ __('is') }}</option>
+                                <option value="2">{{ __('isn\'t') }}</option>
+                                <option value="3">{{ __('contains') }}</option>
+                                <option value="4">{{ __('dosen\'t contain') }}</option>
+                                <option value="5">{{ __('start with') }}</option>
+                                <option value="6">{{ __('ends with') }}</option>
+                                <option value="7">{{ __('is empty') }}</option>
+                                <option value="8">{{ __('is note empty') }}</option>
+                            </select>
+                            <input type="text" class="form-control form-control-sm"
+                                   placeholder="{{ __('Type here') }}"
+                                   id="country_field" name="country_field">
+                        </div>
+                        <div class="form-group mb-2">
+                            <input type="text" class="form-control form-control-sm"
+                                   placeholder="{{ __('Last active') }}"
+                                   id="last_active" name="last_active">
+                        </div>
+                        <div class="checkbox checkbox-primary">
+                            <input id="no_tasks" type="checkbox">
+                            <label for="no_tasks" nonce="no_tasks">{{ __('No tasks') }}</label>
+                        </div>
+                        <div class="theme-form mb-2">
+                            <input class="form-control form-control-sm digits" type="text" name="daterange"
+                                   value="">
+                        </div>
+                        <div class="form-group">
+                            <label class="d-block" for="edo-ani">
+                                <input class="radio_animated" id="edo-ani" type="radio" name="rdo-ani"
+                                       value="creation"> {{ __('Creation') }}
+                            </label>
+                            <label class="d-block" for="edo-ani1">
+                                <input class="radio_animated" id="edo-ani1" type="radio" name="rdo-ani"
+                                       value="modification"> {{ __('Modification') }}
+                            </label>
+                            <label class="d-block" for="edo-ani2">
+                                <input class="radio_animated" id="edo-ani2" type="radio" name="rdo-ani"
+                                       value="arrival"> {{ __('Arrival') }}
+                            </label>
+                            <label class="d-block" for="edo-ani13">
+                                <input class="radio_animated" id="edo-ani13" type="radio" name="rdo-ani" checked
+                                       value="none"> {{ __('None') }}
+                            </label>
+                        </div>
+                </div>
+                <div class="card-footer p-2">
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <button class="btn btn-primary" type="submit">{{ __('Filter') }}</button>
+                        <button class="btn btn-light" type="button" id="refresh">{{ __('Clear') }}</button>
+                    </div>
+                </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-sm-10">
+            <div class="card">
+                <div class="card-header b-t-primary b-b-primary">
+                    <div class="row">
+                        @foreach($newArr as $k => $value)
+                            <div class="col-2" data-aos="fade-right" data-aos-duration="2000">
+                                <label>
+                                    <input type="checkbox" name="fields[]"
+                                           value="{{ $value }}" class="field">
+                                    {{ __('leads-report.' . $value) }}
+                                </label>
+                            </div>
+                        @endforeach
+                        <div class="col-2" data-aos="fade-right" data-aos-duration="2000">
+                            <label>
+                                <input type="checkbox" name="fields[]"
+                                       value="tasks" class="field"> {{ __('Tasks') }} </label>
+                        </div>
+                        <div class="col-2" data-aos="fade-right" data-aos-duration="2000">
+                            <label>
+                                <input type="checkbox" name="fields[]"
+                                       value="notes" class="field"> {{ __('Notes') }} </label>
                         </div>
                     </div>
-                    <div class="card-footer b-t-primary p-2">
-                        <a href="{{ url()->previous() }}" class="btn btn-warning btn-sm"><i
-                                class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
+                </div>
+                <div class="card-body">
+                    <div class="custom-table">
+
                     </div>
+                </div>
+                <div class="card-footer b-t-primary p-2">
+                    <a href="{{ url()->previous() }}" class="btn btn-warning btn-sm"><i
+                            class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 @endsection

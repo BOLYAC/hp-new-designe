@@ -9,6 +9,7 @@ use App\Services\Task\Taskable;
 use App\Traits\Multitenantable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -41,7 +42,9 @@ class Client extends Model implements Auditable, Documentable, Noteable, Taskabl
         'nationality' => 'array',
         'budget_request' => 'array',
         'rooms_request' => 'array',
-        'requirements_request' => 'array'
+        'requirements_request' => 'array',
+        'sellers' => 'array',
+        'sells_names' => 'array',
     ];
 
 
@@ -120,10 +123,19 @@ class Client extends Model implements Auditable, Documentable, Noteable, Taskabl
         return $this->hasMany(Invoice::class);
     }
 
+    public function shareClientWith(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, SharedClient::class)
+            ->withPivot('user_name', 'added_by')
+            ->withTimestamps()
+            ->as('sharedClients');
+    }
+
     public function documents(): MorphMany
     {
         return $this->morphMany(ClientDocument::class, 'source');
     }
+
 
     public function getCreateDocumentEndpoint(): string
     {

@@ -226,8 +226,8 @@
                         <th scope="row">{{ __('Requirement') }}</th>
                         <td>
                             @php
-                                if (is_null($client->requirements_request)) {
-                                    echo $client->getRawOriginal('requirements_request') ?? '';
+                                if (is_null($client->requirement_request)) {
+                                    echo $client->getRawOriginal('requirement_request') ?? '';
                                 } else {
                                     $cou = '';
                                     $requirements = collect($client->requirements_request)->toArray();

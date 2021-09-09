@@ -80,6 +80,14 @@ class User extends Authenticatable implements Auditable
             ->as('sharedEvents');
     }
 
+    public function Sharedclients(): BelongsToMany
+    {
+        return $this->belongsToMany(Event::class, SharedClient::class)
+            ->withPivot('user_name', 'added_by')
+            ->withTimestamps()
+            ->as('sharedClients');
+    }
+
 
     public function child(): HasMany
     {

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Services\Comment\Commentable;
 use App\Traits\DealsTenantable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -36,7 +37,8 @@ class Event extends Model implements Auditable, Commentable
         'nationality' => 'array',
         'language' => 'array',
         'lead_budget' => 'array',
-        'lead_lang' => 'array'
+        'lead_lang' => 'array',
+        'zoom_meeting'  => 'boolean'
     ];
 
     public function user()
@@ -69,6 +71,11 @@ class Event extends Model implements Auditable, Commentable
         static::creating(function ($event) { // On create() method call this
             $event->team_id = auth()->user()->currentTeam->id ?? '1';
         });
+    }
+
+    public function eventConfirmed(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'confirmed_by')->withDefault();
     }
 
     public function comments(): MorphMany

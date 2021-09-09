@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Agency;
-use App\Traits\Multitenantable;
+use App\Traits\TasksTenantable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -13,7 +13,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 class Task extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
-    use SoftDeletes, Multitenantable;
+    use SoftDeletes, TasksTenantable;
 
 
     /**

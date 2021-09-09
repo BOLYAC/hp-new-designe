@@ -11,18 +11,28 @@
                    value="{{ old('event_date', Carbon\Carbon::parse($event->event_date)->format('Y-m-d\TH:i')) }}"
                    type="datetime-local"/>
         </div>
-        <div class="form-group input-group-sm col-md-12">
-            <label for="color">{{ __('Colors') }}</label>
-            <div>
-                <input id="color" name="color" type="color" list="presetColors" value="{{ $event->color }}">
-                <datalist id="presetColors">
-                    <option {{ $event->color === '#0B8043' ? 'selected' : '' }}>#0B8043</option>
-                    <option {{ $event->color === '#D50000' ? 'selected' : '' }}>#D50000</option>
-                    <option {{ $event->color === '#F4511E' ? 'selected' : '' }}>#F4511E</option>
-                    <option {{ $event->color === '#8E24AA' ? 'selected' : '' }}>#8E24AA</option>
-                    <option {{ $event->color === '#3F51B5' ? 'selected' : '' }}>#3F51B5</option>
-                    <option {{ $event->color === '#039BE5' ? 'selected' : '' }}>#039BE5</option>
-                </datalist>
+        <div class="col-md-12 row">
+            <div class="form-group input-group-sm col-2">
+                <label for="color">{{ __('Colors') }}</label>
+                <div>
+                    <input id="color" name="color" type="color" list="presetColors" value="{{ $event->color }}">
+                    <datalist id="presetColors">
+                        <option {{ $event->color === '#0B8043' ? 'selected' : '' }}>#0B8043</option>
+                        <option {{ $event->color === '#D50000' ? 'selected' : '' }}>#D50000</option>
+                        <option {{ $event->color === '#F4511E' ? 'selected' : '' }}>#F4511E</option>
+                        <option {{ $event->color === '#8E24AA' ? 'selected' : '' }}>#8E24AA</option>
+                        <option {{ $event->color === '#3F51B5' ? 'selected' : '' }}>#3F51B5</option>
+                        <option {{ $event->color === '#039BE5' ? 'selected' : '' }}>#039BE5</option>
+                    </datalist>
+                </div>
+            </div>
+            <div class="checkbox checkbox-primary col m-t-20">
+                <input id="zoom_meeting" name="zoom_meeting" type="checkbox"
+                    {{ $event->zoom_meeting == 1 ? 'checked' : '' }}
+                >
+                <label for="zoom_meeting">
+                    {{ __('Zoom meeting') }}
+                </label>
             </div>
         </div>
         <div class="form-group input-group-sm col-md-2">

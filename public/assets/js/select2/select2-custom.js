@@ -1,8 +1,7 @@
 "use strict";
-setTimeout(function(){
-        (function($) {
+setTimeout(function () {
+        (function ($) {
             "use strict";
-            $(".js-example-placeholder-multiple option").addClass("font-size-4")
             // Single Search Select
             $(".js-example-basic-single").select2();
             $(".js-example-disabled-results").select2();
@@ -31,12 +30,12 @@ setTimeout(function(){
             $(".js-example-disabled").select2({
                 disabled: true
             });
-            $(".js-programmatic-enable").on("click", function() {
+            $(".js-programmatic-enable").on("click", function () {
                 $(".js-example-disabled").prop("disabled", false);
             });
-            $(".js-programmatic-disable").on("click", function() {
+            $(".js-programmatic-disable").on("click", function () {
                 $(".js-example-disabled").prop("disabled", true);
             });
         })(jQuery);
     }
-    ,350);
+    , 350);

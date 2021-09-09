@@ -77,6 +77,8 @@ class AloTechController extends Controller
             $click2 = Session::get('current_call');
             $click2->hang();
             Session::forget('current_call');
+            Session::forget('client_called_id');
+
             return response()->json(array(
                 'message' => __('Call ended'),
                 'type' => 'success'

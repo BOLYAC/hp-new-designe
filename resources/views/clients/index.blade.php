@@ -6,6 +6,54 @@
     <link rel="stylesheet" href="{{ asset('assets/css/datatable-extension.css') }}">
     <!-- Notification.css -->
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/daterange-picker.css') }}">
+    <!-- Plugins css start-->
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/select2.css') }}">
+    <style>
+        .select2-container {
+            width: 100% !important;
+            padding: 0;
+        }
+
+        .jconfirm.jconfirm-supervan .jconfirm-box div.jconfirm-content {
+            overflow: hidden
+        }
+
+        .select2-search input {
+            font-size: 12px;
+        }
+
+        .select2-results {
+            font-size: 12px;
+        }
+
+        .select2-results__option--highlighted {
+            font-size: 12px;
+        }
+
+        .select2-results__option[aria-selected=true] {
+            font-size: 12px;
+        }
+
+        .select2-results__options {
+            font-size: 12px !important;
+        }
+
+        .select2-selection__rendered {
+            font-size: 12px;
+        }
+
+        .select2-selection__rendered {
+            line-height: 16px !important;
+        }
+
+        .select2-container .select2-selection--single {
+            height: 16px !important;
+        }
+
+        .select2-selection__arrow {
+            height: 16px !important;
+        }
+    </style>
 @endsection
 
 @section('script')
@@ -25,6 +73,9 @@
     <script src="{{ asset('assets/js/datepicker/daterange-picker/daterange-picker.custom.js') }}"></script>
     <!-- Notify -->
     <script src="{{ asset('assets/js/notify/bootstrap-notify.min.js') }}"></script>
+    <!-- Plugins JS start-->
+    <script src="{{ asset('assets/js/select2/select2.full.min.js') }}"></script>
+    <script src="{{ asset('assets/js/select2/select2-custom.js') }}"></script>
     <script>
         function notify(title, type) {
             $.notify({
@@ -55,13 +106,13 @@
         }
 
         // Main data table
-        let table = $('#leads-table').DataTable({
+        let tableNew = $('#basic-1').DataTable({
             processing: true,
             serverSide: true,
             searching: true,
             responsive: true,
             ajax: {
-                url: '{!! route('clients.data') !!}',
+                url: '{!! route('clients.newLeadList') !!}',
                 data: function (d) {
                     d.status = $('select[name=status_filter]').val();
                     d.source = $('select[name=source_filter]').val();
@@ -82,24 +133,13 @@
                     d.filterDateBase = $('input[type="radio"]:checked').val();
                 }
             },
-            "drawCallback": function (settings) {
-                var api = this.api();
-            },
             columns: [
                 {data: 'id', name: 'id', visible: false},
-                {data: 'check', name: 'check', orderable: false, searchable: false,},
-                {data: 'public_id', name: 'public_id'},
-                {data: 'full_name', name: 'full_name'},
-                {data: 'country', name: 'country'},
-                {data: 'status', name: 'status', orderable: false, searchable: false,},
-                {data: 'source_id', name: 'source_id', orderable: false, searchable: false,},
-                {data: 'agency_id', name: 'agency_id', orderable: false, searchable: false,},
-                {data: 'priority', name: 'priority', orderable: false, searchable: false,},
-                {data: 'user_id', name: 'user_id', orderable: false, searchable: false},
-                {data: 'created_at', name: 'created_at', searchable: false},
+                {data: 'check', name: 'check', orderable: false, searchable: false},
+                {data: 'details', name: 'details', orderable: false, searchable: false},
+                {data: 'more_details', name: 'more_details', orderable: false, searchable: false},
                 {data: 'action', name: 'action', orderable: false, searchable: false},
-            ],
-            order: [[1, 'asc']]
+            ]
         });
         // Assigne user
         $('#refresh').click(function () {
@@ -120,12 +160,12 @@
             $('input[type="radio"]').filter('[value=none]').prop('checked', true);
             valueChanged()
             valuePhoneChanged()
-            table.DataTable().destroy();
+            tableNew.DataTable().destroy();
         });
         // Search form
         $('#search-form').on('submit', function (e) {
             e.preventDefault();
-            table.draw();
+            tableNew.draw();
         });
         // Check/Uncheck ALl
         $('#checkAll').change(function () {
@@ -168,8 +208,118 @@
                     clients: ids,
                 },
                 success: function (response) {
-                    table.ajax.reload(null, false);
+                    tableNew.ajax.reload(null, false);
                     $('#massAssignModal').modal('hide');
+                    notify('Lead transferred', 'success');
+                },
+            });
+        });
+        @can('share-client-with')
+        // Select all, trigger modal
+        $('#row-share-btn').on('click', function (e) {
+            e.preventDefault();
+            let filter = [];
+            $('.checkbox-circle:checked').each(function () {
+                filter.push($(this).val());
+            });
+            if (filter.length > 0) {
+                $('#massShareLeadModal').modal('show');
+            } else {
+                notify('At least select one lead!', 'danger');
+            }
+        });
+        @endcan
+        // Mass assign modal
+        $('#massShareForm').on('submit', function (e) {
+            e.preventDefault();
+            let ids = [];
+            let data = $('#share_mass_lead').val();
+            $('.checkbox-circle:checked').each(function () {
+                ids.push($(this).val());
+            });
+            $.ajax({
+                url: "{{ route('client.massShareClient') }}",
+                type: "POST",
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    users_ids: data,
+                    clients: ids,
+                },
+                success: function (response) {
+                    tableNew.ajax.reload(null, false);
+                    $('#massShareLeadModal').modal('hide');
+                    notify('Leads shared', 'success');
+                },
+            });
+        });
+        @can('client-delete')
+        tableNew.on('click', '.delete', function (e) {
+            e.preventDefault();
+            let $tr = $(this).closest('tr');
+            if ($($tr).hasClass('child')) {
+                $tr = $tr.prev('.parent');
+            }
+            let data = tableNew.row($tr).id()
+            $('#lead_id_delete').val(data);
+            $('#delete_single_lead').modal('show');
+        });
+        @endcan
+        @can('client-delete')
+        $('#deleteLeadForm').on('submit', function (e) {
+            e.preventDefault();
+            let client_id = $('#lead_id_delete').val();
+            $.ajax({
+                url: "/clients/singleDelete/" + client_id,
+                type: "DELETE",
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                },
+                success: function (response) {
+                    tableNew.ajax.reload(null, false);
+                    $('#delete_single_lead').modal('hide');
+                    $('#lead_id_delete').val('');
+                    notify('Lead deleted', 'success', 'fa fa-check mr-5');
+                },
+                error: function (response) {
+                    $('#lead_id_delete').val('');
+                    $('#delete_single_lead').modal('hide');
+                    notify(response, 'danger', 'fa fa-times mr-5');
+                }
+            });
+        });
+        @endcan
+        @can('client-delete')
+        // Select all, trigger modal
+        $('#row-delete-btn').on('click', function (e) {
+            e.preventDefault();
+            let filter = [];
+            $('.checkbox-circle:checked').each(function () {
+                filter.push($(this).val());
+            });
+            if (filter.length > 0) {
+                $('#delete_mass_lead_model').modal('show');
+            } else {
+                notify('At least select one lead!', 'danger');
+            }
+        });
+        @endcan
+        // Mass assign modal
+        $('#deleteMassLeadForm').on('submit', function (e) {
+            e.preventDefault();
+            let ids = [];
+            $('.checkbox-circle:checked').each(function () {
+                ids.push($(this).val());
+            });
+            $.ajax({
+                url: "{{ route('clients.massDelete') }}",
+                type: "DELETE",
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    clients: ids,
+                },
+                success: function (response) {
+                    tableNew.ajax.reload(null, false);
+                    $('#delete_mass_lead_model').modal('hide');
                     notify('Lead transferred', 'success');
                 },
             });
@@ -216,90 +366,47 @@
                         <h6 class="m-0">{{ __('Filter leads by:') }}</h6>
                     </div>
                     <form id="search-form">
-                        <div class="card-body p-2">
-                            @if(auth()->user()->hasRole('Admin'))
+                        <div class="card-body filter-cards-view p-2">
+                            @isset($departments)
                                 <div class="form-group mb-2">
+                                    <div class="col-form-label">{{ __('Departments') }}</div>
                                     <select name="department_filter" id="department_filter"
-                                            class="custom-select custom-select-sm">
+                                            class="js-example-placeholder-multiple col-sm-12" multiple>
                                         <option value="">{{ __('Department') }}</option>
                                         @foreach($departments as $row)
                                             <option value="{{ $row->id }}">{{ $row->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
-                                @if(isset($teams))
-                                    <div class="form-group mb-2">
-                                        <select name="team_filter" id="team_filter"
-                                                class="custom-select custom-select-sm">
-                                            <option value="">{{ __('Team') }}</option>
-                                            @foreach($teams as $row)
-                                                <option value="{{ $row->id }}">{{ $row->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                @endif
+                            @endisset
+                            @isset($teams)
                                 <div class="form-group mb-2">
+                                    <div class="col-form-label">{{ __('Team') }}</div>
+                                    <select name="team_filter" id="team_filter"
+                                            class="js-example-placeholder-multiple col-sm-12" multiple>
+                                        <option value="">{{ __('Team') }}</option>
+                                        @foreach($teams as $row)
+                                            <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            @endisset
+                            @isset($users)
+                                <div class="form-group mb-2">
+                                    <div class="col-form-label">{{ __('Assigned') }}</div>
                                     <select name="user_filter" id="user_filter"
-                                            class="custom-select custom-select-sm">
-                                        <option value="">{{ __('Assigned') }}</option>
+                                            class="js-example-placeholder-multiple col-sm-12" multiple>
+                                        <option value="">{{ __('Team') }}</option>
                                         @foreach($users as $row)
                                             <option value="{{ $row->id }}">{{ $row->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
-                            @elseif(auth()->user()->hasPermissionTo('team-manager'))
-                                @if(isset($teams))
-                                    <div class="form-group mb-2">
-                                        <select name="team_filter" id="team_filter"
-                                                class="custom-select custom-select-sm">
-                                            <option value="">{{ __('Team') }}</option>
-                                            @foreach($teams as $row)
-                                                <option value="{{ $row->id }}">{{ $row->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                @endif
-                                @if(isset($users))
-                                    <div class="form-group mb-2">
-                                        <select name="user_filter" id="user_filter"
-                                                class="custom-select custom-select-sm">
-                                            <option value="">{{ __('Assigned') }}</option>
-                                            @foreach($users as $user)
-                                                <option
-                                                    value="{{ $user->id }}">{{ $user->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                @endif
-                            @elseif(auth()->user()->hasPermissionTo('multiple-department'))
-                                @if(isset($teams))
-                                    <div class="form-group mb-2">
-                                        <select name="team_filter" id="team_filter"
-                                                class="custom-select custom-select-sm">
-                                            <option value="">{{ __('Team') }}</option>
-                                            @foreach($teams as $row)
-                                                <option value="{{ $row->id }}">{{ $row->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                @endif
-                                @if(isset($users))
-                                    <div class="form-group mb-2">
-                                        <select name="user_filter" id="user_filter"
-                                                class="custom-select custom-select-sm">
-                                            <option value="">{{ __('Assigned') }}</option>
-                                            @foreach($users as $user)
-                                                <option
-                                                    value="{{ $user->id }}">{{ $user->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                @endif
-                            @endif
+                            @endisset
                             <div class="form-group mb-2">
-                                <select class="custom-select custom-select-sm" id="status_filter"
-                                        name="status_filter">
-                                    <option value="">{{ __('Status') }}</option>
+                                <div class="col-form-label">{{ __('Status') }}</div>
+                                <select class="js-example-placeholder-multiple col-sm-12" id="status_filter"
+                                        name="status_filter" multiple="multiple">
                                     <option value="1">{{ __('New Lead') }}</option>
                                     <option value="8">{{ __('No Answer') }}</option>
                                     <option value="12">{{ __('In progress') }}</option>
@@ -316,28 +423,27 @@
                                 </select>
                             </div>
                             <div class="form-group mb-2">
-                                <select class="custom-select custom-select-sm" id="source_filter"
-                                        name="source_filter">
-                                    <option value="">{{ __('Source') }}</option>
+                                <div>{{ __('Source') }}</div>
+                                <select class="js-example-placeholder-multiple col-sm-12" id="source_filter"
+                                        name="source_filter" multiple>
                                     @foreach($sources as $row)
                                         <option value="{{ $row->id }}">{{ $row->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="form-group mb-2">
-                                <select class="custom-select custom-select-sm" id="agency_filter"
-                                        name="agency_filter">
-                                    <option value="">{{ __('Agency') }}</option>
+                                <div>{{ __('Agency') }}</div>
+                                <select class="js-example-placeholder-multiple col-sm-12" id="agency_filter"
+                                        name="agency_filter" multiple>
                                     @foreach($agencies as $row)
                                         <option value="{{ $row->id }}">{{ $row->name }}</option>
                                     @endforeach
-
                                 </select>
                             </div>
                             <div class="form-group mb-2">
-                                <select class="custom-select custom-select-sm" id="priority_filter"
-                                        name="priority_filter">
-                                    <option value="">{{ __('Priority') }}</option>
+                                <div>{{ __('Priority') }}</div>
+                                <select class="js-example-placeholder-multiple col-sm-12" id="priority_filter"
+                                        name="priority_filter" multiple>
                                     <option value="1">{{ __('Low') }}</option>
                                     <option value="2">{{ __('Medium') }}</option>
                                     <option value="3">{{ __('High') }}</option>
@@ -432,7 +538,7 @@
                     <div class="card-header card-no-border p-2 b-t-primary row">
                         <div class="col-lg-6 col-md-12 pr-1 pl-1">
                             @can('share-client')
-                                <div class="btn-group btn-group-sm btn-group-toggle" data-toggle="buttons">
+                                <div class="btn-group btn-group-xs btn-group-toggle" data-toggle="buttons">
                                     <label class="btn btn-primary btn-sm">
                                         <input id="checkAll" type="checkbox" checked
                                                autocomplete="off">{{ __('Select/Unselect') }}
@@ -441,8 +547,8 @@
                                 <button type="button" id="row-select-btn" class="btn btn-primary btn-sm">
                                     {{ __('Assign Lead') }}
                                 </button>
-                                <button type="button" id="row-send-btn" class="btn btn-primary btn-sm">
-                                    {{ __('Send project') }}
+                                <button type="button" id="row-share-btn" class="btn btn-primary btn-sm">
+                                    {{ __('Share Lead') }}
                                 </button>
                                 <button type="button" id="row-delete-btn" class="btn btn-danger btn-sm">
                                     {{ __('Delete') }}
@@ -462,49 +568,31 @@
                                     {{ __('Leads Import') }}
                                 </a>
                             @endcan
-
                             @can('client-create')
                                 <a href="{{ route('clients.create') }}"
-                                   class="btn btn-sm btn-outline-primary">
+                                   class="btn btn-sm btn-outline-success">
                                     {{ __('New lead') }}
                                 </a>
                             @endcan
                             @can('client-create')
                                 <a href="{{ route('clients.field.report') }}"
-                                   class="btn btn-sm btn-outline-primary">
+                                   class="btn btn-sm btn-outline-success">
                                     {{ __('Generate report') }}
                                 </a>
                             @endcan
-
                         </div>
                     </div>
                     <div class="card-body p-1 b-t-primary">
-                        <div class="order-history dt-ext table-responsive m-2">
-                            <table id="leads-table" class="display" width="100%" cellspacing="0">
+                        <div class="dt-ext table-responsive product-table">
+                            <table class="table table-striped display table-bordered nowrap" id="basic-1" width="100%"
+                                   cellspacing="0">
                                 <thead>
                                 <tr>
-                                    <th>ID</th>
                                     <th></th>
-                                    <th data-priority="1">N°</th>
-                                    <th data-priority="2">{{ __('Name') }}</th>
-                                    <th>{{ __('Country') }}</th>
-                                    <th>
-                                        {{ __('Status') }}
-                                    </th>
-                                    <th>
-                                        {{ __('Source') }}
-                                    </th>
-                                    <th>
-                                        {{ __('Agency') }}
-                                    </th>
-                                    <th>
-                                        {{ __('Priority') }}
-                                    </th>
-                                    <th>
-                                        {{ __('Assigned') }}
-                                    </th>
-                                    <th>{{ __('Creation date') }}</th>
-                                    <th data-priority="3">{{ __('Action') }}</th>
+                                    <th data-priority="1" width="5%"></th>
+                                    <th data-priority="1">Lead</th>
+                                    <th>Details</th>
+                                    <th width="2%">Actions</th>
                                 </tr>
                                 </thead>
                             </table>
@@ -514,7 +602,7 @@
             </div>
         </div>
     </div>
-    <!-- Mass Assigne -->
+    <!-- Mass Assign -->
     <div class="modal fade" id="massAssignModal" tabindex="-1">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -545,4 +633,80 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="delete_single_lead" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenter"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ __('Delete lead') }}</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">×</span></button>
+                </div>
+                <form role="form" id="deleteLeadForm">
+                    <div class="modal-body">
+                        <p>{{ __('Are you sur to delete this lead') }}</p>
+                    </div>
+                    <input type="hidden" id="lead_id_delete">
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">{{ __('Close') }}</button>
+                        <button class="btn btn-primary" type="submit">{{ __('Delete') }}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="delete_mass_lead_model" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenter"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ __('Delete lead') }}</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">×</span></button>
+                </div>
+                <form role="form" id="deleteMassLeadForm">
+                    <div class="modal-body">
+                        <p>{{ __('Are you sur to delete this lead') }}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">{{ __('Close') }}</button>
+                        <button class="btn btn-primary" type="submit">{{ __('Delete') }}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Mass Share Lead Modal -->
+    <div class="modal fade" id="massShareLeadModal" tabindex="-1">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ __('Mass share lead') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="massShareForm">
+                    @csrf
+                    <div class="modal-body p-b-0">
+                        <div class="form-group">
+                            <select class="js-example-placeholder-multiple form-control" name="share_mass_lead[]"
+                                    id="share_mass_lead"
+                                    multiple>
+                                @foreach($users as $user)
+                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">{{ __('Save') }} <i class="icon-save"></i>
+                        </button>
+                        <button type="button" class="btn btn-warning" data-dismiss="modal">{{ __('Cancel') }}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- End Mass Share Lead Modal -->
 @endsection

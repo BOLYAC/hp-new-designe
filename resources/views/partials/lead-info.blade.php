@@ -242,11 +242,11 @@
                         <th scope="row">{{ __('Requirement') }}</th>
                         <td>
                             @php
-                                if (is_null($client->requirements_request)) {
+                                if (is_null($client->requirement_request)) {
                                     echo $client->getRawOriginal('requirements_request') ?? '';
                                 } else {
                                     $cou = '';
-                                    $requirements = collect($client->requirements_request)->toArray();
+                                    $requirements = collect($client->requirement_request)->toArray();
                                     $newArr = array_filter($requirements_request, function($var) use ($requirements){
                                         return in_array($var['id'], $requirements);
                                     });

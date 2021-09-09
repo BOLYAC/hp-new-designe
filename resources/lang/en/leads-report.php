@@ -19,4 +19,5 @@ return [
     'requirements_request' => 'Requirements',
     'tasks' => 'Tasks',
     'notes' => 'Notes',
+    'import_from_zoho' => 'Zoho Lead'
 ];

@@ -10,5 +10,9 @@ $(document).ready(function () {
         $(".customizer-contain").toggleClass("open");
         $(".customizer-links").toggleClass("open");
     });
-
+    //$(".customizer-contain").toggle(localStorage.radialAloTechKeys==="true")
 });
+// $(".menu-btn").click(function(event) {
+//     event.stopPropagation();
+//     localStorage.radialAloTechKeys= $(".customizer-contain").toggle().is(":open")
+// });

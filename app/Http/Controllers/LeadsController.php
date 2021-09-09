@@ -140,7 +140,7 @@ class LeadsController extends Controller
                                   method="post">
                                 <input type="hidden" name="_token" value="' . csrf_token() . '" />
                                 <button type="submit"
-                                        class="btn btn-success btn-xs">'
+                                        class="btn btn-xs btn-success">'
                             . __('To the invoice') .
                             ' <i class="icon-arrow-right"></i>
                                 </button>

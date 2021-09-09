@@ -16,6 +16,7 @@ use App\Models\Team;
 use App\Models\User;
 use Exception;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
@@ -32,6 +33,8 @@ use Carbon\Carbon;
 
 class ClientsController extends Controller
 {
+
+    private $requirements;
 
     /**
      * Display a listing of the resource.
@@ -113,101 +116,102 @@ class ClientsController extends Controller
         $clients = Client::with(['source', 'user', 'tasks', 'agency']);
 
         if ($request->get('status')) {
-            $clients->where('status', '=', $request->get('status'));
+            $clients->whereIn('status', $request->get('status'));
         }
         if ($request->get('source')) {
-            $clients->where('source_id', '=', $request->get('source'));
+            $clients->whereIn('source_id', $request->get('source'));
         }
         if ($request->get('priority')) {
-            $clients->where('priority', '=', $request->get('priority'));
+            $clients->whereIn('priority', $request->get('priority'));
         }
         if ($request->get('agency')) {
-            $clients->where('agency_id', '=', $request->get('agency'));
+            $clients->whereIn('agency_id', $request->get('agency'));
         }
         if ($request->get('user')) {
-            $clients->where('user_id', '=', $request->get('user'));
+            $clients->whereIn('user_id', $request->get('user'));
         }
         if ($request->get('team')) {
-            $clients->where('team_id', '=', $request->get('team'));
+            $clients->whereIn('team_id', $request->get('team'));
         }
         if ($request->get('department')) {
-            $clients->where('department_id', '=', $request->get('department'));
+            $clients->whereIn('department_id', $request->get('department'));
         }
         if ($request->get('daysActif')) {
-            $clients->where('updated_at', '<=', \Carbon\Carbon::today()->subDays($request->get('daysActif')));
+            $clients->where('updated_at', ' <= ', \Carbon\Carbon::today()->subDays($request->get('daysActif')));
         }
 
-        if ($request->country_check === 'true') {
+        if ($request->country_check === "true") {
             $d = $request->get('country_type');
             switch ($d) {
                 case '1':
-                    $clients->Where('country', 'LIKE', '%' . $request->get('country') . '%')
+                    $clients->Where('country', 'LIKE', ' % ' . $request->get('country') . ' % ')
                         ->orWhereJsonContains('country', $request->get('country'));
                     break;
                 case '2':
-                    $clients->Where('country', 'not like', '%' . $request->get('country') . '%')
+                    $clients->Where('country', 'not like', ' % ' . $request->get('country') . ' % ')
                         ->orWhereJsonDoesntContain('country', $request->get('country'));
                     break;
                 case '3':
-                    $clients->Where('country', 'sounds like', '%' . $request->get('country') . '%');
+                    $clients->Where('country', 'sounds like', ' % ' . $request->get('country') . ' % ');
                     break;
                 case '4':
-                    $clients->Where('country', 'not sounds like', '%' . $request->get('country') . '%');
+                    $clients->Where('country', 'not sounds like', ' % ' . $request->get('country') . ' % ');
                     break;
                 case '5':
-                    $clients->Where('country', 'like', $request->get('country') . '%');
+                    $clients->Where('country', 'like', $request->get('country') . ' % ');
                     break;
                 case '6':
-                    $clients->Where('country', 'like', '%' . $request->get('country'));
+                    $clients->Where('country', 'like', ' % ' . $request->get('country'));
                     break;
                 case '7':
-                    $clients->whereNull('country')->orWhere('country', '=', '');
+                    $clients->whereNull('country')->orWhere('country', ' = ', '');
                     break;
                 case '8':
-                    $clients->whereNotNull('country')->orWhere('country', '<>', '');
+                    $clients->whereNotNull('country')->orWhere('country', ' <> ', '');
                     break;
             }
         }
-        if ($request->phone_check === 'true') {
+
+        if ($request->phone_check === "true") {
             $d = $request->get('phone_type');
             switch ($d) {
-                case '1':
-                    $clients->Where('client_number', 'LIKE', '%' . $request->get('phone') . '%')
-                        ->orWhere('client_number_2', 'LIKE', '%' . $request->get('phone') . '%');
+                case 1:
+                    $clients->Where('client_number', 'LIKE', '%' . $request->phone . '%')
+                        ->orWhere('client_number_2', 'LIKE', '%' . $request->phone . '%');
                     break;
-                case '2':
-                    $clients->Where('client_number', 'not like', '%' . $request->get('phone') . '%')
-                        ->orWhere('client_number_2', 'not like', '%' . $request->get('phone') . '%');
+                case 2:
+                    $clients->Where('client_number', 'not like', ' % ' . $request->get('phone') . ' % ')
+                        ->orWhere('client_number_2', 'not like', ' % ' . $request->get('phone') . ' % ');
                     break;
-                case '3':
-                    $clients->Where('client_number', 'LIKE', '%' . $request->get('phone') . '%')
-                        ->orWhere('client_number_2', 'LIKE', '%' . $request->get('phone') . '%');
+                case 3:
+                    $clients->Where('client_number', 'LIKE', ' % ' . $request->get('phone') . ' % ')
+                        ->orWhere('client_number_2', 'LIKE', ' % ' . $request->get('phone') . ' % ');
                     break;
-                case '4':
-                    $clients->Where('client_number', 'not like', '%' . $request->get('phone') . '%')
-                        ->orWhere('client_number_2', 'not like', '%' . $request->get('phone') . '%');
+                case 4:
+                    $clients->Where('client_number', 'not like', ' % ' . $request->get('phone') . ' % ')
+                        ->orWhere('client_number_2', 'not like', ' % ' . $request->get('phone') . ' % ');
                     break;
-                case '5':
-                    $clients->Where('client_number', 'like', $request->get('phone') . '%')
-                        ->orWhere('client_number_2', 'like', $request->get('phone') . '%');
+                case 5:
+                    $clients->Where('client_number', 'like', $request->get('phone') . ' % ')
+                        ->orWhere('client_number_2', 'like', $request->get('phone') . ' % ');
                     break;
-                case '6':
-                    $clients->Where('client_number', 'like', '%' . $request->get('phone'))
-                        ->orWhere('client_number_2', 'like', '%' . $request->get('phone'));
+                case 6:
+                    $clients->Where('client_number', 'like', ' % ' . $request->get('phone'))
+                        ->orWhere('client_number_2', 'like', ' % ' . $request->get('phone'));
                     break;
-                case '7':
-                    $clients->whereNull('client_number')->orWhere('client_number', '=', 'phone')
-                        ->orWhereNull('client_number_2')->orWhere('client_number_2', '=', 'phone');
+                case 7:
+                    $clients->whereNull('client_number')->orWhere('client_number', ' = ', 'phone')
+                        ->orWhereNull('client_number_2')->orWhere('client_number_2', ' = ', 'phone');
                     break;
-                case '8':
-                    $clients->whereNotNull('client_number')->orWhere('client_number', '<>', 'phone')
-                        ->orwhereNotNull('client_number_2')->orWhere('client_number_2', '<>', 'phone');
+                case 8:
+                    $clients->whereNotNull('client_number')->orWhere('client_number', ' <> ', 'phone')
+                        ->orwhereNotNull('client_number_2')->orWhere('client_number_2', ' <> ', 'phone');
                     break;
             }
         }
 
         if ($request->filterDateBase !== 'none') {
-            $date = explode('-', $request->get('daterange'));
+            $date = explode(' - ', $request->get('daterange'));
             $from = $date[0];
             $to = $date[1];
 
@@ -235,8 +239,8 @@ class ClientsController extends Controller
 
         if ($request->lastUpdate === 'true') {
             $clients->whereHas('tasks', function ($query) {
-                $query->where('archive', '=', 0);
-            }, '=', 0)
+                $query->where('archive', ' = ', 0);
+            }, ' = ', 0)
                 ->WhereDoesntHave('tasks');
         }
         $clients->OrderByDesc('created_at');
@@ -248,7 +252,7 @@ class ClientsController extends Controller
                 return $clients->public_id ?? '';
             })
             ->editColumn('full_name', function ($clients) {
-                return '<a href="clients/' . $clients->id . '">' . $clients->complete_name ?? $clients->full_name . '</a>';
+                return ' <a href = "clients/' . $clients->id . '">' . $clients->complete_name ?? $clients->full_name . '</a >';
             })
             ->editColumn('country', function ($clients) {
                 if (is_null($clients->country)) {
@@ -257,7 +261,7 @@ class ClientsController extends Controller
                     $cou = '';
                     $countries = collect($clients->country)->toArray();
                     foreach ($countries as $name) {
-                        $cou .= '<span class="badge badge-pill badge-primary">' . $name . '</span>';
+                        $cou .= ' <span class="badge badge-pill badge-primary"> ' . $name . '</span>';
                     }
                     return $cou;
                 }
@@ -268,43 +272,43 @@ class ClientsController extends Controller
                     $i = $clients->status;
                     switch ($i) {
                         case 1:
-                            return '<span class="badge badge-light-info">' . __('New Lead') . '</span>';
+                            return ' <span class="badge badge-light-info">' . __('new Lead') . '</span>';
                             break;
                         case 8:
-                            return '<span class="badge badge-light-info">' . __('No Answer') . '</span>';
+                            return '<span class="badge badge-light-info"> ' . __('No Answer') . '</span >';
                             break;
                         case 12:
-                            return '<span class="badge badge-light-info">' . __('In progress') . '</span>';
+                            return '<span class="badge badge-light-info" > ' . __('In progress') . ' </span>';
                             break;
                         case 3:
-                            return '<span class="badge badge-light-primary">' . __('Potential appointment') . '</span>';
+                            return '<span class="badge badge-light-primary" > ' . __('Potential appointment') . '</span>';
                             break;
                         case 4:
-                            return '<span class="badge badge-light-primary">' . __('Appointment set') . '</span>';
+                            return '<span class="badge badge-light-primary" > ' . __('Appointment set') . '</span>';
                             break;
                         case 10:
-                            return '<span class="badge badge-light-primary">' . __('Appointment follow up') . '</span>';
+                            return '<span class="badge badge-light-primary" > ' . __('Appointment follow up') . '</span>';
                             break;
                         case 5:
-                            return '<span class="badge badge-light-success">' . __('Sold') . '</span>';
+                            return '<span class="badge badge-light-success" > ' . __('Sold') . '</span>';
                             break;
                         case 13:
-                            return '<span class="badge badge-light-warning">' . __('Unreachable') . '</span>';
+                            return '<span class="badge badge-light-warning" > ' . __('Unreachable') . '</span>';
                             break;
                         case 7:
-                            return '<span class="badge badge-light-warning">' . __('Not interested') . '</span>';
+                            return '<span class="badge badge-light-warning" > ' . __('Not interested') . '</span>';
                             break;
                         case 11:
-                            return '<span class="badge badge-light-warning">' . __('Low budget') . '</span>';
+                            return '<span class="badge badge-light-warning" > ' . __('Low budget') . '</span>';
                             break;
                         case 9:
-                            return '<span class="badge badge-light-warning">' . __('Wrong Number') . '</span>';
+                            return '<span class="badge badge-light-warning" > ' . __('Wrong Number') . '</span>';
                             break;
                         case 14:
-                            return '<span class="badge badge-light-warning">' . __('Unqualified') . '</span>';
+                            return '<span class="badge badge-light-warning" > ' . __('Unqualified') . '</span>';
                             break;
                         case 15:
-                            return '<span class="badge badge-light-warning">' . __('Lost') . '</span>';
+                            return '<span class="badge badge-light-warning" > ' . __('Lost') . '</span>';
                             break;
                     }
                 }
@@ -328,25 +332,25 @@ class ClientsController extends Controller
                         return '<label class="txt-success f-w-600">' . __('Low') . '</label>';
                         break;
                     case 2:
-                        return '<label class="txt-warning f-w-600">' . __('Medium') . '</label>';
+                        return '<label class="txt-warning f-w-600" > ' . __('Medium') . '</label>';
                         break;
                     case 3:
-                        return '<label class="txt-danger f-w-600">' . __('High') . '</label>';
+                        return '<label class="txt-danger f-w-600" > ' . __('High') . '</label>';
                         break;
                 }
             })
             ->editColumn(
                 'user_id',
                 function ($clients) {
-                    return '<span class="badge badge-success">' . optional($clients->user)->name . '</span> <a href="#" class="assign"><i class="icofont icofont-plus f-w-600"></i></a>';
+                    return ' <span class="badge badge-success" > ' . optional($clients->user)->name . '</span > <a href = "#" class="assign" ><i class="icofont icofont-plus f-w-600" ></i ></a > ';
                 }
             )
-            ->editColumn('action', '<a class="dropdown-toggle addon-btn" data-toggle="dropdown"
-                                                       aria-expanded="true">
-                                                        <i class="icofont icofont-ui-settings"></i>
-                                                    </a>
-                                                    <div class="dropdown-menu dropdown-menu-right">
-                                                    @can(\'client-edit\')
+            ->editColumn('action', ' <a class="dropdown-toggle addon-btn" data-toggle="dropdown"
+                                                       aria-expanded="true" >
+                                                        <i class="icofont icofont-ui-settings" ></i >
+                                                    </a >
+                                                    <div class="dropdown-menu dropdown-menu-right" >
+            @can(\'client-edit\')
                                                             <a class="dropdown-item" href="{{ route(\'clients.show\', $id) }}">
                                                             <i class="fa fa-eye"></i>show lead</a>
                                                         @endcan
@@ -398,13 +402,14 @@ class ClientsController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+
         $request->validate([
             'source' => 'required',
             'agency' => 'required',
-            'client_email' => ['nullable', 'string', 'email', 'max:255', 'unique:clients,client_email,deleted_at'],
-            'client_email_2' => ['nullable', 'string', 'email', 'max:255', 'unique:clients,client_email_2,deleted_at'],
-            'client_number' => ['nullable', 'string', 'max:255', 'unique:clients,client_number,deleted_at'],
-            'client_number_2' => ['nullable', 'string', 'max:255', 'unique:clients,client_number_2,deleted_at'],
+            'client_email' => ['nullable', 'string', 'email', 'max:255', 'unique:clients,client_email,deleted_at', 'unique:clients,client_email_2,' . $request->input('client_email_2') . ',deleted_at'],
+            'client_email_2' => ['nullable', 'string', 'email', 'max:255', 'unique:clients,client_email_2,deleted_at', 'unique:clients,client_email,' . $request->input('client_email') . ',deleted_at'],
+            'client_number' => ['nullable', 'string', 'max:255', 'unique:clients,client_number,deleted_at', 'unique:clients,client_number_2,' . $request->input('client_number_2') . ',deleted_at'],
+            'client_number_2' => ['nullable', 'string', 'max:255', 'unique:clients,client_number_2,deleted_at', 'unique:clients,client_number,' . $request->input('client_number') . ',deleted_at'],
         ]);
         $client = Client::create([
             'first_name' => $request->first_name,
@@ -602,7 +607,6 @@ class ClientsController extends Controller
         return view('clients.zoho-import', compact('users', 'sources'));
     }
 
-
     public function import(Request $request)
     {
 
@@ -640,7 +644,6 @@ class ClientsController extends Controller
 
     public function importFromZoho(Request $request)
     {
-
 
         $validator = Validator::make(
             $request->all(),
@@ -688,15 +691,14 @@ class ClientsController extends Controller
                     ->orWhere('last_name', 'like', '%' . $key . '%');
             })->get();
 
-
             $data = [];
             foreach ($resultClient as $key => $indent) {
                 $data[] .= '<li>' .
                     '<div class="media" ><img class="img-40 m-r-15 rounded-circle" src = "' . asset('assets/images/user/2.png') . '" alt = "" >' .
-                    '<div class="media-body" ><span class="f-w-600" >' . ($indent->full_name ?? $indent->complete_name) . '</span>' .
-                    '<p class="f-w-600">'. __('Owned by:') .'<span class="font-success ml-1 mr-2">' . $indent->user->name . '</span>' .
-                    __('Phone:') . '<span class="ml-2">' . str_pad(substr($indent->client_number, -4), strlen($indent->client_number), '*', STR_PAD_LEFT) .'</span>'.
-                    '<span class="ml-2>' . str_pad(substr($indent->client_number_2, -4), strlen($indent->client_number_2), '*', STR_PAD_LEFT) .'</span>'.
+                    '<div class="media-body" ><span class="f-w-600" ><a href="'. route('clients.show', $indent->id) .'" >' . ($indent->full_name ?? $indent->complete_name) . '</a></span>' .
+                    '<p class="f-w-600">' . __('Owned by:') . '<span class="font-success ml-1 mr-2">' . $indent->user->name . '</span>' .
+                    __('Phone:') . '<span class="ml-2">' . str_pad(substr($indent->client_number, -4), strlen($indent->client_number), '*', STR_PAD_LEFT) . '</span>' .
+                    '<span class="ml-2>' . str_pad(substr($indent->client_number_2, -4), strlen($indent->client_number_2), '*', STR_PAD_LEFT) . '</span>' .
                     '</p>' .
                     '</div></div><li/>';
             }
@@ -729,15 +731,6 @@ class ClientsController extends Controller
         Client::destroy($id);
 
         return response()->json("ok");
-    }
-
-    public function exampleClient()
-    {
-        $users = User::all();
-        $sources = Source::all();
-        $clients = Client::all();
-        //dd($clients);
-        return view('clients . example - 2', compact('clients', 'users', 'sources'));
     }
 
 
@@ -778,12 +771,14 @@ class ClientsController extends Controller
         return redirect()->back()->with('toast_success', __('File upload  successfully'));
     }
 
-    public function composeEmail($email, Client $client)
+    public
+    function composeEmail($email, Client $client)
     {
-        return \view('inbox . compose', compact('email', 'client'));
+        return \view('inbox.compose', compact('email', 'client'));
     }
 
-    public function getFieldReport()
+    public
+    function getFieldReport()
     {
 //        $drink = Drink::where('shopId', $request->session()->get('shopId'))->first();
 //
@@ -840,16 +835,36 @@ class ClientsController extends Controller
             'type',
             'team_id',
             'department_id',
-            'city'
+            'city',
+            'import_from_zoho',
+            'lead_source',
+            'lead_status',
+            'last_activity_time',
+            'social_media_source',
+            'ad_network',
+            'search_partner_network',
+            'ad_campaign_name',
+            'adgroup_name',
+            'ad',
+            'ad_click_date',
+            'adset_name',
+            'form_name',
+            'ad_name',
+            'reason_lost',
+            'zoho_id',
+            'customer_id',
+            'sellers',
+            'sells_names'
         ];
         $newArr = array_filter($columns, function ($value) use ($remove) {
             return !in_array($value, $remove);
         });
 
-        return \view('clients . field - report', compact('newArr', 'sources', 'agencies', 'users', 'teams', 'departments'));
+        return \view('clients.field-report', compact('newArr', 'sources', 'agencies', 'users', 'teams', 'departments'));
     }
 
-    public function postFieldReport(Request $request)
+    public
+    function postFieldReport(Request $request)
     {
         $data = $request->validate([
             "fields" => "required|array|min:3",
@@ -869,25 +884,25 @@ class ClientsController extends Controller
         $leads = $leads->with(['source', 'user', 'tasks', 'agency', 'notes']);
 
         if ($request->get('status')) {
-            $leads->where('status', ' = ', $request->get('status'));
+            $leads->whereIn('status', $request->get('status'));
         }
         if ($request->get('source')) {
-            $leads->where('source_id', ' = ', $request->get('source'));
+            $leads->whereIn('source_id', $request->get('source'));
         }
         if ($request->get('priority')) {
-            $leads->where('priority', ' = ', $request->get('priority'));
+            $leads->whereIn('priority', $request->get('priority'));
         }
         if ($request->get('agency')) {
-            $leads->where('agency_id', ' = ', $request->get('agency'));
+            $leads->whereIn('agency_id', $request->get('agency'));
         }
         if ($request->get('user')) {
-            $leads->where('user_id', ' = ', $request->get('user'));
+            $leads->whereIn('user_id', $request->get('user'));
         }
         if ($request->get('team')) {
-            $leads->where('team_id', ' = ', $request->get('team'));
+            $leads->whereIn('team_id', $request->get('team'));
         }
         if ($request->get('department')) {
-            $leads->where('department_id', ' = ', $request->get('department'));
+            $leads->whereIn('department_id', $request->get('department'));
         }
         if ($request->get('daysActif')) {
             $leads->where('updated_at', ' <= ', \Carbon\Carbon::today()->subDays($request->get('daysActif')));
@@ -962,12 +977,286 @@ class ClientsController extends Controller
         $leads = $leads->get();
 
         $fields = $request->fields;
-        return \View::make('clients . partials . _table - report', compact('fields', 'leads'));
-
+        return \View::make('clients.partials._table-report', compact('fields', 'leads'));
     }
 
     public function postViewReport()
     {
         return view('clients . report', compact('clients'));
     }
+
+    public function newLeadList(Request $request)
+    {
+        $clients = Client::with(['source', 'user', 'tasks', 'agency']);
+
+        if ($request->get('status')) {
+            $clients->whereIn('status', $request->get('status'));
+        }
+        if ($request->get('source')) {
+            $clients->whereIn('source_id', $request->get('source'));
+        }
+        if ($request->get('priority')) {
+            $clients->whereIn('priority', $request->get('priority'));
+        }
+        if ($request->get('agency')) {
+            $clients->whereIn('agency_id', $request->get('agency'));
+        }
+        if ($request->get('user')) {
+            $clients->whereIn('user_id', $request->get('user'));
+        }
+        if ($request->get('team')) {
+            $clients->whereIn('team_id', $request->get('team'));
+        }
+        if ($request->get('department')) {
+            $clients->whereIn('department_id', $request->get('department'));
+        }
+        if ($request->get('daysActif')) {
+            $clients->where('updated_at', ' <= ', \Carbon\Carbon::today()->subDays($request->get('daysActif')));
+        }
+
+        if ($request->country_check === "true") {
+            $d = $request->get('country_type');
+            switch ($d) {
+                case '1':
+                    $clients->Where('country', 'LIKE', ' % ' . $request->get('country') . ' % ')
+                        ->orWhereJsonContains('country', $request->get('country'));
+                    break;
+                case '2':
+                    $clients->Where('country', 'not like', ' % ' . $request->get('country') . ' % ')
+                        ->orWhereJsonDoesntContain('country', $request->get('country'));
+                    break;
+                case '3':
+                    $clients->Where('country', 'sounds like', ' % ' . $request->get('country') . ' % ');
+                    break;
+                case '4':
+                    $clients->Where('country', 'not sounds like', ' % ' . $request->get('country') . ' % ');
+                    break;
+                case '5':
+                    $clients->Where('country', 'like', $request->get('country') . ' % ');
+                    break;
+                case '6':
+                    $clients->Where('country', 'like', ' % ' . $request->get('country'));
+                    break;
+                case '7':
+                    $clients->whereNull('country')->orWhere('country', ' = ', '');
+                    break;
+                case '8':
+                    $clients->whereNotNull('country')->orWhere('country', ' <> ', '');
+                    break;
+            }
+        }
+
+        if ($request->phone_check === "true") {
+            $d = $request->get('phone_type');
+            switch ($d) {
+                case 1:
+                    $clients->Where('client_number', 'LIKE', '%' . $request->phone . '%')
+                        ->orWhere('client_number_2', 'LIKE', '%' . $request->phone . '%');
+                    break;
+                case 2:
+                    $clients->Where('client_number', 'not like', ' % ' . $request->get('phone') . ' % ')
+                        ->orWhere('client_number_2', 'not like', ' % ' . $request->get('phone') . ' % ');
+                    break;
+                case 3:
+                    $clients->Where('client_number', 'LIKE', ' % ' . $request->get('phone') . ' % ')
+                        ->orWhere('client_number_2', 'LIKE', ' % ' . $request->get('phone') . ' % ');
+                    break;
+                case 4:
+                    $clients->Where('client_number', 'not like', ' % ' . $request->get('phone') . ' % ')
+                        ->orWhere('client_number_2', 'not like', ' % ' . $request->get('phone') . ' % ');
+                    break;
+                case 5:
+                    $clients->Where('client_number', 'like', $request->get('phone') . ' % ')
+                        ->orWhere('client_number_2', 'like', $request->get('phone') . ' % ');
+                    break;
+                case 6:
+                    $clients->Where('client_number', 'like', ' % ' . $request->get('phone'))
+                        ->orWhere('client_number_2', 'like', ' % ' . $request->get('phone'));
+                    break;
+                case 7:
+                    $clients->whereNull('client_number')->orWhere('client_number', ' = ', 'phone')
+                        ->orWhereNull('client_number_2')->orWhere('client_number_2', ' = ', 'phone');
+                    break;
+                case 8:
+                    $clients->whereNotNull('client_number')->orWhere('client_number', ' <> ', 'phone')
+                        ->orwhereNotNull('client_number_2')->orWhere('client_number_2', ' <> ', 'phone');
+                    break;
+            }
+        }
+
+        if ($request->filterDateBase !== 'none') {
+            $date = explode(' - ', $request->get('daterange'));
+            $from = $date[0];
+            $to = $date[1];
+
+            $from = Carbon::parse($from)
+                ->startOfDay()        // 2018-09-29 00:00:00.000000
+                ->toDateTimeString(); // 2018-09-29 00:00:00
+
+            $to = Carbon::parse($to)
+                ->endOfDay()          // 2018-09-29 23:59:59.000000
+                ->toDateTimeString(); // 2018-09-29 23:59:59
+
+            $d = $request->get('filterDateBase');
+            switch ($d) {
+                case 'creation':
+                    $clients->whereBetween('created_at', [$from, $to]);
+                    break;
+                case 'modification':
+                    $clients->whereBetween('updated_at', [$from, $to]);
+                    break;
+                case 'arrival':
+                    $clients->whereBetween('appointment_date', [$from, $to]);
+                    break;
+            }
+        }
+
+        if ($request->lastUpdate === 'true') {
+            $clients->whereHas('tasks', function ($query) {
+                $query->where('archive', ' = ', 0);
+            }, ' = ', 0)
+                ->WhereDoesntHave('tasks');
+        }
+        $clients->OrderByDesc('created_at');
+
+        return Datatables::of($clients)
+            ->setRowId('id')
+            ->addColumn('check', '<input type="checkbox" class="checkbox-circle check-task" name="selected_clients[]" value="{{ $id }}">')
+            ->addColumn('details', function ($clients) {
+                $country = '';
+                $priority = '';
+                $status = '';
+                if (is_null($clients->country)) {
+                    $country = '<span class="badge badge-pill badge-primary">' . $clients->getRawOriginal('country') ?? '' . '</span>';
+                } else {
+                    $countries = collect($clients->country)->toArray();
+                    foreach ($countries as $name) {
+                        $country .= '<span class="badge badge-pill badge-primary">' . $name . '</span>';
+                    }
+                    $country;
+                }
+                $i = $clients->status;
+                switch ($i) {
+                    case 1:
+                        $status = '<span class="badge badge-light-info mr-2">' . __('new Lead') . '</span>';
+                        break;
+                    case 8:
+                        $status = '<span class="badge badge-light-info mr-2">' . __('No Answer') . '</span >';
+                        break;
+                    case 12:
+                        $status = '<span class="badge badge-light-info mr-2">' . __('In progress') . ' </span>';
+                        break;
+                    case 3:
+                        $status = '<span class="badge badge-light-primary mr-2">' . __('Potential appointment') . '</span>';
+                        break;
+                    case 4:
+                        $status = '<span class="badge badge-light-primary mr-2">' . __('Appointment set') . '</span>';
+                        break;
+                    case 10:
+                        $status = '<span class="badge badge-light-primary mr-2">' . __('Appointment follow up') . '</span>';
+                        break;
+                    case 5:
+                        $status = '<span class="badge badge-light-success mr-2">' . __('Sold') . '</span>';
+                        break;
+                    case 13:
+                        $status = '<span class="badge badge-light-warning mr-2">' . __('Unreachable') . '</span>';
+                        break;
+                    case 7:
+                        $status = '<span class="badge badge-light-warning mr-2">' . __('Not interested') . '</span>';
+                        break;
+                    case 11:
+                        $status = '<span class="badge badge-light-warning mr-2">' . __('Low budget') . '</span>';
+                        break;
+                    case 9:
+                        $status = '<span class="badge badge-light-warning mr-2">' . __('Wrong Number') . '</span>';
+                        break;
+                    case 14:
+                        $status = '<span class="badge badge-light-warning mr-2">' . __('Unqualified') . '</span>';
+                        break;
+                    case 15:
+                        $status = '<span class="badge badge-light-warning mr-2">' . __('Lost') . '</span>';
+                        break;
+                }
+
+                $i = $clients->priority;
+                switch ($i) {
+                    case 1:
+                        $priority = '<span class="text-success mr-2">' . __('Low') . '</span>';
+                        break;
+                    case 2:
+                        $priority = '<span class="text-warning mr-2">' . __('Medium') . '</span >';
+                        break;
+                    case 3:
+                        $priority = '<span class="text-danger mr-2">' . __('High') . ' </span>';
+                        break;
+                }
+
+                return '<div class="d-inline-block align-middle">' .
+                    '<div class="d-inline-block"><h6><a href="' . route('clients.show', $clients->id) . '">' . ($clients->complete_name ?? $clients->full_name) . '</a></h6>' .
+                    '<span class="f-w-600">Source: </span><span class="mr-2">' . optional($clients->source)->name . '</span>' . $status . $priority . $country .
+                    '</div></div>';
+            })
+            ->addColumn('more_details', function ($clients) {
+                return '<div class="d-inline-block align-middle">' .
+                    '<img class="img-radius img-50 align-top m-r-15 rounded-circle" src="' . asset('storage/' . optional($clients->user)->image_path) . '" alt="">' .
+                    '<div class="d-inline-block"><h6> ' . optional($clients->user)->name . ' </h6>' .
+                    '<span class="f-w-600">Last modify: ' . $clients->updated_at->format('Y/m/d') . '</span>' .
+                    '</div></div>';
+            })
+            ->editColumn('action', function ($clients) {
+                return '<a href="' . route('clients.show', $clients->id) . '" class="m-r-15 text-muted f-18"  data-original-title="Delete Lead"><i class="icofont icofont-eye-alt"></i></a>' .
+                    '<a href="javascript:void(0)" class="m-r-15 text-muted f-18 delete"  data-original-title="View lead"><i class="icofont icofont-trash"></i></a>';
+            })
+            ->rawColumns(['check', 'details', 'more_details', 'action'])
+            ->make(true);
+    }
+
+    public function massDeleteClient(Request $request)
+    {
+        $validator = \Validator::make($request->all(), [
+            'selected_clients' => 'present|array',
+        ]);
+
+        if ($validator->fails()) {
+            return back()->with('toast_error', $validator->messages()->all()[0])->withInput();
+        }
+
+        foreach ($request['update'] as $updateid) {
+            DB::beginTransaction();
+            try {
+                $client = Client::find($updateid);
+                $client->delete();
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollback();
+                return response()->json(['error' => $e->getMessage()], 500);
+            }
+        }
+        return response()->json("ok");
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function singleDelete($id): \Illuminate\Http\JsonResponse
+    {
+        Client::find($id)->delete($id);
+        return response()->json("ok");
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function massDelete(Request $request): \Illuminate\Http\JsonResponse
+    {
+        Client::destroy($request->clients);
+        return response()->json("ok");
+    }
+
 }

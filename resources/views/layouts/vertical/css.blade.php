@@ -30,8 +30,9 @@
         float: left;
         padding: 10px 30px;
         width: 30px;
-        font-size: 2rem;
+        font-size: 1.5rem;
         cursor: pointer;
+        font-weight: 600;
     }
 
     .sub {
@@ -43,14 +44,13 @@
         width: 295px;
         padding: 10px;
         margin: 10px 10px 10px 10px;
-        height: 100vh;
         text-align: center;
     }
 
     #output {
         font-size: 1.5rem;
         height: 60px;
-        font-weight: bold;
+        font-weight: 600;
         color: #1067be;
     }
 
@@ -98,6 +98,12 @@
         padding: 10px 20px;
         width: 30px;
         cursor: pointer;
+    }
+
+    .customizer-contain .customizer-body {
+        max-height: calc(100vh - 100px) !important;
+        padding: 10px 0 !important;
+        overflow-y: auto!important;
     }
 </style>
 @yield('style_after')

@@ -144,7 +144,9 @@
                                         </tr>
                                         <tr>
                                             <th scope="row">{{ __('Agency phone') }}</th>
-                                            <td>{{ $agency->phone ?? '' }}</td>
+                                            <td>
+                                                @livewire('agency-calls', ['agency' => $agency])
+                                            </td>
                                         </tr>
                                         <tr>
                                             <th scope="row">{{ __('Agency email') }}</th>

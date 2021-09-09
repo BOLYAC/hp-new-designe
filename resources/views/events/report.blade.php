@@ -7,10 +7,6 @@
     <link rel="stylesheet" href="{{ asset('assets/css/datatable-extension.css') }}">
 @endsection
 
-@section('style')
-
-@endsection
-
 @section('script')
 
     <script src="{{ asset('assets/js/datatables/jquery.dataTables.min.js')}}"></script>
@@ -63,6 +59,7 @@
     <li class="breadcrumb-item">{{ __('Events report') }}</li>
 @endsection
 @section('content')
+
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-12">
@@ -101,7 +98,7 @@
                                     <th>{{ __('Language') }}</th>
                                     <th>{{ __('Customer’s Location') }}</th>
                                     <th>{{ __('Lead Owner’s Notes') }}</th>
-                                    <th>{{ __('Lead Owner') }}</th>
+                                    <th>{{ __('Made by') }}</th>
                                     @switch($val)
                                         @case('tomorrow')
 
@@ -115,7 +112,11 @@
                                     @endswitch
                                     <th>{{ __('Previous Appointments Count') }}</th>
                                     <th>{{ __('Stage') }}</th>
+                                    <th>{{ __('Lead Owner') }}</th>
+                                    <th>{{ __('Type') }}</th>
                                     <th>{{ __('Confirmed') }}</th>
+                                    <th>{{ __('Confirmed by') }}</th>
+                                    <th>{{ __('Confirmation date') }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -285,7 +286,19 @@
                                             @endphp
                                         </td>
                                         <td>
-                                            {{ $event->confirmed === 1 ? 'Yes' : 'Cancelled' }}
+                                            {{ $event->client->user->name ?? '' }}
+                                        </td>
+                                        <td>
+                                            {{ $event->zoom_meting === 1 ? 'Zoom' : 'Appointment' }}
+                                        </td>
+                                        <td>
+                                            {{ $event->confirmed === 1 ? 'Yes' : 'No' }}
+                                        </td>
+                                        <td>
+                                            {{ $event->confirmed_by ?? '' }}
+                                        </td>
+                                        <td>
+                                            {{ Carbon\Carbon::parse($event->confirmed_at)->format('Y-m-d H:i') }}
                                         </td>
                                     </tr>
                                 @endforeach

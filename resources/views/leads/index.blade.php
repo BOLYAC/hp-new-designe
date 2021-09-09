@@ -13,8 +13,40 @@
             padding: 0;
         }
 
-        .font-size-4 {
-            font-size: 4px;
+        .select2-search input {
+            font-size: 12px;
+        }
+
+        .select2-results {
+            font-size: 12px;
+        }
+
+        .select2-results__option--highlighted {
+            font-size: 12px;
+        }
+
+        .select2-results__option[aria-selected=true] {
+            font-size: 12px;
+        }
+
+        .select2-results__options {
+            font-size: 12px !important;
+        }
+
+        .select2-selection__rendered {
+            font-size: 12px;
+        }
+
+        .select2-selection__rendered {
+            line-height: 16px !important;
+        }
+
+        .select2-container .select2-selection--single {
+            height: 16px !important;
+        }
+
+        .select2-selection__arrow {
+            height: 16px !important;
         }
     </style>
 @endsection
@@ -23,9 +55,7 @@
 
     <script src="{{asset('assets/js/datatables/jquery.dataTables.min.js')}}"></script>
     <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.buttons.min.js')}}"></script>
-    <script src="{{asset('assets/js/datatables/dat
-
-atable-extension/buttons.bootstrap4.min.js')}}"></script>
+    <script src="{{asset('assets/js/datatables/datatable-extension/buttons.bootstrap4.min.js')}}"></script>
 
     <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.bootstrap4.min.js')}}"></script>
     <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.responsive.min.js')}}"></script>
@@ -78,6 +108,7 @@ atable-extension/buttons.bootstrap4.min.js')}}"></script>
                 $('select[name=user_filter]').val('');
                 $('select[name=department_filter]').val('');
                 $('select[name=team_filter]').val('');
+                $(".js-example-placeholder-multiple").empty();
                 table.DataTable().destroy();
             });
             // Search form
@@ -115,8 +146,8 @@ atable-extension/buttons.bootstrap4.min.js')}}"></script>
                     </div>
                     <form id="search-form">
                         <div class="card-body filter-cards-view animate-chk p-2">
-                            <label>{{ __('Stage:') }}</label>
                             <div class="checkbox-animated">
+                                <div class="mb-2">{{ __('Stage:') }}</div>
                                 <label class="d-block" for="chk-ani">
                                     <input class="checkbox_animated field_stages" id="chk-ani" type="checkbox"
                                            name="status_filter[]" value="1"> {{ __('In contact') }}
