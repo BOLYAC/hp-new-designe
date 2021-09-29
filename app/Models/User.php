@@ -194,7 +194,7 @@ class User extends Authenticatable implements Auditable
 
     public function ownedTeam()
     {
-        return $this->belongsTo(Team::class, 'current_team_id');
+        return $this->belongsTo(Team::class, 'current_team_id')->withDefault();
     }
 
     /**

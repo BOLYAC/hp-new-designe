@@ -54,17 +54,16 @@
                                 data-target="#createModal">{{ __('New team') }} <i class="icon-plus"></i></button>
                     </div>
                     <div class="card-body">
-                        <div class="order-history dt-ext table-responsive">
+                        <div class="dt-ext table-responsive product-table">
                             <table id="res-config"
-                                   class="table task-list-table table-striped table-bordered nowrap"
-                                   style="width:100%">
+                                   class="table table-striped display table-bordered nowrap">
                                 <thead>
                                 <tr>
-                                    <th width="5%">ID</th>
-                                    <th width="15%">{{ __('Name') }}</th>
-                                    <th width="15%">{{ __('Owner') }}</th>
+                                    <th>ID</th>
+                                    <th>{{ __('Name') }}</th>
+                                    <th>{{ __('Owner') }}</th>
                                     <th>{{ __('Member') }}</th>
-                                    <th width="5%"></th>
+                                    <th></th>
                                 </tr>
                                 </thead>
                                 <tbody>

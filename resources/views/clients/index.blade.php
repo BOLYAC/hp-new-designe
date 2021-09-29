@@ -13,43 +13,33 @@
             width: 100% !important;
             padding: 0;
         }
-
         .jconfirm.jconfirm-supervan .jconfirm-box div.jconfirm-content {
             overflow: hidden
         }
-
         .select2-search input {
             font-size: 12px;
         }
-
         .select2-results {
             font-size: 12px;
         }
-
         .select2-results__option--highlighted {
             font-size: 12px;
         }
-
         .select2-results__option[aria-selected=true] {
             font-size: 12px;
         }
-
         .select2-results__options {
             font-size: 12px !important;
         }
-
         .select2-selection__rendered {
             font-size: 12px;
         }
-
         .select2-selection__rendered {
             line-height: 16px !important;
         }
-
         .select2-container .select2-selection--single {
             height: 16px !important;
         }
-
         .select2-selection__arrow {
             height: 16px !important;
         }
@@ -61,7 +51,6 @@
     <script src="{{asset('assets/js/datatables/jquery.dataTables.min.js')}}"></script>
     <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.buttons.min.js')}}"></script>
     <script src="{{asset('assets/js/datatables/datatable-extension/buttons.bootstrap4.min.js')}}"></script>
-
     <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.bootstrap4.min.js')}}"></script>
     <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.responsive.min.js')}}"></script>
     <script src="{{asset('assets/js/datatables/datatable-extension/responsive.bootstrap4.min.js')}}"></script>
@@ -104,7 +93,6 @@
                     }
                 });
         }
-
         // Main data table
         let tableNew = $('#basic-1').DataTable({
             processing: true,

@@ -53,17 +53,17 @@
                             {{ __('New user') }}<i class="icon-plus"></i></a>
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive">
+                        <div class="dt-ext table-responsive product-table">
                             <table id="res-config"
-                                   class="display"
-                                   style="width:100%">
+                                   class="table table-striped display table-bordered nowrap">
                                 <thead>
                                 <tr>
                                     <th>ID</th>
                                     <th>{{ __('Name') }}</th>
                                     <th>{{ __('E-mail') }}</th>
                                     <th>{{ __('Role') }}</th>
-                                    <th>{{ __('Status') }}</th>
+                                    <th>{{ __('Department') }}</th>
+                                    <th>{{ __('Team') }}</th>
                                     <th></th>
                                 </tr>
                                 </thead>
@@ -71,16 +71,44 @@
                                 @foreach($users as $index => $user)
                                     <tr>
                                         <td>{{ $user->id }}</td>
-                                        <td>{{ $user->name ?? '' }}</td>
-                                        <td>{{ $user->email ?? '' }}</td>
                                         <td>
-                                            @if(!empty($user->getRoleNames()))
+                                            <div class="d-inline-block align-middle"><img
+                                                    class="img-radius img-50 align-top m-r-15 rounded-circle"
+                                                    src="{{  asset('storage/' . $user->image_path ?? 'users/16.png')}}"
+                                                    alt="">
+                                                <div class="d-inline-block"><h6
+                                                        class="f-w-400">{{optional($user)->name}}</h6>
+                                                    <span
+                                                        class="f-w-400">{{ __('Last modify:') }} {{ $user->updated_at->format('Y/m/d') }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-inline-block align-middle">
+                                                <div class="d-inline-block">
+                                                    <span>{{ $user->email ?? '' }}</span><br>
+                                                    <span>{{ $user->phone_1 ?? '' }} - {{ $user->phone_2 ?? '' }}</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            @if(!empty($user->getRoleNames())-
                                                 @foreach($user->getRoleNames() as $v)
-                                                    <label class="badge badge-success">{{ $v }}</label>
+                                                    <span class="badge badge-light-success btn-xs">{{ $v }}</span>
                                                 @endforeach
                                             @endif
                                         </td>
-                                        <td>{{ $user->status ?? '' }}</td>
+                                        <td>
+                                            <span class="badge badge-light-secondary btn-xs">
+                                                {{ $user->department->name ?? '' }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-light-info btn-xs">
+                                            {{ $user->ownedTeam->name }}
+                                            </span>
+                                        </td>
                                         <td class="action-icon">
                                             <a href="{{ route('users.show', $user) }}"
                                                class="m-r-15 text-muted f-18"><i
